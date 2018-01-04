@@ -1,0 +1,222 @@
+@page {
+	margin:.25in;
+	size:8.5in 11in;
+}
+html, body {
+	height: 100%;
+}
+body {
+	font-family:arial;
+	font-size:10pt;
+	margin:0;
+	padding: 0;
+	display: flex;
+	flex-direction:column;
+	flex-wrap: wrap;
+	align-items: center;
+}
+@media all {
+	*.interface {
+		display:flex;
+		flex-direction: column;
+		flex-wrap: wrap;
+		height: 100%;
+		width: 100%;
+		align-content: stretch;
+		& > * {
+			position: relative;
+		}
+		& > *:nth-child(2) {
+			flex: 1 0 100%;
+			order: 1;
+		}
+		& > *:nth-child(1) {
+			flex: 1 0 auto;
+			height: auto;
+			order: 2;
+			min-width: 8.5in;
+		}
+		& > *:nth-child(3) {
+			flex: 0 0 1in;
+			order: 3;
+		}
+	}
+}
+div#options {
+	box-sizing: border-box;
+//	flex: 1 0 100%;
+	height: 100%;
+	min-width: 3in;
+	background-color: rgba(0,0,0,.1);
+	padding:1em;
+	& th {
+		text-align: right;
+		width:5em;
+	}
+}
+
+div.champ {
+	display:flex;
+	align-items: center;
+	& > * {
+		flex: 1 0 0px;
+	}
+	& > label {
+		flex: 0 0 4em;
+		text-align: right;
+		padding-right: .5em;
+		font-weight: bold;
+	}
+	& input[type=button],
+	& input[type=text],
+	& input:not([type]),
+	& select,
+	& textarea {
+		zzzwidth: 100%;
+		box-sizing: border-box;
+		resize:vertical;
+	}
+}
+div#contenu {
+	flex: 1 0 8in;
+	display:flex;
+	flex-direction: column;
+	align-items: center;
+}
+div#status {
+	background: #ccc;
+	align-self: stretch;
+	margin-top: 1em;
+	padding: 1em;
+	& div.boutons {
+		display: flex;
+		justify-content: space-between;
+	}
+	& textarea, & input {
+		box-sizing: border-box;
+	}
+	& textarea {
+		resize: vertical;
+	}
+}
+div#horaire {
+	width: 8in;
+	zzzheight: 5in;
+	display: flex;
+	flex-direction: column;
+	& > div.caption {
+		font-weight:bold;
+		font-size:2em;
+		text-align:center;
+		flex: 0 0 auto;
+	}
+	& > div.grille {
+		flex: 1 0 auto;
+		& > table {
+			table-layout: fixed;
+			width:100%;
+			height:100%;
+			border-collapse: collapse;
+			border-spacing:0;
+			border: solid 2px black;
+			& > thead {
+				background-color:#666;
+				color:white;
+				border:solid 2px black;
+			}
+			& th, & td {
+				border: solid 1px black;
+			}
+		}
+	}
+}
+html.frame {
+	&, body {
+		height: 100%;
+		font-size: 1.8vw;
+		margin:0;
+		padding: 0;
+	}
+	div#contenu {
+		flex: 1 0 0 !important;
+
+	}
+	div#horaire {
+		height: 100% !important;
+		width: 100% !important;
+
+	}
+}
+@media (max-width: 13in) {
+	*.interface {
+		& > *:nth-child(2) {
+			zzzalign-self: flex-start;
+			zzzwidth: 1em;
+			background-color: #CC0 !important;
+			& > * {
+				zzzdisplay:none;
+				position: absolute;
+				right: 0;
+				width: 3in;
+				background-color: inherit !important;
+				z-index: 1000;
+			}
+			&:hover {
+				& > * {
+					left:0;
+					display:block;
+				}
+			}
+		}
+	}
+}
+
+@media screen {
+	div#horaire > table.modif td:not(.courant):hover {
+		box-shadow: 0 0 .5em red;
+	}
+}
+col.heures {
+	width:4em;
+}
+th {
+	font-size: smaller;
+}
+td.dispo {
+	xbackground-color:lightgreen;
+}
+td.cours {
+	xbackground-color:orange;
+}
+td.rv {
+	xbackground-color:lightblue;
+}
+td.nd {
+	background-color:#EEE;
+	color:#999;
+}
+div.plage {
+	text-align:center;
+}
+div.plage > div.etat {
+	font-weight:bold;
+}
+@media screen {
+	.courant {
+		box-shadow: 0 0 1em red inset;
+	}
+}
+#formPlage {
+	padding-top:.5em;
+	margin-top:.5em;
+	border-top:1px solid black;
+}
+textarea#code, input#code-iframe {
+	width:100%;
+	margin-top:1em;
+}
+@media print {
+	#status, #options {
+		display:none;
+	}
+}
