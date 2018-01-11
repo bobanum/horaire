@@ -22,7 +22,22 @@ class Horaire extends DOM {
 		this.hauteur = 5; // La hauteur en pouces de la zone horaire
 		return this;
 	}
+	static trouverNomsJours(lang) {
+		var resultat, d;
+		lang = lang || this.lang;
+		resultat = [];
+		d = new Date();
+		d.setTime(d.getTime() + (7-d.getDay()) * 1000*60*60*24);
+		for (let i = 0; i < 7; i += 1) {
+			let dd = new Date(d.getTime() + i * 1000*60*60*24);
+			resultat.push(dd.toLocaleString(lang, {weekday: 'long'}));
+		}
+		console.log(resultat);
+		return resultat;
+	}
 	static init() {
+		this.lang = window.navigator.language;
+//		this.lang = "it-IT";
 		this.types = {
 			'C': {"htmlClass":'cours', etat:'En cours', css: {'background-color':'gold','color':'#A52929'}},
 			'D': {"htmlClass":'dispo', etat:'Disponible', css: {'background-color':'lightgreen','color':'darkgreen'}},
@@ -276,17 +291,17 @@ class Horaire extends DOM {
 		colgroup.appendChild(this.createElement('col.heures'));
 		return colgroup;
 	}
-	dom_thead() {
-		var thead, tr, i, n;
-		thead = this.createElement('thead');
-		tr = this.createElement('tr');
-		thead.appendChild(tr);
+	dom_entete() {
+		var resultat, tr, i, n;
+		resultat = this.createElement('div');
+		resultat.classList.add("rangee");
+		resultat.classList.add("rangee entete");
 		tr.appendChild(this.createElement('th', '&nbsp;'));
 		for (i=0, n=this.jours.length; i < n; i += 1) {
 			tr.appendChild(this.createElement('th', this.jours[i]));
 		}
 		tr.appendChild(this.createElement('th', '&nbsp;'));
-		return thead;
+		return resultat;
 	}
 	dom_tbody() {
 		var tbody, debut, i, np, tr, j, n, td;
@@ -313,23 +328,24 @@ class Horaire extends DOM {
 	}
 	dom_horaire() {
 		var div;
-		this.dom = this.dom_table();
+		this.dom = this.dom_grille();
 		this.gererPlages();
 		div = this.createElement("div#horaire", this.dom_caption());
 		div.style.height = this.hauteur+'in';
 		this.createElementIn(div, "div.grille", this.dom);
 		return div;
 	}
-	dom_table() {
-		var table;
-		table = this.createElement('table',  null, {'border': '1'});
+	dom_grille() {
+		var resultat;
+		resultat = document.createElement('div');
+		resultat.classList.add("grille");
 		if (Horaire.mode === Horaire.MODE_EDITION) {
-			table.classList.add('modif');
+			resultat.classList.add('modif');
 		}
-		table.appendChild(this.dom_cols());
-		table.appendChild(this.dom_thead());
-		table.appendChild(this.dom_tbody());
-		return table;
+//		resultat.appendChild(this.dom_cols());
+		resultat.appendChild(this.dom_entete());
+		resultat.appendChild(this.dom_tbody());
+		return resultat;
 	}
 	dom_status() {
 		var resultat, form;

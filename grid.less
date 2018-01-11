@@ -1,0 +1,13 @@
+div {
+	border: solid;
+}
+div.grille {
+	height: 5in;
+	display:grid;
+	grid-auto-columns: 5em;
+	grid-auto-rows: 2em;
+	grid-auto-flow: column dense;
+	grid-gap: 1px;
+	grid-template-rows: 2em repeat(10, 1fr);
+	grid-template-columns: 3em repeat(7, 1fr) 3em;
+}
