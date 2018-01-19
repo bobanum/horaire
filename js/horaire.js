@@ -1,5 +1,5 @@
 /*jslint esnext:true, browser:true, debug:false*/
-/*globals LZString, DOM, Plage*/
+/*globals LZString, DOM, Plage, App*/
 // Ajouter annuler
 // toArray
 // compression base64
@@ -29,9 +29,6 @@ class Horaire extends DOM {
 			'R': {"htmlClass":'rv', etat:'Disponible sur rendez-vous', css: {'background-color':'lightblue', 'color':'darkblue'}},
 			'N': {"htmlClass":'nd', etat:'Non disponible', css: {'background-color':'#ddd','color':'#999'}}
 		};
-		this.MODE_AFFICHAGE = 0;
-		this.MODE_EDITION = 1;
-		this.MODE_IMPRESSION = 2;
 		this.evt = {
 	//		code: {
 	//			change:function(e) {
@@ -149,13 +146,6 @@ class Horaire extends DOM {
 				}
 			}
 		};
-		if (location.href.match(/edition\.html/)) {
-			this.mode = this.MODE_EDITION;
-		} else if (location.href.match(/impression\.html/)) {
-			this.mode = this.MODE_IMPRESSION;
-		} else {
-			this.mode = this.MODE_AFFICHAGE;
-		}
 		if (location.search) {
 			var d, script;
 			d = this.getSearch();
@@ -166,18 +156,6 @@ class Horaire extends DOM {
 				window.json = this.decoder(d.h);
 			}
 		}
-		window.addEventListener("load", function() {
-			var h;
-			if (window.json) {
-				h = Horaire.fromArray(window.json);
-			} else {
-				h = new Horaire();
-			}
-			if (Horaire.mode === Horaire.MODE_AFFICHAGE && window.self !== window.top) {
-				document.body.parentNode.classList.add("frame");
-			}
-			h.afficher();
-		});
 	}
 	get titre() {
 		return this._titre;
@@ -201,20 +179,22 @@ class Horaire extends DOM {
 		this._dom.obj = this;
 	}
 	initAffichage() {
-		Horaire.mode = Horaire.MODE_AFFICHAGE;
+		App.mode = App.MODE_AFFICHAGE;
 		this.afficher();
 	}
 	initModif() {
-		Horaire.mode = Horaire.MODE_EDITION;
+		App.mode = App.MODE_EDITION;
 		this.afficher();
 	}
 	afficher() {
 		var iface;
 		iface = this.dom_interface(document.body);
-		this.dom_panneau(this.dom_horaire(), iface);
-		if (Horaire.mode === Horaire.MODE_EDITION) {
+		if (App.mode === App.MODE_EDITION) {
+			this.dom_panneau(this.dom_horaire(), iface);
 			this.dom_panneau(this.dom_options(), iface);
 			this.dom_panneau(this.dom_status(), iface);
+		} else {
+			iface.appendChild(this.dom_horaire());
 		}
 		return this;
 	}
@@ -254,7 +234,7 @@ class Horaire extends DOM {
 	zzzdom_contenu(conteneur) {
 		conteneur = conteneur || this.createElement("div#contenu");
 		conteneur.appendChild(this.dom_horaire());
-		if (Horaire.mode == Horaire.MODE_EDITION) {
+		if (App.mode == App.MODE_EDITION) {
 			conteneur.appendChild(this.dom_status());
 		}
 		return conteneur;
@@ -299,7 +279,7 @@ class Horaire extends DOM {
 			for (j=0, n=this.jours.length; j < n; j += 1) {
 				td = this.createElement('td');
 				tr.appendChild(td);
-				if (Horaire.mode==Horaire.MODE_EDITION) {
+				if (App.mode==App.MODE_EDITION) {
 					this.addEventListeners(td, Plage.evt.td);
 				}
 				td.horaire = this;
@@ -316,14 +296,14 @@ class Horaire extends DOM {
 		this.dom = this.dom_table();
 		this.gererPlages();
 		div = this.createElement("div#horaire", this.dom_caption());
-		div.style.height = this.hauteur+'in';
+//		div.style.height = this.hauteur+'in';
 		this.createElementIn(div, "div.grille", this.dom);
 		return div;
 	}
 	dom_table() {
 		var table;
 		table = this.createElement('table',  null, {'border': '1'});
-		if (Horaire.mode === Horaire.MODE_EDITION) {
+		if (App.mode === App.MODE_EDITION) {
 			table.classList.add('modif');
 		}
 		table.appendChild(this.dom_cols());

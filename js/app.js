@@ -4,8 +4,35 @@
 Classe App gérant l'application
 */
 class App {
+	static load() {
+		var h;
+		if (window.json) {
+			h = Horaire.fromArray(window.json);
+		} else {
+			h = new Horaire();
+		}
+		if (location.href.match(/edition\.html/)) {
+			this.mode = this.MODE_EDITION;
+			document.body.parentNode.classList.add("edition");
+		} else if (location.href.match(/impression\.html/)) {
+			this.mode = this.MODE_IMPRESSION;
+			document.body.parentNode.classList.add("impression");
+		} else if (window.self !== window.top) {
+			this.mode = this.MODE_FRAME;
+			document.body.parentNode.classList.add("frame");
+		} else {
+			this.mode = this.MODE_AFFICHAGE;
+			document.body.parentNode.classList.add("affichage");
+		}
+		h.afficher();
+	}
 	static init() {
 //		debugger;
+		this.MODE_AFFICHAGE = 0;
+		this.MODE_EDITION = 1;
+		this.MODE_IMPRESSION = 2;
+		this.MODE_FRAME = 3;
+
 		this.scriptUrl = this.getScriptUrl();
 		this.rootUrl = this.getRootUrl();
 		this.ajouterLink("horaire", "all");
@@ -15,23 +42,7 @@ class App {
 		this.ajouterScript("plage");
 		this.data = {};
 		window.addEventListener("load", function() {
-			var h;
-			if (window.json) {
-				h = Horaire.fromArray(window.json);
-			} else {
-				h = new Horaire();
-			}
-			if (location.href.match(/edition\.html/)) {
-				Horaire.mode = Horaire.MODE_EDITION;
-			} else if (location.href.match(/impression\.html/)) {
-				Horaire.mode = Horaire.MODE_IMPRESSION;
-			} else {
-				Horaire.mode = Horaire.MODE_AFFICHAGE;
-				if (window.self !== window.top) {
-					document.body.parentNode.classList.add("frame");
-				}
-			}
-			h.afficher();
+			App.load();
 		});
 		return;
 	}

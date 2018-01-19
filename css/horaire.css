@@ -3,19 +3,23 @@
   margin: .25in;
   size: 8.5in 11in;
 }
-html,
-body {
+html {
+  font-size: 10pt;
   height: 100%;
+  -webkit-print-color-adjust: exact;
 }
 body {
+  height: 100%;
   font-family: arial;
-  font-size: 10pt;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
   flex-wrap: wrap;
   align-items: center;
+}
+iframe html {
+  background-color: red;
 }
 @media all {
   *.interface {
@@ -37,7 +41,6 @@ body {
     flex: 1 0 auto;
     height: auto;
     order: 2;
-    min-width: 8.5in;
   }
   *.interface > *:nth-child(3) {
     flex: 0 0 1in;
@@ -101,19 +104,18 @@ div#status textarea {
   resize: vertical;
 }
 div#horaire {
-  width: 8in;
-  zzzheight: 5in;
   display: flex;
   flex-direction: column;
+  margin: 0 auto;
 }
 div#horaire > div.caption {
   font-weight: bold;
   font-size: 2em;
   text-align: center;
-  flex: 0 0 auto;
+  flex: 0 0 0;
 }
 div#horaire > div.grille {
-  flex: 1 0 auto;
+  flex: 1 0 0;
 }
 div#horaire > div.grille > table {
   table-layout: fixed;
@@ -121,16 +123,27 @@ div#horaire > div.grille > table {
   height: 100%;
   border-collapse: collapse;
   border-spacing: 0;
-  border: solid 2px black;
+  border: solid .2em black;
 }
 div#horaire > div.grille > table > thead {
   background-color: #666;
   color: white;
-  border: solid 2px black;
+  border: solid .2em black;
 }
 div#horaire > div.grille > table th,
 div#horaire > div.grille > table td {
-  border: solid 1px black;
+  border: solid .1em black;
+}
+html.edition #horaire {
+  width: 8in;
+}
+html.affichage .interface {
+  width: 8in;
+  height: 7.5in;
+}
+html.affichage *.demi .interface {
+  width: 8in;
+  height: 5in;
 }
 html.frame,
 html.frame body {
@@ -145,6 +158,8 @@ html.frame div#contenu {
 html.frame div#horaire {
   height: 100% !important;
   width: 100% !important;
+  box-sizing: border-box;
+  outline: 2px blue solid;
 }
 @media (max-width: 13in) {
   *.interface > *:nth-child(2) {
