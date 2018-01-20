@@ -130,6 +130,38 @@ div#horaire {
 		}
 	}
 }
+div.grille {
+	height: 5in;
+	display:grid;
+	grid-auto-columns: 5em;
+	grid-auto-rows: 2em;
+	grid-auto-flow: column dense;
+	grid-gap: .2em;
+	& > div {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+	}
+	div.heure {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-around;
+		font-size: smaller;
+		background-color: rgba(80%,80%,80%,1);
+		line-height: 1;
+		& > div:nth-child(2) {
+			display: none;
+		}
+	}
+	div.plage {
+		background-color: rgba(95%,95%,95%,1);
+	}
+}
+div.jour, div.vide {
+	background-color: #666;
+	color: white;
+}
 html.frame {
 	&, body {
 		height: 100%;

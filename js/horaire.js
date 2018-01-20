@@ -13,8 +13,8 @@ class Horaire extends DOM {
 	}
 	init() {
 		this.titre = "Horaire";
-		this.jours = ['Lundi','Mardi','Mercredi','Jeudi','Vendredi'];
-		this.heureDebut = 8*60+0;
+		this.jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
+		this.heureDebut = 8 * 60 + 0;
 		this.nbPeriodes = 11;
 		this.dureePeriode = 50;
 		this.pause = 5;
@@ -27,172 +27,14 @@ class Horaire extends DOM {
 		lang = lang || this.lang;
 		resultat = [];
 		d = new Date();
-		d.setTime(d.getTime() + (7-d.getDay()) * 1000*60*60*24);
+		d.setTime(d.getTime() + (7 - d.getDay()) * 1000 * 60 * 60 * 24);
 		for (let i = 0; i < 7; i += 1) {
-			let dd = new Date(d.getTime() + i * 1000*60*60*24);
-			resultat.push(dd.toLocaleString(lang, {weekday: 'long'}));
+			let dd = new Date(d.getTime() + i * 1000 * 60 * 60 * 24);
+			resultat.push(dd.toLocaleString(lang, {
+				weekday: "long"
+			}));
 		}
-		console.log(resultat);
 		return resultat;
-	}
-	static init() {
-		this.lang = window.navigator.language;
-//		this.lang = "it-IT";
-		this.types = {
-			'C': {"htmlClass":'cours', etat:'En cours', css: {'background-color':'gold','color':'#A52929'}},
-			'D': {"htmlClass":'dispo', etat:'Disponible', css: {'background-color':'lightgreen','color':'darkgreen'}},
-			'R': {"htmlClass":'rv', etat:'Disponible sur rendez-vous', css: {'background-color':'lightblue', 'color':'darkblue'}},
-			'N': {"htmlClass":'nd', etat:'Non disponible', css: {'background-color':'#ddd','color':'#999'}}
-		};
-		this.MODE_AFFICHAGE = 0;
-		this.MODE_EDITION = 1;
-		this.MODE_IMPRESSION = 2;
-		this.evt = {
-	//		code: {
-	//			change:function(e) {
-	//				try {
-	//					var hh = JSON.parse(this.value);
-	//					this.horaire.init().fromJson(hh).redessiner();
-	//				} catch (err) {
-	//					this.horaire.init().redessiner();
-	//					this.horaire.redessiner();
-	//				}
-	//			},
-	//			click:function(e) {
-	//				if ((e.metaKey || e.ctrlKey) && e.altKey) {
-	//					this.value = Horaire.encoder(this.horaire.toArray(true));
-	//					this.select();
-	//				} else if (e.metaKey || e.ctrlKey) {
-	//					this.value = this.horaire.toJson(true);
-	//					this.select();
-	//				} else if (e.altKey) {
-	//					this.value = this.horaire.toArray(true);
-	//					this.select();
-	//				}
-	//			}
-	//		},
-			input_titre: {
-				input:function() {
-					this.form.obj.titre = this.value;
-				}
-			},
-			btn_array: {
-				click:function() {
-					var resultat, ta;
-					resultat = this.form.obj.toArray(true);
-					ta = document.getElementById('code');
-					ta.innerHTML = resultat;
-					ta.select();
-				}
-			},
-			btn_arraycompresse: {
-				click:function() {
-					var resultat, ta;
-					resultat = this.form.obj.toArray(true);
-					ta = document.getElementById('code');
-					ta.innerHTML = Horaire.encoder(resultat);
-					ta.select();
-				}
-			},
-			btn_json: {
-				click:function(e) {
-					var resultat, ta;
-					if (e.shiftKey) {
-						ta = document.getElementById('code');
-						resultat = JSON.parse(ta.value);
-						resultat = Horaire.fromJson(resultat);
-						resultat = resultat.toUrl();
-						resultat = resultat.replace("index.html", "edition.html");
-						window.location = resultat;
-					} else {
-						resultat = this.form.obj.toJson(true);
-						ta = document.getElementById('code');
-						ta.innerHTML = resultat;
-						ta.select();
-					}
-				}
-			},
-			btn_jsoncompresse: {
-				click:function() {
-					var resultat, ta;
-					resultat = this.form.obj.toJson(true);
-					ta = document.getElementById('code');
-					ta.innerHTML = Horaire.encoder(resultat);
-					ta.select();
-				}
-			},
-			btn_adresse: {
-				click:function() {
-					var resultat, ta;
-					resultat = this.form.obj.toUrl();
-					ta = document.getElementById('code');
-					ta.innerHTML = resultat;
-					ta.select();
-				}
-			},
-			btn_lien: {
-				click:function() {
-					var resultat, ta;
-					resultat = this.form.obj.dom_code_lien();
-					ta = document.getElementById('code');
-					ta.innerHTML = resultat;
-					ta.select();
-				}
-			},
-			btn_iframe: {
-				click:function() {
-					var resultat, ta;
-					resultat = this.form.obj.dom_code_iframe();
-					ta = document.getElementById('code');
-					ta.innerHTML = resultat;
-					ta.select();
-				}
-			},
-			btn_redessiner: {
-				click:function() {
-					var resultat;
-					resultat = this.form.obj.toUrl();
-					resultat = resultat.replace("index.html", "edition.html");
-					window.location = resultat;
-				}
-			},
-			btn_visionner: {
-				click:function() {
-					var resultat;
-					resultat = this.form.obj.toUrl();
-					window.location = resultat;
-				}
-			}
-		};
-		if (location.href.match(/edition\.html/)) {
-			this.mode = this.MODE_EDITION;
-		} else if (location.href.match(/impression\.html/)) {
-			this.mode = this.MODE_IMPRESSION;
-		} else {
-			this.mode = this.MODE_AFFICHAGE;
-		}
-		if (location.search) {
-			var d, script;
-			d = this.getSearch();
-			if (d.session && d.nom) {
-				script = DOM.createElement("script", null, {'src': d.session+d.nom+'.js'});
-				document.head.appendChild(script);
-			} else if (d.h) {
-				window.json = this.decoder(d.h);
-			}
-		}
-		window.addEventListener("load", function() {
-			var h;
-			if (window.json) {
-				h = Horaire.fromArray(window.json);
-			} else {
-				h = new Horaire();
-			}
-			if (Horaire.mode === Horaire.MODE_AFFICHAGE && window.self !== window.top) {
-				document.body.parentNode.classList.add("frame");
-			}
-			h.afficher();
-		});
 	}
 	get titre() {
 		return this._titre;
@@ -266,85 +108,102 @@ class Horaire extends DOM {
 		}
 		return resultat;
 	}
-	zzzdom_contenu(conteneur) {
-		conteneur = conteneur || this.createElement("div#contenu");
-		conteneur.appendChild(this.dom_horaire());
-		if (Horaire.mode == Horaire.MODE_EDITION) {
-			conteneur.appendChild(this.dom_status());
-		}
-		return conteneur;
-	}
-	/**
-	 * [[Description]]
-	 * @returns {[[Type]]} [[Description]]
-	 */
+		/**
+		 * [[Description]]
+		 * @returns {[[Type]]} [[Description]]
+		 */
 	dom_caption() {
 		var caption;
-		caption = this.createElement('div.caption#affichage_titre', this.titre);
+		caption = this.createElement("div.caption#affichage_titre", this.titre);
 		return caption;
 	}
 	dom_cols() {
 		var colgroup;
-		colgroup = this.createElement('colgroup');
-		colgroup.appendChild(this.createElement('col.heures'));
-		colgroup.appendChild(this.createElement('col.jour', null, {'span': this.jours.length}));
-		colgroup.appendChild(this.createElement('col.heures'));
+		colgroup = this.createElement("colgroup");
+		colgroup.appendChild(this.createElement("col.heures"));
+		colgroup.appendChild(this.createElement("col.jour", null, {
+			"span": this.jours.length
+		}));
+		colgroup.appendChild(this.createElement("col.heures"));
 		return colgroup;
 	}
-	dom_entete() {
-		var resultat, tr, i, n;
-		resultat = this.createElement('div');
-		resultat.classList.add("rangee");
-		resultat.classList.add("rangee entete");
-		tr.appendChild(this.createElement('th', '&nbsp;'));
-		for (i=0, n=this.jours.length; i < n; i += 1) {
-			tr.appendChild(this.createElement('th', this.jours[i]));
-		}
-		tr.appendChild(this.createElement('th', '&nbsp;'));
-		return resultat;
-	}
-	dom_tbody() {
-		var tbody, debut, i, np, tr, j, n, td;
-		tbody = this.createElement('tbody');
-		debut = this.heureDebut;
-		for (i=0, np=this.nbPeriodes; i < np; i += 1) {
-			tr = this.createElement('tr');
-			tbody.appendChild(tr);
-			tr.appendChild(this.heures(debut));
-			for (j=0, n=this.jours.length; j < n; j += 1) {
-				td = this.createElement('td');
-				tr.appendChild(td);
-				if (Horaire.mode==Horaire.MODE_EDITION) {
-					this.addEventListeners(td, Plage.evt.td);
-				}
-				td.horaire = this;
-				td.jour = j;
-				td.debut = i;
-			}
-			tr.appendChild(this.heures(debut));
-			debut += this.dureePeriode + this.pause;
-		}
-		return tbody;
-	}
 	dom_horaire() {
-		var div;
+		var resultat;
 		this.dom = this.dom_grille();
 		this.gererPlages();
-		div = this.createElement("div#horaire", this.dom_caption());
-		div.style.height = this.hauteur+'in';
-		this.createElementIn(div, "div.grille", this.dom);
-		return div;
+		resultat = this.createElement("div#horaire", this.dom_caption());
+		resultat.style.height = this.hauteur + "in";
+		resultat.appendChild(this.dom);
+		return resultat;
 	}
 	dom_grille() {
 		var resultat;
-		resultat = document.createElement('div');
+		resultat = document.createElement("div");
 		resultat.classList.add("grille");
+		resultat.style.gridTemplate = "2em repeat(" + this.nbPeriodes + ", 1fr) / 3em repeat(" + this.jours.length + ", 1fr) 3em";
 		if (Horaire.mode === Horaire.MODE_EDITION) {
-			resultat.classList.add('modif');
+			resultat.classList.add("modif");
 		}
-//		resultat.appendChild(this.dom_cols());
-		resultat.appendChild(this.dom_entete());
-		resultat.appendChild(this.dom_tbody());
+		this.dom_jours(resultat);
+		this.dom_heures(resultat);
+		this.dom_plages(resultat);
+		return resultat;
+	}
+	dom_jours(grille) {
+		var i, n, plage;
+		grille.appendChild(this.dom_case("vide", 1, 1));
+		grille.appendChild(this.dom_case("vide", 1, this.jours.length + 2));
+		for (i = 0, n = this.jours.length; i < n; i += 1) {
+			plage = grille.appendChild(this.dom_case("jour", 1, i + 2));
+			plage.innerHTML = this.jours[i];
+		}
+	}
+	dom_heures(grille) {
+		var resultat, j, i;
+		for (i = 0; i < this.jours.length; i += 1) {
+			for (j = 0; j < this.nbPeriodes; j += 1) {
+				grille.appendChild(this.dom_case("plage", j + 2, i + 2));
+			}
+		}
+		return resultat;
+	}
+	dom_plages(grille) {
+		var resultat, debut, fin, j, i, col, plage;
+		for (i = 0; i < 2; i += 1) {
+			col = i * (this.jours.length + 1) + 1;
+			for (j = 0; j < this.nbPeriodes; j += 1) {
+				debut = this.heureDebut + j * (this.dureePeriode + this.pause);
+				fin = debut + this.dureePeriode;
+				plage = grille.appendChild(this.dom_case("heure", j + 2, col));
+				plage.appendChild(this.createElement("div.heureDebut", this.min2h(debut)));
+				plage.appendChild(this.createElement("div"));
+				plage.appendChild(this.createElement("div.heureFin", this.min2h(fin)));
+			}
+		}
+		return resultat;
+	}
+	dom_case(classe, r, c, h, l) {
+		if (r === undefined) {
+			r = "auto";
+		}
+		if (c === undefined) {
+			c = "auto";
+		}
+		if (h === undefined) {
+			h = "auto";
+		} else {
+			h = h + " span";
+		}
+		if (l === undefined) {
+			l = "auto";
+		} else {
+			l = l + " span";
+		}
+		var resultat = document.createElement("div");
+		if (classe) {
+			resultat.classList.add(classe);
+		}
+		resultat.style.gridArea = "" + r + " / " + c + " / " + h + " / " + l + "";
 		return resultat;
 	}
 	dom_status() {
@@ -354,50 +213,81 @@ class Horaire extends DOM {
 		form.obj = this;
 		form.appendChild(this.dom_status_options());
 		form.appendChild(this.dom_code());
-//		form.appendChild(this.dom_codeIframe());
+		//		form.appendChild(this.dom_codeIframe());
 		return resultat;
 	}
 	dom_status_options() {
 		var resultat, div;
 		resultat = this.createElement("div.boutons");
 		div = this.createElementIn(resultat, "div");
-		this.createElementIn(div, "input", null, {'type': 'button', 'value':'JSON'}, Horaire.evt.btn_json);
-//		this.createElementIn(div, "input", null, {'type': 'button', 'value':'JSON Compressé'}, Horaire.evt.btn_jsoncompresse);
-//		this.createElementIn(div, "input", null, {'type': 'button', 'value':'Array'}, Horaire.evt.btn_array);
-		this.createElementIn(div, "input", null, {'type': 'button', 'value':'Compressé'}, Horaire.evt.btn_arraycompresse);
-		this.createElementIn(div, "input", null, {'type': 'button', 'value':'Adresse'}, Horaire.evt.btn_adresse);
-		this.createElementIn(div, "input", null, {'type': 'button', 'value':'Lien'}, Horaire.evt.btn_lien);
-		this.createElementIn(div, "input", null, {'type': 'button', 'value':'iFrame'}, Horaire.evt.btn_iframe);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "JSON"
+		}, Horaire.evt.btn_json);
+		//		this.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, Horaire.evt.btn_jsoncompresse);
+		//		this.createElementIn(div, "input", null, {"type": "button", "value":"Array"}, Horaire.evt.btn_array);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Compressé"
+		}, Horaire.evt.btn_arraycompresse);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Adresse"
+		}, Horaire.evt.btn_adresse);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Lien"
+		}, Horaire.evt.btn_lien);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "iFrame"
+		}, Horaire.evt.btn_iframe);
 		div = this.createElementIn(resultat, "div");
-		this.createElementIn(div, "input", null, {'type': 'button', 'value':'Redessiner'}, Horaire.evt.btn_redessiner);
-		this.createElementIn(div, "input", null, {'type': 'button', 'value':'Visionner'}, Horaire.evt.btn_visionner);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Redessiner"
+		}, Horaire.evt.btn_redessiner);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Visionner"
+		}, Horaire.evt.btn_visionner);
 		return resultat;
 	}
 	dom_code() {
-		var resultat = this.createElement('textarea#code', null, {'cols':'60', rows:'10',  'placeholder':"Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"}, Horaire.evt.code);
-		resultat.horaire = this;
-		return resultat;
-	}
-	/*codeIframe() {
-		var resultat = this.createElement('input#code-iframe', null, {'readonly': true, 'value': this.dom_iframe().outerHTML}, Horaire.evt.codeIframe);
-		resultat.horaire = this;
-		return resultat;
-	}*/
+			var resultat = this.createElement("textarea#code", null, {
+				"cols": "60",
+				rows: "10",
+				"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
+			}, Horaire.evt.code);
+			resultat.horaire = this;
+			return resultat;
+		}
+		/*codeIframe() {
+			var resultat = this.createElement("input#code-iframe", null, {"readonly": true, "value": this.dom_iframe().outerHTML}, Horaire.evt.codeIframe);
+			resultat.horaire = this;
+			return resultat;
+		}*/
 	dom_code_lien() {
 		var resultat;
-		resultat = '<a href="'+this.toUrl()+'">'+this.titre+'</a>';
+		resultat = '<a href="' + this.toUrl() + '">' + this.titre + '</a>';
 		return resultat;
 	}
 	dom_code_iframe() {
 		var resultat;
-		resultat = '<iframe style="width:768px;height:469px;border:none;" src="'+this.toUrl()+'"></iframe>';
+		resultat = '<iframe style="width:768px;height:469px;border:none;" src="' + this.toUrl() + '"></iframe>';
 		return resultat;
 	}
 	dom_iframe() {
 		var resultat, adresse;
 		adresse = this.iframe_src();
-		resultat = this.createElement('iframe', null, {'src': adresse});
-		this.applyStyle(resultat, {'border': 'none', 'width': 768, 'height': 469});
+		resultat = this.createElement("iframe", null, {
+			"src": adresse
+		});
+		this.applyStyle(resultat, {
+			"border": "none",
+			"width": 768,
+			"height": 469
+		});
 		return resultat;
 	}
 	dom_options() {
@@ -407,7 +297,7 @@ class Horaire extends DOM {
 	}
 	dom_form() {
 		var resultat;
-		resultat = this.createElement('form#formHoraire');
+		resultat = this.createElement("form#formHoraire");
 		resultat.obj = this;
 		this.trForm = resultat;
 		resultat.appendChild(this.dom_form_titre());
@@ -415,33 +305,29 @@ class Horaire extends DOM {
 	}
 	dom_form_titre() {
 		var input;
-		input = this.createElement('input#titre', null, {'type': 'text', 'value': this.titre, 'placeholder': 'Titre'}, Horaire.evt.input_titre);
-		return this.form_wrap(input, 'Titre');
+		input = this.createElement("input#titre", null, {
+			"type": "text",
+			"value": this.titre,
+			"placeholder": "Titre"
+		}, Horaire.evt.input_titre);
+		return this.form_wrap(input, "Titre");
 	}
 	toUrl() {
 		var url = "";
 		url += location.protocol;
-		url += "//"+location.host;
-		url += location.pathname.split("/").slice(0,-1).join("/")+"/";
+		url += "//" + location.host;
+		url += location.pathname.split("/").slice(0, -1).join("/") + "/";
 		url += "index.html";
 		url += "?h=";
 		url += Horaire.encoder(this.toArray(true));
 		return url;
 	}
-	heures(debut) {
-		var resultat;
-		resultat = this.createElement('th');
-		resultat.appendChild(this.createElement('div.heureDebut', this.min2h(debut)));
-		resultat.appendChild(this.createElement('div'));
-		resultat.appendChild(this.createElement('div.heureFin', this.min2h(debut+this.dureePeriode)));
-		return resultat;
-	}
 	min2h(min) {
-		var h = "0"+Math.floor(min/60);
+		var h = "0" + Math.floor(min / 60);
 		h = h.slice(-2);
-		var m = "0"+min%60;
+		var m = "0" + min % 60;
 		m = m.slice(-2);
-		return h+"h"+m;
+		return h + "h" + m;
 	}
 	ajouterPlage(plage) {
 		this.plages.push(plage);
@@ -452,7 +338,7 @@ class Horaire extends DOM {
 		return this;
 	}
 	gererPlages() {
-		for (var i=0, n=this.plages.length; i<n; i += 1) {
+		for (var i = 0, n = this.plages.length; i < n; i += 1) {
 			this.afficherPlage(this.plages[i]);
 		}
 	}
@@ -468,12 +354,12 @@ class Horaire extends DOM {
 	supprimerPlage(plage) {
 		var i;
 		i = this.trouverPlage(plage);
-		this.plages.splice(i,1);
+		this.plages.splice(i, 1);
 		return this;
 	}
 	redessiner() {
 		this.dom = this.dom_horaire();
-		document.getElementById('code').innerHTML = this.toJson(true);
+		document.getElementById("code").innerHTML = this.toJson(true);
 	}
 	static fromJson(j) {
 		if (typeof j == "string") {
@@ -488,25 +374,25 @@ class Horaire extends DOM {
 			j = JSON.parse(j);
 		}
 		if (j.titre !== undefined) {
-			this.titre=j.titre;
+			this.titre = j.titre;
 		}
 		if (j.jours !== undefined) {
-			this.jours=j.jours;
+			this.jours = j.jours;
 		}
 		if (j.heureDebut !== undefined) {
-			this.heureDebut=j.heureDebut;
+			this.heureDebut = j.heureDebut;
 		}
 		if (j.dureePeriode !== undefined) {
-			this.dureePeriode=j.dureePeriode;
+			this.dureePeriode = j.dureePeriode;
 		}
 		if (j.pause !== undefined) {
-			this.pause=j.pause;
+			this.pause = j.pause;
 		}
 		if (j.hauteur !== undefined) {
-			this.hauteur=j.hauteur;
+			this.hauteur = j.hauteur;
 		}
 		if (j.plages !== undefined) {
-			for (var i=0,n=j.plages.length; i<n; i += 1) {
+			for (var i = 0, n = j.plages.length; i < n; i += 1) {
 				Plage.fromJson(j.plages[i], this);
 			}
 		}
@@ -514,15 +400,15 @@ class Horaire extends DOM {
 	}
 	toJson(stringify) {
 		var resultat = {
-			titre:this.titre,
-			jours:this.jours,
-			heureDebut:this.heureDebut,
-			dureePeriode:this.dureePeriode,
-			pause:this.pause,
-			hauteur:this.hauteur,
-			plages:[]
+			titre: this.titre,
+			jours: this.jours,
+			heureDebut: this.heureDebut,
+			dureePeriode: this.dureePeriode,
+			pause: this.pause,
+			hauteur: this.hauteur,
+			plages: []
 		};
-		for (var i=0,n=this.plages.length; i<n; i += 1) {
+		for (var i = 0, n = this.plages.length; i < n; i += 1) {
 			resultat.plages.push(this.plages[i].toJson(false));
 		}
 		if (stringify !== false) {
@@ -543,14 +429,14 @@ class Horaire extends DOM {
 			j = JSON.parse(j);
 		}
 		j = j.concat();
-		this.titre=j.shift();
-		this.jours=j.shift();
-		this.heureDebut=j.shift();
-		this.dureePeriode=j.shift();
-		this.pause=j.shift();
-		this.hauteur=j.shift();
+		this.titre = j.shift();
+		this.jours = j.shift();
+		this.heureDebut = j.shift();
+		this.dureePeriode = j.shift();
+		this.pause = j.shift();
+		this.hauteur = j.shift();
 		var plages = j.shift();
-		for (var i=0,n=plages.length; i<n; i += 1) {
+		for (var i = 0, n = plages.length; i < n; i += 1) {
 			Plage.fromArray(plages[i], this);
 		}
 		return this;
@@ -565,7 +451,7 @@ class Horaire extends DOM {
 			this.hauteur,
 		];
 		var plages = [];
-		for (var i=0,n=this.plages.length; i<n; i += 1) {
+		for (var i = 0, n = this.plages.length; i < n; i += 1) {
 			plages.push(this.plages[i].toArray(false));
 		}
 		resultat.push(plages);
@@ -576,23 +462,212 @@ class Horaire extends DOM {
 	}
 	static encoder(str) {
 		return LZString.compressToEncodedURIComponent(str);
-//		var resultat = str;
-//		resultat = Lzw.encode(resultat);
-//		resultat = encodeURIComponent(resultat);
-//		resultat = unescape(resultat);
-//		resultat = btoa(resultat);
-//		resultat = resultat.replace(/=/g,"").replace(/\+/g, "-").replace(/\//g, "_");
+		//		var resultat = str;
+		//		resultat = Lzw.encode(resultat);
+		//		resultat = encodeURIComponent(resultat);
+		//		resultat = unescape(resultat);
+		//		resultat = btoa(resultat);
+		//		resultat = resultat.replace(/=/g,"").replace(/\+/g, "-").replace(/\//g, "_");
 	}
 	static decoder(str) {
 		return LZString.decompressFromEncodedURIComponent(str);
-//		var resultat = str;
-//		resultat = resultat.replace(/\_/g,"/").replace(/\-/g, "+");
-//		resultat = atob(resultat);
-//		resultat = escape(resultat);
-//		resultat = decodeURIComponent(resultat);
-//		resultat = Lzw.decode(resultat);
-//		fct(resultat);
-//		return this;
+		//		var resultat = str;
+		//		resultat = resultat.replace(/\_/g,"/").replace(/\-/g, "+");
+		//		resultat = atob(resultat);
+		//		resultat = escape(resultat);
+		//		resultat = decodeURIComponent(resultat);
+		//		resultat = Lzw.decode(resultat);
+		//		fct(resultat);
+		//		return this;
+	}
+	static init() {
+		this.lang = window.navigator.language;
+		//		this.lang = "it-IT";
+		this.types = {
+			"C": {
+				"htmlClass": "cours",
+				etat: "En cours",
+				css: {
+					"background-color": "gold",
+					"color": "#A52929"
+				}
+			},
+			"D": {
+				"htmlClass": "dispo",
+				etat: "Disponible",
+				css: {
+					"background-color": "lightgreen",
+					"color": "darkgreen"
+				}
+			},
+			"R": {
+				"htmlClass": "rv",
+				etat: "Disponible sur rendez-vous",
+				css: {
+					"background-color": "lightblue",
+					"color": "darkblue"
+				}
+			},
+			"N": {
+				"htmlClass": "nd",
+				etat: "Non disponible",
+				css: {
+					"background-color": "#ddd",
+					"color": "#999"
+				}
+			}
+		};
+		this.MODE_AFFICHAGE = 0;
+		this.MODE_EDITION = 1;
+		this.MODE_IMPRESSION = 2;
+		this.evt = {
+			//		code: {
+			//			change:function(e) {
+			//				try {
+			//					var hh = JSON.parse(this.value);
+			//					this.horaire.init().fromJson(hh).redessiner();
+			//				} catch (err) {
+			//					this.horaire.init().redessiner();
+			//					this.horaire.redessiner();
+			//				}
+			//			},
+			//			click:function(e) {
+			//				if ((e.metaKey || e.ctrlKey) && e.altKey) {
+			//					this.value = Horaire.encoder(this.horaire.toArray(true));
+			//					this.select();
+			//				} else if (e.metaKey || e.ctrlKey) {
+			//					this.value = this.horaire.toJson(true);
+			//					this.select();
+			//				} else if (e.altKey) {
+			//					this.value = this.horaire.toArray(true);
+			//					this.select();
+			//				}
+			//			}
+			//		},
+			input_titre: {
+				input: function () {
+					this.form.obj.titre = this.value;
+				}
+			},
+			btn_array: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.toArray(true);
+					ta = document.getElementById("code");
+					ta.innerHTML = resultat;
+					ta.select();
+				}
+			},
+			btn_arraycompresse: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.toArray(true);
+					ta = document.getElementById("code");
+					ta.innerHTML = Horaire.encoder(resultat);
+					ta.select();
+				}
+			},
+			btn_json: {
+				click: function (e) {
+					var resultat, ta;
+					if (e.shiftKey) {
+						ta = document.getElementById("code");
+						resultat = JSON.parse(ta.value);
+						resultat = Horaire.fromJson(resultat);
+						resultat = resultat.toUrl();
+						resultat = resultat.replace("index.html", "edition.html");
+						window.location = resultat;
+					} else {
+						resultat = this.form.obj.toJson(true);
+						ta = document.getElementById("code");
+						ta.innerHTML = resultat;
+						ta.select();
+					}
+				}
+			},
+			btn_jsoncompresse: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.toJson(true);
+					ta = document.getElementById("code");
+					ta.innerHTML = Horaire.encoder(resultat);
+					ta.select();
+				}
+			},
+			btn_adresse: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.toUrl();
+					ta = document.getElementById("code");
+					ta.innerHTML = resultat;
+					ta.select();
+				}
+			},
+			btn_lien: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.dom_code_lien();
+					ta = document.getElementById("code");
+					ta.innerHTML = resultat;
+					ta.select();
+				}
+			},
+			btn_iframe: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.dom_code_iframe();
+					ta = document.getElementById("code");
+					ta.innerHTML = resultat;
+					ta.select();
+				}
+			},
+			btn_redessiner: {
+				click: function () {
+					var resultat;
+					resultat = this.form.obj.toUrl();
+					resultat = resultat.replace("index.html", "edition.html");
+					window.location = resultat;
+				}
+			},
+			btn_visionner: {
+				click: function () {
+					var resultat;
+					resultat = this.form.obj.toUrl();
+					window.location = resultat;
+				}
+			}
+		};
+		if (location.href.match(/edition\.html/)) {
+			this.mode = this.MODE_EDITION;
+		} else if (location.href.match(/impression\.html/)) {
+			this.mode = this.MODE_IMPRESSION;
+		} else {
+			this.mode = this.MODE_AFFICHAGE;
+		}
+		if (location.search) {
+			var d, script;
+			d = this.getSearch();
+			if (d.session && d.nom) {
+				script = DOM.createElement("script", null, {
+					"src": d.session + d.nom + ".js"
+				});
+				document.head.appendChild(script);
+			} else if (d.h) {
+				window.json = this.decoder(d.h);
+			}
+		}
+		window.addEventListener("load", function () {
+			var h;
+			if (window.json) {
+				h = Horaire.fromArray(window.json);
+			} else {
+				h = new Horaire();
+			}
+			if (Horaire.mode === Horaire.MODE_AFFICHAGE && window.self !== window.top) {
+				document.body.parentNode.classList.add("frame");
+			}
+			h.afficher();
+		});
 	}
 }
 Horaire.init();
