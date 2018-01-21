@@ -384,7 +384,7 @@ class Horaire extends DOM {
 	}
 	dupliquerPlage(plage) {
 		var p;
-		p = Plage.fromJson(plage.toJson());
+		p = Plage.fromJson(plage.toJson(), this);
 		this.ajouterPlage(p);
 		return p;
 	}
@@ -399,39 +399,47 @@ class Horaire extends DOM {
 		document.getElementById("code").innerHTML = this.toJson(true);
 	}
 	static fromJson(j) {
-		if (typeof j == "string") {
-			j = JSON.parse(j);
-		}
 		var resultat = new Horaire();
-		resultat.fromJson(j);
+		resultat.fill(j);
 		return resultat;
 	}
-	fromJson(j) {
+	fill(j) {
 		if (typeof j == "string") {
-			j = JSON.parse(j);
+			return this.fill(JSON.parse(j));
+		} else if (j instanceof Array) {
+			j = [].slice.call(j, 0);
+			this.titre = j.shift();
+			this.jours = j.shift();
+			this.heureDebut = j.shift();
+			this.dureePeriode = j.shift();
+			this.pause = j.shift();
+			this.hauteur = j.shift();
+			this.plages = j.shift();
+			return this;
+		} else {
+			if (j.titre !== undefined) {
+				this.titre = j.titre;
+			}
+			if (j.jours !== undefined) {
+				this.jours = j.jours;
+			}
+			if (j.heureDebut !== undefined) {
+				this.heureDebut = j.heureDebut;
+			}
+			if (j.dureePeriode !== undefined) {
+				this.dureePeriode = j.dureePeriode;
+			}
+			if (j.pause !== undefined) {
+				this.pause = j.pause;
+			}
+			if (j.hauteur !== undefined) {
+				this.hauteur = j.hauteur;
+			}
+			if (j.plages !== undefined) {
+				this.plages = j.plages;
+			}
+			return this;
 		}
-		if (j.titre !== undefined) {
-			this.titre = j.titre;
-		}
-		if (j.jours !== undefined) {
-			this.jours = j.jours;
-		}
-		if (j.heureDebut !== undefined) {
-			this.heureDebut = j.heureDebut;
-		}
-		if (j.dureePeriode !== undefined) {
-			this.dureePeriode = j.dureePeriode;
-		}
-		if (j.pause !== undefined) {
-			this.pause = j.pause;
-		}
-		if (j.hauteur !== undefined) {
-			this.hauteur = j.hauteur;
-		}
-		if (j.plages !== undefined) {
-			this.plages = j.plages;
-		}
-		return this;
 	}
 	toJson(stringify) {
 		var resultat = {
@@ -457,22 +465,8 @@ class Horaire extends DOM {
 		}
 		var resultat = new Horaire();
 		App.horaire = resultat;
-		resultat.fromArray(j);
+		resultat.fill(j);
 		return resultat;
-	}
-	fromArray(j) {
-		if (typeof j == "string") {
-			j = JSON.parse(j);
-		}
-		j = j.concat();
-		this.titre = j.shift();
-		this.jours = j.shift();
-		this.heureDebut = j.shift();
-		this.dureePeriode = j.shift();
-		this.pause = j.shift();
-		this.hauteur = j.shift();
-		this.plages = j.shift();
-		return this;
 	}
 	toArray(stringify) {
 		var resultat = [
@@ -499,7 +493,7 @@ class Horaire extends DOM {
 				click: function () {
 					var r = parseInt(this.style.gridRowStart) - 2;
 					var c = parseInt(this.style.gridColumnStart) - 2;
-					var plage = new Plage(App.horaire, "D", c, r, 3);
+					var plage = new Plage(App.horaire);
 					plage.typePlage = "D";
 					plage.jour = c;
 					plage.debut = r;
@@ -637,9 +631,7 @@ class Horaire extends DOM {
 	static setType(data) {
 		this.types[data.id] = data;
 		this.stylesheet.insertRule('div.plage[data-type="'+data.id+'"] {}');
-		console.log(this.stylesheet);
 		data.regle = this.stylesheet.cssRules[0];
-		console.log(data.regle.style);
 		for (let k in data.css) {
 			data.regle.style[k] = data.css[k];
 		}
@@ -697,18 +689,6 @@ class Horaire extends DOM {
 				window.json = App.decoder(d.h);
 			}
 		}
-//		window.addEventListener("load", function () {
-//			var h;
-//			if (window.json) {
-//				h = Horaire.fromArray(window.json);
-//			} else {
-//				h = new Horaire();
-//			}
-//			if (Horaire.mode === Horaire.MODE_AFFICHAGE && window.self !== window.top) {
-//				document.body.parentNode.classList.add("frame");
-//			}
-//			h.afficher();
-//		});
 	}
 }
 Horaire.init();

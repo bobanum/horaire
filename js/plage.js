@@ -8,49 +8,17 @@
 class Plage extends DOM {
 	constructor(horaire) {
 		super();
-		if (horaire!==undefined) {
-			horaire.plages.push(this);
-		}
 		this.horaire = horaire;
-		this._typePlage = "D";
 		this._jour = 0;
 		this._debut = 0;
 		this._duree = 1;
-		this.texte = "";
-		this.local = "";
-		this.td = null;
-		this.trForm = null;
-	}
-	init() {
-		var horaire, typePlage, jour, debut, duree, props;
-		debugger;
-		horaire = window.horaire;
-
-		if (horaire !== undefined) {
-			horaire.plages.push(this);
-		}
-		this.horaire = horaire;
-		if (typePlage !== undefined) {
-			this.typePlage = typePlage.toUpperCase();	//C=Cours, D=Disponible, R=Sur rendez-vous
-		}
-		this.jour = jour;
-		this.debut = debut;
-		this.duree = duree;
-		this.texte = "";
-		this.local = "";
-		if (props !== undefined) {
-			for (var i in props) {
-				this[i] = props[i];
-			}
-		}
-		this._dom = null;
-		this.td = null;
-		this.trForm = null;
-		return this;
+		this._texte = "";
+		this._local = "";
+		this.dom_creer();
 	}
 	get dom() {
 		if (!this._dom) {
-			this._dom = this.html();
+			this._dom = this.dom_creer();
 			this._dom.obj = this;
 		}
 		return this._dom;
@@ -59,18 +27,17 @@ class Plage extends DOM {
 		return Horaire.types[this.typePlage].htmlClass;
 	}
 	get css() {
-		debugger;
 		return Horaire.types[this.typePlage].css;
 	}
 	get typePlage() {
-//		return this.dom.getAttribute("data-type");
+		return this._dom.getAttribute("data-type");
 	}
 	set typePlage(val) {
-//		this.dom.label.innerHTML = Horaire.types[];
-		this.dom.setAttribute("data-type", val);
-	}
-	get etat() {
-		return Horaire.types[this.typePlage].etat;
+		this._dom.setAttribute("data-type", val);
+		this._dom_label.innerHTML = Horaire.types[val].label;
+		if (this.form) {
+			this.form.typePlage.value = val;
+		}
 	}
 	get debut() {
 		return this._debut;
@@ -88,6 +55,9 @@ class Plage extends DOM {
 		if (this._dom) {
 			this._dom.style.gridRowStart = this._debut + 2;
 		}
+		if (this.form) {
+			this.form.debut.value = val;
+		}
 	}
 	get duree() {
 		return this._duree;
@@ -101,6 +71,9 @@ class Plage extends DOM {
 		this._duree = val;
 		if (this._dom) {
 			this._dom.style.gridRowEnd = "span " + this._duree;
+		}
+		if (this.form) {
+			this.form.duree.value = val;
 		}
 	}
 	get jour() {
@@ -116,33 +89,64 @@ class Plage extends DOM {
 		if (this._dom) {
 			this._dom.style.gridColumnStart = this._jour + 2;
 		}
+		if (this.form) {
+			this.form.jour.value = val;
+		}
 	}
-	html() {
-		var resultat, plage, bts, bt;
+	get texte() {
+		return this._dom_texte.innerHTML.replace(/<br\/>/g, "\r\n");
+	}
+	set texte(val) {
+		val = val.replace(/(?:\r\n|\n\r|\r|\n")/g, "<br/>");
+		this._dom_texte.innerHTML = val;
+		if (this.form) {
+			this.form.texte.innerHTML = val;
+		}
+	}
+	get local() {
+		return this._dom_local.innerHTML.replace(/<br\/>/g, "\r\n");
+	}
+	set local(val) {
+		val = val.replace(/(?:\r\n|\n\r|\r|\n")/g, "<br/>");
+		this._dom_local.innerHTML = val;
+		if (this.form) {
+			this.form.local.value = val;
+		}
+	}
+	/**
+	 * Retourne le div complet de la plage
+	 * @private
+	 * @returns {HTMLElement} Un élément div.plage
+	 */
+	dom_creer() {
+		var resultat, typePlage = "C";
 		resultat = this.createElement('div.plage');
-		resultat.setAttribute("data-type", this.typePlage);
+		this._dom = resultat;
+		resultat.obj = this;
+		resultat.setAttribute("data-type", typePlage);
 		if (App.mode === App.MODE_EDITION) {
-			bts = resultat.appendChild(this.createElement('span.boutons.debut'));
-			bt = bts.appendChild(this.html_btPlusMoins('moins', 0, Plage.evt.debutMoins.click));
-			bt = bts.appendChild(this.html_btPlusMoins('plus', 180, Plage.evt.debutPlus.click));
-			bts = resultat.appendChild(this.createElement('span.boutons.duree'));
-			bt = bts.appendChild(this.html_btPlusMoins('moins', 0, Plage.evt.dureeMoins.click));
-			bt = bts.appendChild(this.html_btPlusMoins('plus', 180, Plage.evt.dureePlus.click));
-			bt = resultat.appendChild(this.html_btPlusMoins('jour.moins', -90, Plage.evt.jourMoins.click));
-			bt = resultat.appendChild(this.html_btPlusMoins('jour.plus', 90, Plage.evt.jourPlus.click));
 			resultat.addEventListener("click", Plage.evt.plage.click);
 		}
-		plage = resultat.appendChild(this.createElement('div.etat', this.etat));
-		if (this.local) {
-			resultat.appendChild(this.createElement('div.local', this.local));
-		}
-		if (this.texte) {
-			resultat.appendChild(this.createElement('div.texte', this.texte));
-		}
+		this._dom_label = resultat.appendChild(this.createElement('div.etat', Horaire.types[typePlage].label));
+		this._dom_local = resultat.appendChild(this.createElement('div.local', ""));
+		this._dom_texte = resultat.appendChild(this.createElement('div.texte', ""));
 		resultat.style.gridRowStart = this.debut + 2;
 		resultat.style.gridColumnStart = this.jour + 2;
 		resultat.style.gridRowEnd = "span " + this.duree;
 		resultat.style.gridColumnEnd = "span " + 1;
+		return resultat;
+	}
+	html_btsPlage() {
+		var resultat, bts, bt;
+		resultat = DOM.createElement("div.boutonsPlage");
+		bts = resultat.appendChild(this.createElement('span.boutons.debut'));
+		bt = bts.appendChild(this.html_btPlusMoins('moins', 0, Plage.evt.debutMoins.click));
+		bt = bts.appendChild(this.html_btPlusMoins('plus', 180, Plage.evt.debutPlus.click));
+		bts = resultat.appendChild(this.createElement('span.boutons.duree'));
+		bt = bts.appendChild(this.html_btPlusMoins('moins', 0, Plage.evt.dureeMoins.click));
+		bt = bts.appendChild(this.html_btPlusMoins('plus', 180, Plage.evt.dureePlus.click));
+		bt = resultat.appendChild(this.html_btPlusMoins('jour.moins', -90, Plage.evt.jourMoins.click));
+		bt = resultat.appendChild(this.html_btPlusMoins('jour.plus', 90, Plage.evt.jourPlus.click));
 		return resultat;
 	}
 	html_btPlusMoins(classe, angle, evt) {
@@ -179,7 +183,7 @@ class Plage extends DOM {
 		var select, i;
 		select = this.createElement('select#typePlage', null, null, Plage.evt.typePlage);
 		for (i in Horaire.types) {
-			select.appendChild(this.createElement('option', Horaire.types[i].etat, {'value': i}));
+			select.appendChild(this.createElement('option', Horaire.types[i].label, {'value': i}));
 		}
 		select.value = this.typePlage;
 		select.plage = this;
@@ -223,7 +227,7 @@ class Plage extends DOM {
 		return this.form_wrap(input, 'Local');
 	}
 	form_texte() {
-		var input = this.createElement('textarea#texte', this.texte.replace('<br>', '/r/n'), {'placeholder': 'Texte'}, {'change': Plage.evt.texte.change, 'keyup': Plage.evt.texte.change, 'blur': Plage.evt.texte.change});
+		var input = this.createElement('textarea#texte', this.texte.replace(/<br\s*\/?>/g, '\r\n'), {'placeholder': 'Texte', cols:20, rows: 5}, {'change': Plage.evt.texte.change, 'keyup': Plage.evt.texte.change, 'blur': Plage.evt.texte.change});
 		input.plage = this;
 		return this.form_wrap(input, 'Texte');
 	}
@@ -235,111 +239,67 @@ class Plage extends DOM {
 		input[1].plage = this;
 		return this.form_wrap(input);
 	}
-	changerValeur(prop, val) {
-		var courant;
-		debugger;
-		courant = this.td.classList.contains("courant");
-		if (courant) {
-			this.td.classList.remove("courant");
-		}
-		this.masquer();
+	setProperty(prop, val) {
 		this[prop] = val;
-		this.afficher();
-		if (courant) {
-			this.td.classList.add("courant");
-		}
-	}
-	editer() {
-		var form, s, i, n;
-		form = document.getElementById('formPlage');
-		if (form) {
-			form.parentNode.removeChild(form);
-		}
-		document.getElementById('options').appendChild(this.dom_form());
-		s = document.getElementsByClassName('courant');
-		for (i = 0, n = s.length; i < n; i += 1) {
-			s[i].classList.remove('courant');
-		}
-		this.dom.classList.add('courant');
-		this.trForm.style.backgroundColor = '';
-	}
-	redessiner() {
-		this.masquer().afficher();
 		return this;
 	}
-	cells() {
-		var resultat;
-		resultat = this.horaire.dom.querySelectorAll('tbody>tr>td:nth-child('+(this.jour+2)+')');
-		resultat = Array.prototype.slice.call(resultat, this.debut, this.debut + this.duree);
-		return resultat;
+	editer() {
+		Plage.deposerTout();
+		this.form = document.getElementById('options').appendChild(this.dom_form());
+		this._dom.classList.add('courant');
+		this._dom.appendChild(this.html_btsPlage());
 	}
-	zzzafficher() {
-		var table, tds, i, td;
-		table = this.horaire.dom;
-		tds = this.cells();
-		td = tds[0];
-		td.bak = Array.prototype.concat.call(td.bak || [], td.getAttribute('rowspan') || "1");
-		td.setAttribute('rowspan', this.duree);
-		this.dom = this.html();
-		td.appendChild(this.dom);
-		//td.classList.add(this.htmlClass);
-		td.bak_style = Array.prototype.concat.call(td.bak || [], td.getAttribute('style') || "");
-		this.applyStyle(td, this.css);
-		this.td = td;
-		this.td.plage = this;
-		for (i = 1; i < this.duree; i += 1) {
-			td = tds[i];
-			td.bak_display = Array.prototype.concat.call(td.bak_display || [], td.style.display);
-			td.style.display = 'none';
-		}
+	deposer() {
+		this._dom.classList.remove("courant");
+		this.form.parentNode.removeChild(this.form);
+		this._dom.removeChild(this._dom.lastChild);
+		return this;
 	}
-	masquer() {
-		var tds, i, td;
-		tds = this.cells();
-		td = tds[0];
-		while (td.firstChild) {
-			td.removeChild(td.firstChild);
-		}
-//		td.setAttribute("rowspan", td.bak.pop());
-		//td.classList.remove(this.htmlClass);
-//		td.setAttribute("style", td.bak_style.pop());
-		for (i = 1; i < this.duree; i += 1) {
-			td = tds[i];
-			td.style.display = td.bak_display.pop();
+	static deposerTout() {
+		var plage;
+		while (plage = document.querySelector('.courant'), plage) {
+			   plage.obj.deposer();
 		}
 		return this;
 	}
 	static fromJson(j, horaire) {
 		var resultat;
-		if (typeof j == "string") {
-			j = JSON.parse(j);
-		}
-
 		resultat = new Plage(horaire);
-		resultat.fromJson(j);
+		resultat.fill(j);
 		return resultat;
 	}
-	fromJson(j) {
-		if (typeof j == "string") {
-			j = JSON.parse(j);
-		}
-		if (j.typePlage !== undefined) {
-			this.typePlage=j.typePlage;
-		}
-		if (j.jour !== undefined) {
-			this.jour=j.jour;
-		}
-		if (j.debut !== undefined) {
-			this.debut=j.debut;
-		}
-		if (j.duree !== undefined) {
-			this.duree=j.duree;
-		}
-		if (j.texte !== undefined) {
-			this.texte=j.texte;
-		}
-		if (j.local !== undefined) {
-			this.local=j.local;
+	fill(j) {
+		if (typeof j === "string") {
+			return this.fill(JSON.parse(j));
+		} else if (j instanceof Array) {
+			j = [].slice.call(j, 0);
+			this.typePlage = j.shift();
+			this.jour = j.shift();
+			this.debut = j.shift();
+			this.duree = j.shift();
+			this.texte = j.shift();
+			this.local = j.shift();
+			return this;
+		} else {
+			if (j.typePlage !== undefined) {
+				this.typePlage=j.typePlage;
+			}
+			if (j.jour !== undefined) {
+				this.jour=j.jour;
+			}
+			if (j.debut !== undefined) {
+				this.debut=j.debut;
+			}
+			if (j.duree !== undefined) {
+				this.duree=j.duree;
+			}
+			if (j.texte !== undefined) {
+				this.texte=j.texte;
+			}
+			if (j.local !== undefined) {
+				this.local=j.local;
+			}
+			return this;
 		}
 		return this;
 	}
@@ -365,21 +325,8 @@ class Plage extends DOM {
 //		???var h = Horaire.fromJson(a);
 
 		resultat = new Plage(horaire);
-		resultat.fromArray(a);
+		resultat.fill(a);
 		return resultat;
-	}
-	fromArray(a) {
-		if (typeof a == "string") {
-			a = JSON.parse(a);
-		}
-		a = a.concat();
-		this.typePlage=a.shift();
-		this.jour=a.shift();
-		this.debut=a.shift();
-		this.duree=a.shift();
-		this.texte=a.shift();
-		this.local=a.shift();
-		return this;
 	}
 	toArray(stringify) {
 		var resultat = [
@@ -399,32 +346,32 @@ class Plage extends DOM {
 		this.evt = {
 			typePlage: {
 				change:function() {
-					this.form.obj.changerValeur('typePlage', this.value);
+					this.form.obj.setProperty('typePlage', this.value);
 				}
 			},
 			jour: {
 				change:function() {
-					this.form.obj.changerValeur('jour', parseFloat(this.value));
+					this.form.obj.setProperty('jour', parseFloat(this.value));
 				}
 			},
 			debut: {
 				change:function() {
-					this.form.obj.changerValeur('debut', parseFloat(this.value));
+					this.form.obj.setProperty('debut', parseFloat(this.value));
 				}
 			},
 			duree: {
 				change:function() {
-					this.form.obj.changerValeur('duree', parseFloat(this.value));
+					this.form.obj.setProperty('duree', parseFloat(this.value));
 				}
 			},
 			local: {
 				change:function() {
-					this.form.obj.changerValeur('local', this.value);
+					this.form.obj.setProperty('local', this.value);
 				}
 			},
 			texte: {
 				change:function() {
-					this.form.obj.changerValeur('texte', this.value.replace(/\r\n|\n\r|\r|\n/g, "<br>"));
+					this.form.obj.setProperty('texte', this.value.replace(/\r\n|\n\r|\r|\n/g, "<br>"));
 				}
 			},
 			supprimer: {
@@ -493,16 +440,11 @@ class Plage extends DOM {
 			},
 			plage: {
 				click:function() {
-//					debugger;
 					if (this.classList.contains("courant")) {
-						this.classList.remove("courant");
+						this.obj.deposer();
 					} else {
 						this.obj.editer();
 					}
-//					var courants = [].slice.call(document.querySelectorAll(".courant"),0);
-//					courants.forEach((c)=>(c.classList.remove("courant")));
-//					this.classList.add("courant");
-//					return;
 				}
 			}
 		};

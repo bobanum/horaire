@@ -76,7 +76,6 @@ class App {
 		this.pathScript = src.join("/");
 	}
 	static init() {
-//		debugger;
 		this.MODE_AFFICHAGE = 0;
 		this.MODE_EDITION = 1;
 		this.MODE_IMPRESSION = 2;

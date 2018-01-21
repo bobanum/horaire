@@ -115,23 +115,6 @@ div#horaire > div.caption {
 div#horaire > div.grille {
   flex: 1 0 auto;
 }
-div#horaire > div.grille > table {
-  table-layout: fixed;
-  width: 100%;
-  height: 100%;
-  border-collapse: collapse;
-  border-spacing: 0;
-  border: solid 2px black;
-}
-div#horaire > div.grille > table > thead {
-  background-color: #666;
-  color: white;
-  border: solid 2px black;
-}
-div#horaire > div.grille > table th,
-div#horaire > div.grille > table td {
-  border: solid 1px black;
-}
 div.grille {
   height: 5in;
   display: grid;
@@ -145,13 +128,12 @@ div.grille {
 div.grille > div {
   display: flex;
   align-items: center;
-  justify-content: center;
   text-align: center;
+  justify-content: space-around;
 }
 div.grille div.heure {
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   font-size: smaller;
   background-color: #cccccc;
   line-height: 1;
@@ -162,6 +144,13 @@ div.grille div.heure > div:nth-child(2) {
 div.grille div.case {
   background-color: #f2f2f2;
   background-color: white;
+}
+div.boutonsPlage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 div.jour,
 div.vide {
@@ -210,31 +199,25 @@ html.frame div#horaire {
 col.heures {
   width: 4em;
 }
-th {
-  font-size: smaller;
-}
-td.dispo {
-  xbackground-color: lightgreen;
-}
-td.cours {
-  xbackground-color: orange;
-}
-td.rv {
-  xbackground-color: lightblue;
-}
-td.nd {
-  background-color: #EEE;
-  color: #999;
-}
 div.plage {
+  padding: 10% 0;
   text-align: center;
+  flex-direction: column;
 }
 div.plage > div.etat {
   font-weight: bold;
 }
-div.plage:not(.courant) span.boutons,
-div.plage:not(.courant) span.bouton {
+div.plage > div.local {
+  font-style: italic;
+}
+div.plage > :empty {
   display: none;
+}
+div.plage:before {
+  content: "";
+}
+div.plage:after {
+  content: "";
 }
 .courant span.boutons {
   position: absolute;
