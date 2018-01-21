@@ -1,5 +1,5 @@
 /*jslint esnext:true, browser:true, debug:false*/
-/*globals LZString, DOM, Plage*/
+/*globals DOM, Plage, App*/
 // Ajouter annuler
 // toArray
 // compression base64
@@ -18,7 +18,8 @@ class Horaire extends DOM {
 		this.nbPeriodes = 11;
 		this.dureePeriode = 50;
 		this.pause = 5;
-		this.plages = [];
+		this._plages = [];
+		this._grille = null;
 		this.hauteur = 5; // La hauteur en pouces de la zone horaire
 		return this;
 	}
@@ -53,23 +54,38 @@ class Horaire extends DOM {
 		}
 		return this._dom;
 	}
-	set dom(val) {
-		this._dom = val;
-		this._dom.obj = this;
+//	set dom(val) {
+//		this._dom = val;
+//		this._dom.obj = this;
+//	}
+	get grille() {
+		if (!this._grille) {
+			this._grille = this.dom_grille();
+		}
+		return this._grille;
+	}
+//	set grille(val) {
+//
+//	}
+	get plages() {
+		return this._plages;
+	}
+	set plages(plages) {
+		plages.forEach(p=>this.ajouterPlage(p));
 	}
 	initAffichage() {
-		Horaire.mode = Horaire.MODE_AFFICHAGE;
+		App.mode = App.MODE_AFFICHAGE;
 		this.afficher();
 	}
 	initModif() {
-		Horaire.mode = Horaire.MODE_EDITION;
+		App.mode = App.MODE_EDITION;
 		this.afficher();
 	}
 	afficher() {
 		var iface;
 		iface = this.dom_interface(document.body);
-		this.dom_panneau(this.dom_horaire(), iface);
-		if (Horaire.mode === Horaire.MODE_EDITION) {
+		this.dom_panneau(this.dom, iface);
+		if (App.mode === App.MODE_EDITION) {
 			this.dom_panneau(this.dom_options(), iface);
 			this.dom_panneau(this.dom_status(), iface);
 		}
@@ -108,32 +124,20 @@ class Horaire extends DOM {
 		}
 		return resultat;
 	}
-		/**
-		 * [[Description]]
-		 * @returns {[[Type]]} [[Description]]
-		 */
+	/**
+	 * Retourne la zone d'affichage du titre
+	 * @returns {HTMLElement} Un élément div.caption#affichage_titre
+	 */
 	dom_caption() {
 		var caption;
 		caption = this.createElement("div.caption#affichage_titre", this.titre);
 		return caption;
 	}
-	dom_cols() {
-		var colgroup;
-		colgroup = this.createElement("colgroup");
-		colgroup.appendChild(this.createElement("col.heures"));
-		colgroup.appendChild(this.createElement("col.jour", null, {
-			"span": this.jours.length
-		}));
-		colgroup.appendChild(this.createElement("col.heures"));
-		return colgroup;
-	}
-	dom_horaire() {
+	dom_creer() {
 		var resultat;
-		this.dom = this.dom_grille();
-		this.gererPlages();
 		resultat = this.createElement("div#horaire", this.dom_caption());
 		resultat.style.height = this.hauteur + "in";
-		resultat.appendChild(this.dom);
+		resultat.appendChild(this.grille);
 		return resultat;
 	}
 	dom_grille() {
@@ -141,15 +145,20 @@ class Horaire extends DOM {
 		resultat = document.createElement("div");
 		resultat.classList.add("grille");
 		resultat.style.gridTemplate = "2em repeat(" + this.nbPeriodes + ", 1fr) / 3em repeat(" + this.jours.length + ", 1fr) 3em";
-		if (Horaire.mode === Horaire.MODE_EDITION) {
+		if (App.mode === App.MODE_EDITION) {
 			resultat.classList.add("modif");
 		}
-		this.dom_jours(resultat);
-		this.dom_heures(resultat);
-		this.dom_plages(resultat);
+		this.dom_grille_ajouterJours(resultat);
+		this.dom_grille_ajouterHeures(resultat);
+		this.dom_grille_ajouterCases(resultat);
 		return resultat;
 	}
-	dom_jours(grille) {
+	/**
+	 * Ajoute la rangee des jours
+	 * @param   {HTMLElement} grille La grille
+	 * @returns {Horaire}     this
+	 */
+	dom_grille_ajouterJours(grille) {
 		var i, n, plage;
 		grille.appendChild(this.dom_case("vide", 1, 1));
 		grille.appendChild(this.dom_case("vide", 1, this.jours.length + 2));
@@ -157,18 +166,33 @@ class Horaire extends DOM {
 			plage = grille.appendChild(this.dom_case("jour", 1, i + 2));
 			plage.innerHTML = this.jours[i];
 		}
+		return this;
 	}
-	dom_heures(grille) {
-		var resultat, j, i;
+	/**
+	 * Ajoute les cases dans la grille
+	 * @param   {HTMLElement} grille La grille
+	 * @returns {Horaire}     this
+	 */
+	dom_grille_ajouterCases(grille) {
+		var j, i, plage;
 		for (i = 0; i < this.jours.length; i += 1) {
 			for (j = 0; j < this.nbPeriodes; j += 1) {
-				grille.appendChild(this.dom_case("plage", j + 2, i + 2));
+				plage = grille.appendChild(this.dom_case("case", j + 2, i + 2));
+				if (App.mode === App.MODE_EDITION) {
+					plage.addEventListener("click", Horaire.evt.plage.click);
+				}
+				plage.obj = this;
 			}
 		}
-		return resultat;
+		return this;
 	}
-	dom_plages(grille) {
-		var resultat, debut, fin, j, i, col, plage;
+	/**
+	 * Ajoute la colonne des heures
+	 * @param   {HTMLElement} grille La grille
+	 * @returns {Horaire}     this
+	 */
+	dom_grille_ajouterHeures(grille) {
+		var debut, fin, j, i, col, plage;
 		for (i = 0; i < 2; i += 1) {
 			col = i * (this.jours.length + 1) + 1;
 			for (j = 0; j < this.nbPeriodes; j += 1) {
@@ -180,7 +204,7 @@ class Horaire extends DOM {
 				plage.appendChild(this.createElement("div.heureFin", this.min2h(fin)));
 			}
 		}
-		return resultat;
+		return this;
 	}
 	dom_case(classe, r, c, h, l) {
 		if (r === undefined) {
@@ -319,7 +343,7 @@ class Horaire extends DOM {
 		url += location.pathname.split("/").slice(0, -1).join("/") + "/";
 		url += "index.html";
 		url += "?h=";
-		url += Horaire.encoder(this.toArray(true));
+		url += App.encoder(this.toArray(true));
 		return url;
 	}
 	min2h(min) {
@@ -329,9 +353,22 @@ class Horaire extends DOM {
 		m = m.slice(-2);
 		return h + "h" + m;
 	}
+	/**
+	 * Ajoute une plage et l'affiche
+	 * @param   {object}  plage La plage
+	 * @returns {Horaire} this
+	 */
 	ajouterPlage(plage) {
-		this.plages.push(plage);
-		plage.horaire = this;
+		if (plage instanceof Plage) {
+			this.plages.push(plage);
+			plage.horaire = this;
+			this.grille.appendChild(plage.dom);
+			return this;
+		} else if (typeof plage === "object") {
+			return this.ajouterPlage(Plage.fromJson(plage, this));
+		} else {
+			return this.ajouterPlage(JSON.parse(plage));
+		}
 	}
 	afficherPlage(plage) {
 		plage.afficher();
@@ -392,9 +429,7 @@ class Horaire extends DOM {
 			this.hauteur = j.hauteur;
 		}
 		if (j.plages !== undefined) {
-			for (var i = 0, n = j.plages.length; i < n; i += 1) {
-				Plage.fromJson(j.plages[i], this);
-			}
+			this.plages = j.plages;
 		}
 		return this;
 	}
@@ -421,6 +456,7 @@ class Horaire extends DOM {
 			j = JSON.parse(j);
 		}
 		var resultat = new Horaire();
+		App.horaire = resultat;
 		resultat.fromArray(j);
 		return resultat;
 	}
@@ -435,10 +471,7 @@ class Horaire extends DOM {
 		this.dureePeriode = j.shift();
 		this.pause = j.shift();
 		this.hauteur = j.shift();
-		var plages = j.shift();
-		for (var i = 0, n = plages.length; i < n; i += 1) {
-			Plage.fromArray(plages[i], this);
-		}
+		this.plages = j.shift();
 		return this;
 	}
 	toArray(stringify) {
@@ -460,67 +493,21 @@ class Horaire extends DOM {
 		}
 		return resultat;
 	}
-	static encoder(str) {
-		return LZString.compressToEncodedURIComponent(str);
-		//		var resultat = str;
-		//		resultat = Lzw.encode(resultat);
-		//		resultat = encodeURIComponent(resultat);
-		//		resultat = unescape(resultat);
-		//		resultat = btoa(resultat);
-		//		resultat = resultat.replace(/=/g,"").replace(/\+/g, "-").replace(/\//g, "_");
-	}
-	static decoder(str) {
-		return LZString.decompressFromEncodedURIComponent(str);
-		//		var resultat = str;
-		//		resultat = resultat.replace(/\_/g,"/").replace(/\-/g, "+");
-		//		resultat = atob(resultat);
-		//		resultat = escape(resultat);
-		//		resultat = decodeURIComponent(resultat);
-		//		resultat = Lzw.decode(resultat);
-		//		fct(resultat);
-		//		return this;
-	}
-	static init() {
-		this.lang = window.navigator.language;
-		//		this.lang = "it-IT";
-		this.types = {
-			"C": {
-				"htmlClass": "cours",
-				etat: "En cours",
-				css: {
-					"background-color": "gold",
-					"color": "#A52929"
-				}
-			},
-			"D": {
-				"htmlClass": "dispo",
-				etat: "Disponible",
-				css: {
-					"background-color": "lightgreen",
-					"color": "darkgreen"
-				}
-			},
-			"R": {
-				"htmlClass": "rv",
-				etat: "Disponible sur rendez-vous",
-				css: {
-					"background-color": "lightblue",
-					"color": "darkblue"
-				}
-			},
-			"N": {
-				"htmlClass": "nd",
-				etat: "Non disponible",
-				css: {
-					"background-color": "#ddd",
-					"color": "#999"
-				}
-			}
-		};
-		this.MODE_AFFICHAGE = 0;
-		this.MODE_EDITION = 1;
-		this.MODE_IMPRESSION = 2;
+	static setEvents() {
 		this.evt = {
+			plage: {
+				click: function () {
+					var r = parseInt(this.style.gridRowStart) - 2;
+					var c = parseInt(this.style.gridColumnStart) - 2;
+					var plage = new Plage(App.horaire, "D", c, r, 3);
+					plage.typePlage = "D";
+					plage.jour = c;
+					plage.debut = r;
+					plage.duree = 3;
+					this.obj.ajouterPlage(plage);
+					plage.editer();
+				}
+			},
 			//		code: {
 			//			change:function(e) {
 			//				try {
@@ -533,7 +520,7 @@ class Horaire extends DOM {
 			//			},
 			//			click:function(e) {
 			//				if ((e.metaKey || e.ctrlKey) && e.altKey) {
-			//					this.value = Horaire.encoder(this.horaire.toArray(true));
+			//					this.value = App.encoder(this.horaire.toArray(true));
 			//					this.select();
 			//				} else if (e.metaKey || e.ctrlKey) {
 			//					this.value = this.horaire.toJson(true);
@@ -563,7 +550,7 @@ class Horaire extends DOM {
 					var resultat, ta;
 					resultat = this.form.obj.toArray(true);
 					ta = document.getElementById("code");
-					ta.innerHTML = Horaire.encoder(resultat);
+					ta.innerHTML = App.encoder(resultat);
 					ta.select();
 				}
 			},
@@ -590,7 +577,7 @@ class Horaire extends DOM {
 					var resultat, ta;
 					resultat = this.form.obj.toJson(true);
 					ta = document.getElementById("code");
-					ta.innerHTML = Horaire.encoder(resultat);
+					ta.innerHTML = App.encoder(resultat);
 					ta.select();
 				}
 			},
@@ -637,13 +624,67 @@ class Horaire extends DOM {
 				}
 			}
 		};
-		if (location.href.match(/edition\.html/)) {
-			this.mode = this.MODE_EDITION;
-		} else if (location.href.match(/impression\.html/)) {
-			this.mode = this.MODE_IMPRESSION;
-		} else {
-			this.mode = this.MODE_AFFICHAGE;
+		return this;
+	}
+
+	static initTypes() {
+		this.types = {};
+		this.stylesheet = document.head.appendChild(document.createElement("style"));
+		this.stylesheet.appendChild(document.createTextNode(''));
+		this.stylesheet = this.stylesheet.sheet;
+		return this;
+	}
+	static setType(data) {
+		this.types[data.id] = data;
+		this.stylesheet.insertRule('div.plage[data-type="'+data.id+'"] {}');
+		console.log(this.stylesheet);
+		data.regle = this.stylesheet.cssRules[0];
+		console.log(data.regle.style);
+		for (let k in data.css) {
+			data.regle.style[k] = data.css[k];
 		}
+		return data;
+	}
+	static init() {
+		this.lang = window.navigator.language;
+		this.initTypes();
+		this.setType({
+			"id": "C",
+			"htmlClass": "cours",
+			"label": "En cours",
+			"css": {
+				"background-color": "gold",
+				"color": "#A52929"
+			}
+		});
+		this.setType({
+			"id": "D",
+			"htmlClass": "dispo",
+			"label": "Disponible",
+			"css": {
+				"background-color": "lightgreen",
+				"color": "darkgreen"
+			}
+		});
+		this.setType({
+			"id": "R",
+			"htmlClass": "rv",
+			"label": "Disponible sur rendez-vous",
+			"css": {
+				"background-color": "lightblue",
+				"color": "darkblue"
+			}
+		});
+		this.setType({
+			"id": "N",
+			"htmlClass": "nd",
+			"label": "Non disponible",
+			"css": {
+				"background-color": "#ddd",
+				"color": "#999"
+			}
+		});
+		this.setEvents();
 		if (location.search) {
 			var d, script;
 			d = this.getSearch();
@@ -653,21 +694,21 @@ class Horaire extends DOM {
 				});
 				document.head.appendChild(script);
 			} else if (d.h) {
-				window.json = this.decoder(d.h);
+				window.json = App.decoder(d.h);
 			}
 		}
-		window.addEventListener("load", function () {
-			var h;
-			if (window.json) {
-				h = Horaire.fromArray(window.json);
-			} else {
-				h = new Horaire();
-			}
-			if (Horaire.mode === Horaire.MODE_AFFICHAGE && window.self !== window.top) {
-				document.body.parentNode.classList.add("frame");
-			}
-			h.afficher();
-		});
+//		window.addEventListener("load", function () {
+//			var h;
+//			if (window.json) {
+//				h = Horaire.fromArray(window.json);
+//			} else {
+//				h = new Horaire();
+//			}
+//			if (Horaire.mode === Horaire.MODE_AFFICHAGE && window.self !== window.top) {
+//				document.body.parentNode.classList.add("frame");
+//			}
+//			h.afficher();
+//		});
 	}
 }
 Horaire.init();
