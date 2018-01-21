@@ -58,7 +58,6 @@ class DOM {
 			return this;
 		}
 		for (k in attributes) {
-//			console.log(k, attributes[k]);
 			element.setAttribute(k, attributes[k]);
 		}
 		return this;

@@ -1,43 +1,12 @@
 /*jslint esnext:true, browser:true, debug:true*/
-/*global Horaire*/
+/*global Horaire, LZString*/
 /*
 Classe App gérant l'application
 */
 class App {
-	static init() {
-//		debugger;
-		this.scriptUrl = this.getScriptUrl();
-		this.rootUrl = this.getRootUrl();
-		this.ajouterLink("horaire", "all");
-		this.ajouterScript("lz-string");
-		this.ajouterScript("dom");
-		this.ajouterScript("horaire");
-		this.ajouterScript("plage");
-		this.data = {};
-		window.addEventListener("load", function() {
-			var h;
-			if (window.json) {
-				h = Horaire.fromArray(window.json);
-			} else {
-				h = new Horaire();
-			}
-			if (location.href.match(/edition\.html/)) {
-				Horaire.mode = Horaire.MODE_EDITION;
-			} else if (location.href.match(/impression\.html/)) {
-				Horaire.mode = Horaire.MODE_IMPRESSION;
-			} else {
-				Horaire.mode = Horaire.MODE_AFFICHAGE;
-				if (window.self !== window.top) {
-					document.body.parentNode.classList.add("frame");
-				}
-			}
-			h.afficher();
-		});
-		return;
-	}
 	static ajouterScript(url) {
 		var resultat = document.createElement("script");
-		resultat.setAttribute("src", this.scriptUrl + "/" + url + ".js");
+		resultat.setAttribute("src", this.urlScript(url + ".js"));
 		document.head.appendChild(resultat);
 		return resultat;
 	}
@@ -47,22 +16,94 @@ class App {
 		if (media) {
 			resultat.setAttribute("media", media);
 		}
-		resultat.setAttribute("href", this.rootUrl + "/css/" + url + ".css");
+		resultat.setAttribute("href", this.urlPage("css/" + url + ".css"));
 		document.head.appendChild(resultat);
 		return resultat;
 	}
-	static getScriptUrl() {
-		var src = document.head.lastElementChild.src;
-		src = src.split(/\//);
-		if (src.length === 1) {
-			return "./";
+	static load() {
+		if (window.json) {
+			this.horaire = Horaire.fromArray(window.json);
+		} else {
+			this.horaire = new Horaire();
 		}
-		src = src.slice(0,-1).join("/");
-		return src;
+		this.horaire.afficher();
 	}
-	static getRootUrl() {
-		var resultat = window.location.href.split("/").slice(0,-1).join("/");
-		return resultat;
+	static encoder(str) {
+		return LZString.compressToEncodedURIComponent(str);
+		//		var resultat = str;
+		//		resultat = Lzw.encode(resultat);
+		//		resultat = encodeURIComponent(resultat);
+		//		resultat = unescape(resultat);
+		//		resultat = btoa(resultat);
+		//		resultat = resultat.replace(/=/g,"").replace(/\+/g, "-").replace(/\//g, "_");
+	}
+	static decoder(str) {
+		return LZString.decompressFromEncodedURIComponent(str);
+		//		var resultat = str;
+		//		resultat = resultat.replace(/\_/g,"/").replace(/\-/g, "+");
+		//		resultat = atob(resultat);
+		//		resultat = escape(resultat);
+		//		resultat = decodeURIComponent(resultat);
+		//		resultat = Lzw.decode(resultat);
+		//		fct(resultat);
+		//		return this;
+	}
+	static urlPage(fic) {
+		if (!fic) {
+			return this.pathPage;
+		} else {
+			return this.pathPage + "/" + fic;
+		}
+	}
+	static urlScript(fic) {
+		if (!fic) {
+			return this.pathScript;
+		} else {
+			return this.pathScript + "/" + fic;
+		}
+	}
+	static setPaths() {
+		var dossierPage = window.location.href.split("/").slice(0, -1);
+		this.pathPage = dossierPage.join("/");
+		var src = document.head.lastChild.getAttribute("src").split("/").slice(0, -1);
+		if (src.length === 0 || !src[0].startsWith("http")) {
+			src = dossierPage.concat(src).filter(x => x !== ".");
+			let idx;
+			while (idx = src.indexOf(".."), idx > -1) {
+				src.splice(idx - 1, 2);
+			}
+		}
+		this.pathScript = src.join("/");
+	}
+	static init() {
+		this.MODE_AFFICHAGE = 0;
+		this.MODE_EDITION = 1;
+		this.MODE_IMPRESSION = 2;
+		this.MODE_FRAME = 3;
+		this.setPaths();
+		if (location.href.match(/edition\.html/)) {
+			this.mode = this.MODE_EDITION;
+			document.documentElement.classList.add("edition");
+		} else if (location.href.match(/impression\.html/)) {
+			this.mode = this.MODE_IMPRESSION;
+			document.documentElement.classList.add("impression");
+		} else if (window.self !== window.top) {
+			this.mode = this.MODE_FRAME;
+			document.documentElement.classList.add("frame");
+		} else {
+			this.mode = this.MODE_AFFICHAGE;
+			document.documentElement.classList.add("affichage");
+		}
+		window.addEventListener("load", function() {
+			App.load();
+		});
+		this.ajouterLink("horaire", "all");
+		this.ajouterScript("lz-string");
+		this.ajouterScript("dom");
+		this.ajouterScript("horaire");
+		this.ajouterScript("plage");
+		this.data = {};
+		return;
 	}
 }
 App.init();
