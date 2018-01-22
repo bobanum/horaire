@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<meta charset="UTF-8">
+	<title>test frame</title>
+	<script>
+	window.addEventListener("load", function () {
+		var moitie = document.body.appendChild(document.createElement("div"));
+		moitie.classList.add("moitie");
+		var iframe = moitie.appendChild(document.createElement("iframe"));
+		iframe.setAttribute("src", "index.html" + location.search);
+		document.body.appendChild(moitie.cloneNode(true));
+	})
+
+	</script>
+	<style>
+		@page {
+			margin: 0;
+			size: 8.5in 11in;
+		}
+		body {
+			margin: 0;
+			width: 8.5in;
+			height: 11in;
+		}
+		div.moitie {
+			width: 100%;
+			height: 50%;
+			padding: .25in;
+			box-sizing: border-box;
+		}
+		div.moitie + div.moitie > iframe {
+			transform: rotate(180deg);
+		}
+		iframe {
+			width: 100%;
+			height: 100%;
+			border:none;
+		}
+	</style>
+</head>
+<body>
+<!--<iframe src="index.html?h=NoIgEg9gTghgllApiANKAMgVwHYBM6ogCyMU+hRiUAxkuSiAFKKb0gBqiedBAuigBYAHAAYUAVjHiJaUAGFUYsQEYGhEP3moAzClWqQ6zSAAiqVQDYUuw2uNm9KMTcQBuADa5XAM0+uAPABGUAB83gDW4bi+rlHuroTu3l5JKd4JvJlAA" style="width:768px;height:469px;border:none;"></iframe>-->
+</body>
+</html>

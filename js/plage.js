@@ -255,6 +255,12 @@ class Plage extends DOM {
 		this._dom.removeChild(this._dom.lastChild);
 		return this;
 	}
+	supprimer() {
+		this.deposer();
+		this.horaire.supprimerPlage(this);
+		this._dom.parentNode.removeChild(this._dom);
+		return this;
+	}
 	static deposerTout() {
 		var plage;
 		while (plage = document.querySelector('.courant'), plage) {
@@ -376,20 +382,19 @@ class Plage extends DOM {
 			},
 			supprimer: {
 				click:function() {
-					var form;
-					this.form.obj.masquer();
-					this.form.obj.horaire.supprimerPlage(this.form.obj);
-					form = document.getElementById('formPlage');
-					form.parentNode.removeChild(form);
-					return;
+					this.form.obj.supprimer();
 				}
 			},
 			dupliquer: {
 				click:function() {
-					var p;
-					p = this.form.obj.masquer(this.form.obj);
-					p = this.form.obj.horaire.dupliquerPlage(this.form.obj);
-					p.afficher();
+					var p, t, j;
+					this.form.obj.deposer();
+					t = this.form.obj.horaire.trouverTrou(this.form.obj.jour, this.form.obj.debut + this.form.obj.duree, this.form.obj.duree);
+					j = this.form.obj.toJson();
+					p = Plage.fromJson(j, this.form.obj.horaire);
+					p.jour = t.jour;
+					p.debut = t.heure;
+					this.form.obj.horaire.ajouterPlage(p);
 					p.editer();
 					return;
 				}

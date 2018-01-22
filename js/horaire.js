@@ -54,19 +54,12 @@ class Horaire extends DOM {
 		}
 		return this._dom;
 	}
-//	set dom(val) {
-//		this._dom = val;
-//		this._dom.obj = this;
-//	}
 	get grille() {
 		if (!this._grille) {
 			this._grille = this.dom_grille();
 		}
 		return this._grille;
 	}
-//	set grille(val) {
-//
-//	}
 	get plages() {
 		return this._plages;
 	}
@@ -82,12 +75,10 @@ class Horaire extends DOM {
 		this.afficher();
 	}
 	afficher() {
-		var iface;
-		iface = this.dom_interface(document.body);
-		this.dom_panneau(this.dom, iface);
 		if (App.mode === App.MODE_EDITION) {
-			this.dom_panneau(this.dom_options(), iface);
-			this.dom_panneau(this.dom_status(), iface);
+			document.body.appendChild(this.dom_interface(document.body));
+		} else {
+			document.body.appendChild(this.dom);
 		}
 		return this;
 	}
@@ -105,12 +96,19 @@ class Horaire extends DOM {
 		}
 		return resultat;
 	}
-	dom_interface(conteneur) {
-		var resultat;
+	dom_interface() {
+		var resultat, panneau;
 		resultat = this.createElement("div.interface");
-		if (conteneur) {
-			conteneur.appendChild(resultat);
-		}
+		panneau = resultat.appendChild(this.createElement("header", "<h1>La maison des horaires</h1>"));
+		panneau.style.gridArea = "h";
+		panneau = resultat.appendChild(this.createElement("footer", "<p>&copy;</p>"));
+		panneau.style.gridArea = "f";
+		panneau = this.dom_panneau(this.dom, resultat);
+		panneau.style.gridArea = "g";
+		panneau = this.dom_panneau(this.dom_options(), resultat);
+		panneau.style.gridArea = "o";
+		panneau = this.dom_panneau(this.dom_status(), resultat);
+		panneau.style.gridArea = "c";
 		return resultat;
 	}
 	dom_panneau(contenu, conteneur) {
@@ -136,7 +134,7 @@ class Horaire extends DOM {
 	dom_creer() {
 		var resultat;
 		resultat = this.createElement("div#horaire", this.dom_caption());
-		resultat.style.height = this.hauteur + "in";
+//		resultat.style.height = this.hauteur + "in";
 		resultat.appendChild(this.grille);
 		return resultat;
 	}
@@ -144,7 +142,7 @@ class Horaire extends DOM {
 		var resultat;
 		resultat = document.createElement("div");
 		resultat.classList.add("grille");
-		resultat.style.gridTemplate = "2em repeat(" + this.nbPeriodes + ", 1fr) / 3em repeat(" + this.jours.length + ", 1fr) 3em";
+		resultat.style.gridTemplate = "1.6em repeat(" + this.nbPeriodes + ", 1fr) / 6ch repeat(" + this.jours.length + ", 1fr) 6ch";
 		if (App.mode === App.MODE_EDITION) {
 			resultat.classList.add("modif");
 		}
@@ -269,10 +267,6 @@ class Horaire extends DOM {
 		div = this.createElementIn(resultat, "div");
 		this.createElementIn(div, "input", null, {
 			"type": "button",
-			"value": "Redessiner"
-		}, Horaire.evt.btn_redessiner);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
 			"value": "Visionner"
 		}, Horaire.evt.btn_visionner);
 		return resultat;
@@ -382,6 +376,55 @@ class Horaire extends DOM {
 	trouverPlage(plage) {
 		return this.plages.indexOf(plage);
 	}
+	trouverPlageA(jour, debut, duree) {
+		duree = duree || 1;
+		if (debut + duree > this.nbPeriodes) {
+			return false;
+		}
+		for (let i = debut; i < debut + duree; i += 1) {
+			var plage = this.plages.find((p)=>(p.jour === jour && i >= p.debut && i < p.debut + p.duree));
+			if (plage) {
+				return plage;
+			}
+		}
+		return true;
+	}
+	trouverTrou(jour, heure, duree) {
+		//Regarder la fin du jour
+		for (let i = heure; i + duree <= this.nbPeriodes; i += 1) {
+			let plage = this.trouverPlageA(jour, i, duree);
+			if (plage === true) {
+				return {jour: jour, heure: i};
+			} else if (plage === false) {
+				break;
+			} else {
+				i = plage.debut + plage.duree - 1;
+			}
+		}
+		//Regarder les autres jours
+		for (let j = 1; j < this.jours.length; j += 1) {
+			for (let i = 0; i + duree <= this.nbPeriodes; i += 1) {
+				let plage = this.trouverPlageA((jour + j) % this.jours.length, i, duree);
+				if (plage === true) {
+					return {jour: (jour + j) % this.jours.length, heure: i};
+				} else if (plage === false) {
+					break;
+				} else {
+					i = plage.debut + plage.duree - 1;
+				}
+			}
+		}
+		//Regarder le debut du jour
+		for (let i = 0; i + duree <= heure; i += 1) {
+			if (plage === true) {
+				return {jour: jour, heure: i};
+			} else if (plage === false) {
+				break;
+			} else {
+				i = plage.debut + plage.duree - 1;
+			}
+		}
+	}
 	dupliquerPlage(plage) {
 		var p;
 		p = Plage.fromJson(plage.toJson(), this);
@@ -393,10 +436,6 @@ class Horaire extends DOM {
 		i = this.trouverPlage(plage);
 		this.plages.splice(i, 1);
 		return this;
-	}
-	redessiner() {
-		this.dom = this.dom_horaire();
-		document.getElementById("code").innerHTML = this.toJson(true);
 	}
 	static fromJson(j) {
 		var resultat = new Horaire();
@@ -491,40 +530,22 @@ class Horaire extends DOM {
 		this.evt = {
 			plage: {
 				click: function () {
-					var r = parseInt(this.style.gridRowStart) - 2;
-					var c = parseInt(this.style.gridColumnStart) - 2;
-					var plage = new Plage(App.horaire);
-					plage.typePlage = "D";
-					plage.jour = c;
-					plage.debut = r;
-					plage.duree = 3;
-					this.obj.ajouterPlage(plage);
-					plage.editer();
+					var courant;
+					if (courant = document.querySelector("div.plage.courant"), courant) {
+						courant.obj.deposer();
+					} else {
+						var r = parseInt(this.style.gridRowStart) - 2;
+						var c = parseInt(this.style.gridColumnStart) - 2;
+						var plage = new Plage(App.horaire);
+						plage.typePlage = "D";
+						plage.jour = c;
+						plage.debut = r;
+						plage.duree = 3;
+						this.obj.ajouterPlage(plage);
+						plage.editer();
+					}
 				}
 			},
-			//		code: {
-			//			change:function(e) {
-			//				try {
-			//					var hh = JSON.parse(this.value);
-			//					this.horaire.init().fromJson(hh).redessiner();
-			//				} catch (err) {
-			//					this.horaire.init().redessiner();
-			//					this.horaire.redessiner();
-			//				}
-			//			},
-			//			click:function(e) {
-			//				if ((e.metaKey || e.ctrlKey) && e.altKey) {
-			//					this.value = App.encoder(this.horaire.toArray(true));
-			//					this.select();
-			//				} else if (e.metaKey || e.ctrlKey) {
-			//					this.value = this.horaire.toJson(true);
-			//					this.select();
-			//				} else if (e.altKey) {
-			//					this.value = this.horaire.toArray(true);
-			//					this.select();
-			//				}
-			//			}
-			//		},
 			input_titre: {
 				input: function () {
 					this.form.obj.titre = this.value;
@@ -602,19 +623,11 @@ class Horaire extends DOM {
 					ta.select();
 				}
 			},
-			btn_redessiner: {
-				click: function () {
-					var resultat;
-					resultat = this.form.obj.toUrl();
-					resultat = resultat.replace("index.html", "edition.html");
-					window.location = resultat;
-				}
-			},
 			btn_visionner: {
 				click: function () {
 					var resultat;
 					resultat = this.form.obj.toUrl();
-					window.location = resultat;
+					window.open(resultat);
 				}
 			}
 		};
@@ -661,7 +674,7 @@ class Horaire extends DOM {
 		this.setType({
 			"id": "R",
 			"htmlClass": "rv",
-			"label": "Disponible sur rendez-vous",
+			"label": "Sur rendez-vous",
 			"css": {
 				"background-color": "lightblue",
 				"color": "darkblue"
