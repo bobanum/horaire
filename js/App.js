@@ -100,8 +100,8 @@ class App {
 		this.ajouterLink("horaire", "all");
 		this.ajouterScript("lz-string");
 		this.ajouterScript("dom");
-		this.ajouterScript("horaire");
-		this.ajouterScript("plage");
+		this.ajouterScript("Horaire");
+		this.ajouterScript("Plage");
 		this.data = {};
 		return;
 	}
