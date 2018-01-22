@@ -1,6 +1,7 @@
 /*jslint esnext:true, browser:true, debug:true*/
 /*
 Classe DOM permettant la manipulation et la création d'éléments
+ATTENTION : CE CODE A ÉTÉ PLACÉ DANS App.js
 */
 class DOM {
 	constructor() {
