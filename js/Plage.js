@@ -349,6 +349,8 @@ class Plage extends DOM {
 		return resultat;
 	}
 	static init() {
+		this.prototype.defaut = {};	// Les propriétés par défaut d'une plage.
+		this.types = {};	// {Object}. Les types de plage
 		this.evt = {
 			typePlage: {
 				change:function() {

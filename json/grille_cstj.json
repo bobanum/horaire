@@ -1,0 +1,50 @@
+{
+	"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"],
+	"heureDebut": 480,
+	"dureePeriode": 50,
+	"pause": 5,
+	"hauteur": 5,
+	"theme": "standard",
+	"typesPlages" : {
+		"defaut": {
+			"htmlClass": "cours",
+			"label": "En cours",
+			"css": {
+				"background-color": "gold",
+				"color": "#A52929"
+			}
+		},
+		"C": {
+			"htmlClass": "cours",
+			"label": "En cours",
+			"css": {
+				"background-color": "gold",
+				"color": "#A52929"
+			}
+		},
+		"D": {
+			"htmlClass": "dispo",
+			"label": "Disponible",
+			"css": {
+				"background-color": "lightgreen",
+				"color": "darkgreen"
+			}
+		},
+		"R": {
+			"htmlClass": "rv",
+			"label": "Sur rendez-vous",
+			"css": {
+				"background-color": "lightblue",
+				"color": "darkblue"
+			}
+		},
+		"N": {
+			"htmlClass": "nd",
+			"label": "Non disponible",
+			"css": {
+				"background-color": "#ddd",
+				"color": "#999"
+			}
+		}
+	}
+}

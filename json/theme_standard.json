@@ -1,0 +1,51 @@
+{
+	"css": {
+		"couleurBordures": "black",
+		"couleurJours": "#666",
+		"couleurHeures": "#CCC",
+		"epaisseurExterieur": "3px",
+		"epaisseurInterieur": "1px"
+	},
+	"typesPlages" : {
+		"defaut": {
+			"htmlClass": "plage",
+			"label": "Plage",
+			"css": {
+				"background-color": "white",
+				"color": "black"
+			}
+		},
+		"C": {
+			"htmlClass": "cours",
+			"label": "En cours",
+			"css": {
+				"background-color": "gold",
+				"color": "#A52929"
+			}
+		},
+		"D": {
+			"htmlClass": "dispo",
+			"label": "Disponible",
+			"css": {
+				"background-color": "lightgreen",
+				"color": "darkgreen"
+			}
+		},
+		"R": {
+			"htmlClass": "rv",
+			"label": "Sur rendez-vous",
+			"css": {
+				"background-color": "lightblue",
+				"color": "darkblue"
+			}
+		},
+		"N": {
+			"htmlClass": "nd",
+			"label": "Non disponible",
+			"css": {
+				"background-color": "#ddd",
+				"color": "#999"
+			}
+		}
+	}
+}

@@ -45,8 +45,14 @@ class Horaire extends DOM {
 		this._titre = titre;
 		dom = document.getElementById("affichage_titre");
 		if (dom) {
-			dom.innerHTML = this._titre;
+			dom.innerHTML = this.html_titre;
 		}
+	}
+	get html_titre() {
+		var resultat = this._titre.split("|");
+		resultat = resultat.map(t=>"<span>"+t+"</span>");
+		resultat = resultat.join("");
+		return resultat;
 	}
 	get dom() {
 		if (!this._dom) {
@@ -99,7 +105,7 @@ class Horaire extends DOM {
 	dom_interface() {
 		var resultat, panneau;
 		resultat = this.createElement("div.interface");
-		panneau = resultat.appendChild(this.createElement("header", "<h1>La maison des horaires</h1>"));
+		panneau = resultat.appendChild(this.createElement("header", "<h1><img src=\"images/logo.svg\"/>La maison des horaires</h1>"));
 		panneau.style.gridArea = "h";
 		panneau = resultat.appendChild(this.createElement("footer", "<p>&copy;</p>"));
 		panneau.style.gridArea = "f";
@@ -128,7 +134,7 @@ class Horaire extends DOM {
 	 */
 	dom_caption() {
 		var caption;
-		caption = this.createElement("div.caption#affichage_titre", this.titre);
+		caption = this.createElement("div.caption#affichage_titre", this.html_titre);
 		return caption;
 	}
 	dom_creer() {
@@ -653,42 +659,13 @@ class Horaire extends DOM {
 	static init() {
 		this.lang = window.navigator.language;
 		this.initTypes();
-		this.setType({
-			"id": "C",
-			"htmlClass": "cours",
-			"label": "En cours",
-			"css": {
-				"background-color": "gold",
-				"color": "#A52929"
+		App.loadJson("json/theme_standard.json", function (response) {
+			for (let k in response.typesPlages) {
+				var type = response.typesPlages[k];
+				type.id = k;
+				this.setType(type);
 			}
-		});
-		this.setType({
-			"id": "D",
-			"htmlClass": "dispo",
-			"label": "Disponible",
-			"css": {
-				"background-color": "lightgreen",
-				"color": "darkgreen"
-			}
-		});
-		this.setType({
-			"id": "R",
-			"htmlClass": "rv",
-			"label": "Sur rendez-vous",
-			"css": {
-				"background-color": "lightblue",
-				"color": "darkblue"
-			}
-		});
-		this.setType({
-			"id": "N",
-			"htmlClass": "nd",
-			"label": "Non disponible",
-			"css": {
-				"background-color": "#ddd",
-				"color": "#999"
-			}
-		});
+		}, this);
 		this.setEvents();
 		if (location.search) {
 			var d, script;

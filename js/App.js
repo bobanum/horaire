@@ -165,6 +165,18 @@ class App {
 		document.head.appendChild(resultat);
 		return resultat;
 	}
+	static loadJson(url, callback, thisArg) {
+		thisArg = thisArg || this;
+		var xhr = new XMLHttpRequest();
+		xhr.open("get", url);
+		xhr.obj = thisArg;
+		xhr.responseType = "json";
+		xhr.addEventListener("load", function () {
+			callback.call(thisArg, this.response, this);
+		});
+		xhr.send(null);
+		return xhr;
+	}
 	static load() {
 		if (window.json) {
 			this.horaire = Horaire.fromArray(window.json);

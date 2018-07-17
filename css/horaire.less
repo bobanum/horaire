@@ -27,7 +27,8 @@
 		grid-template-columns: 20em 1fr;
 		grid-gap: 0.5em 0.5em;
 		height: 100%;
-		width: 1100px;
+//		width: 1100px;
+		width: 100%;
 		& > header, & > footer {
 			background-color: #234;
 			color:white;
@@ -35,6 +36,37 @@
 		}
 	}
 }
+@media all and (min-width: 13in) {
+	*.interface {
+		display: grid;
+		grid-template-areas: "h h h" "o g c" "f f f";
+		grid-template-rows: auto 1fr auto;
+		grid-template-columns: 20em 1fr 20em;
+//		width: 1100px;
+		& > header, & > footer {
+			background-color: #234;
+			color:white;
+			padding: 0 1em 0;
+		}
+	}
+}
+//@media all and (min-width: 13in) {
+//	*.interface {
+//		background-color: yellow;
+//		display: grid;
+//		grid-template-areas: "h h h" "o g c" "f f f";
+//		grid-template-rows: auto 1fr auto;
+//		grid-template-columns: 20em 1fr 20em;
+//		grid-gap: 0.5em 0.5em;
+//		height: 100%;
+//		width: 1100px;
+//		& > header, & > footer {
+//			background-color: #234;
+//			color:white;
+//			padding: 0 1em 0;
+//		}
+//	}
+//}
 div#options {
 	box-sizing: border-box;
 	height: 100%;
@@ -101,8 +133,14 @@ div#horaire {
 	& > div.caption {
 		font-weight: bold;
 		font-size: 3em;
-		text-align: center;
-		flex: 0 0 0;
+//		text-align: center;
+		flex: 0 0 auto;
+		display: flex;
+		justify-content: space-between;
+		&>span:only-child {
+			text-align: center;
+			flex: 1 0 0;
+		}
 	}
 	& > div.grille {
 		flex: 1 0 0;
