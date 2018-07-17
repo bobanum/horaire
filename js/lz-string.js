@@ -539,7 +539,7 @@ class LZString {
 	}
 }
 LZString.init();
-console.log(LZString.decompressFromEncodedURIComponent(LZString.compressToEncodedURIComponent("fdsbjfnbjgnvjkdnvdkjnkgfjbnx")));
+//console.log(LZString.decompressFromEncodedURIComponent(LZString.compressToEncodedURIComponent("fdsbjfnbjgnvjkdnvdkjnkgfjbnx")));
 //
 //if (typeof window.define === 'function' && window.define.amd) {
 //	window.define(function () {

@@ -183,7 +183,7 @@ class Horaire extends DOM {
 			for (j = 0; j < this.nbPeriodes; j += 1) {
 				plage = grille.appendChild(this.dom_case("case", j + 2, i + 2));
 				if (App.mode === App.MODE_EDITION) {
-					plage.addEventListener("click", Horaire.evt.plage.click);
+					plage.addEventListener("click", this.evt.plage.click);
 				}
 				plage.obj = this;
 			}
@@ -251,30 +251,30 @@ class Horaire extends DOM {
 		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "JSON"
-		}, Horaire.evt.btn_json);
-		//		this.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, Horaire.evt.btn_jsoncompresse);
-		//		this.createElementIn(div, "input", null, {"type": "button", "value":"Array"}, Horaire.evt.btn_array);
+		}, this.evt.btn_json);
+		//		this.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, this.evt.btn_jsoncompresse);
+		//		this.createElementIn(div, "input", null, {"type": "button", "value":"Array"}, this.evt.btn_array);
 		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Compressé"
-		}, Horaire.evt.btn_arraycompresse);
+		}, this.evt.btn_arraycompresse);
 		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Adresse"
-		}, Horaire.evt.btn_adresse);
+		}, this.evt.btn_adresse);
 		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Lien"
-		}, Horaire.evt.btn_lien);
+		}, this.evt.btn_lien);
 		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "iFrame"
-		}, Horaire.evt.btn_iframe);
+		}, this.evt.btn_iframe);
 		div = this.createElementIn(resultat, "div");
 		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Visionner"
-		}, Horaire.evt.btn_visionner);
+		}, this.evt.btn_visionner);
 		return resultat;
 	}
 	dom_code() {
@@ -282,12 +282,12 @@ class Horaire extends DOM {
 				"cols": "60",
 				rows: "10",
 				"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
-			}, Horaire.evt.code);
+			}, this.evt.code);
 			resultat.horaire = this;
 			return resultat;
 		}
 		/*codeIframe() {
-			var resultat = this.createElement("input#code-iframe", null, {"readonly": true, "value": this.dom_iframe().outerHTML}, Horaire.evt.codeIframe);
+			var resultat = this.createElement("input#code-iframe", null, {"readonly": true, "value": this.dom_iframe().outerHTML}, this.evt.codeIframe);
 			resultat.horaire = this;
 			return resultat;
 		}*/
@@ -333,7 +333,7 @@ class Horaire extends DOM {
 			"type": "text",
 			"value": this.titre,
 			"placeholder": "Titre"
-		}, Horaire.evt.input_titre);
+		}, this.evt.input_titre);
 		return this.form_wrap(input, "Titre");
 	}
 	toUrl() {
@@ -422,6 +422,7 @@ class Horaire extends DOM {
 		}
 		//Regarder le debut du jour
 		for (let i = 0; i + duree <= heure; i += 1) {
+			let plage = this.trouverPlageA(jour, i, duree);
 			if (plage === true) {
 				return {jour: jour, heure: i};
 			} else if (plage === false) {
@@ -533,7 +534,7 @@ class Horaire extends DOM {
 		return resultat;
 	}
 	static setEvents() {
-		this.evt = {
+		this.prototype.evt = {
 			plage: {
 				click: function () {
 					var courant;
