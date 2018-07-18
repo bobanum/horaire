@@ -24,17 +24,17 @@ class Plage extends DOM {
 		return this._dom;
 	}
 	get htmlClass() {
-		return Horaire.types[this.typePlage].htmlClass;
+		return this.getType(this.typePlage).htmlClass;
 	}
 	get css() {
-		return Horaire.types[this.typePlage].css;
+		return this.getType(this.typePlage).css;
 	}
 	get typePlage() {
 		return this._dom.getAttribute("data-type");
 	}
 	set typePlage(val) {
 		this._dom.setAttribute("data-type", val);
-		this._dom_label.innerHTML = Horaire.types[val].label;
+		this._dom_label.innerHTML = this.getType(val).label;
 		if (this.form) {
 			this.form.typePlage.value = val;
 		}
@@ -125,9 +125,9 @@ class Plage extends DOM {
 		resultat.obj = this;
 		resultat.setAttribute("data-type", typePlage);
 		if (App.mode === App.MODE_EDITION) {
-			resultat.addEventListener("click", Plage.evt.plage.click);
+			resultat.addEventListener("click", this.evt.plage.click);
 		}
-		this._dom_label = resultat.appendChild(this.createElement('div.etat', Horaire.types[typePlage].label));
+		this._dom_label = resultat.appendChild(this.createElement('div.etat', this.getType(typePlage).label));
 		this._dom_local = resultat.appendChild(this.createElement('div.local', ""));
 		this._dom_texte = resultat.appendChild(this.createElement('div.texte', ""));
 		resultat.style.gridRowStart = this.debut + 2;
@@ -140,13 +140,13 @@ class Plage extends DOM {
 		var resultat, bts, bt;
 		resultat = DOM.createElement("div.boutonsPlage");
 		bts = resultat.appendChild(this.createElement('span.boutons.debut'));
-		bt = bts.appendChild(this.html_btPlusMoins('moins', 0, Plage.evt.debutMoins.click));
-		bt = bts.appendChild(this.html_btPlusMoins('plus', 180, Plage.evt.debutPlus.click));
+		bt = bts.appendChild(this.html_btPlusMoins('moins', 0, this.evt.debutMoins.click));
+		bt = bts.appendChild(this.html_btPlusMoins('plus', 180, this.evt.debutPlus.click));
 		bts = resultat.appendChild(this.createElement('span.boutons.duree'));
-		bt = bts.appendChild(this.html_btPlusMoins('moins', 0, Plage.evt.dureeMoins.click));
-		bt = bts.appendChild(this.html_btPlusMoins('plus', 180, Plage.evt.dureePlus.click));
-		bt = resultat.appendChild(this.html_btPlusMoins('jour.moins', -90, Plage.evt.jourMoins.click));
-		bt = resultat.appendChild(this.html_btPlusMoins('jour.plus', 90, Plage.evt.jourPlus.click));
+		bt = bts.appendChild(this.html_btPlusMoins('moins', 0, this.evt.dureeMoins.click));
+		bt = bts.appendChild(this.html_btPlusMoins('plus', 180, this.evt.dureePlus.click));
+		bt = resultat.appendChild(this.html_btPlusMoins('jour.moins', -90, this.evt.jourMoins.click));
+		bt = resultat.appendChild(this.html_btPlusMoins('jour.plus', 90, this.evt.jourPlus.click));
 		return resultat;
 	}
 	html_btPlusMoins(classe, angle, evt) {
@@ -181,16 +181,16 @@ class Plage extends DOM {
 	}
 	form_typePlage() {
 		var select, i;
-		select = this.createElement('select#typePlage', null, null, Plage.evt.typePlage);
-		for (i in Horaire.types) {
-			select.appendChild(this.createElement('option', Horaire.types[i].label, {'value': i}));
+		select = this.createElement('select#typePlage', null, null, this.evt.typePlage);
+		for (i in this.types) {
+			select.appendChild(this.createElement('option', this.getType(i).label, {'value': i}));
 		}
 		select.value = this.typePlage;
 		select.plage = this;
 		return this.form_wrap(select, 'Type');
 	}
 	form_jour() {
-		var select = this.createElement('select#jour', null, null, Plage.evt.jour);
+		var select = this.createElement('select#jour', null, null, this.evt.jour);
 		for (var i = 0, n = this.horaire.jours.length; i < n; i += 1) {
 			select.appendChild(this.createElement('option', this.horaire.jours[i], {'value':i}));
 		}
@@ -200,7 +200,7 @@ class Plage extends DOM {
 	}
 	form_debut() {
 		var select, horaire, heure, i;
-		select = this.createElement('select#debut', null, null, Plage.evt.debut);
+		select = this.createElement('select#debut', null, null, this.evt.debut);
 		horaire = this.horaire;
 		for (i = 0; i < horaire.nbPeriodes; i += 1) {
 			heure = horaire.heureDebut+i*(horaire.dureePeriode+horaire.pause);
@@ -211,7 +211,7 @@ class Plage extends DOM {
 		return this.form_wrap(select, 'Début');
 	}
 	form_duree() {
-		var select = this.createElement('select#duree', null, null, Plage.evt.duree);
+		var select = this.createElement('select#duree', null, null, this.evt.duree);
 		var horaire = this.horaire;
 		select.appendChild(this.createElement('option', '1 période', {'value': 1}));
 		for (var i=2; i<=horaire.nbPeriodes; i += 1) {
@@ -222,19 +222,19 @@ class Plage extends DOM {
 		return this.form_wrap(select, 'Durée');
 	}
 	form_local() {
-		var input = this.createElement('input#local', null, {'value': this.local, 'placeholder': 'Local'}, {'change': Plage.evt.local.change, 'keyup': Plage.evt.local.change, 'blur': Plage.evt.local.change});
+		var input = this.createElement('input#local', null, {'value': this.local, 'placeholder': 'Local'}, {'change': this.evt.local.change, 'keyup': this.evt.local.change, 'blur': this.evt.local.change});
 		input.plage = this;
 		return this.form_wrap(input, 'Local');
 	}
 	form_texte() {
-		var input = this.createElement('textarea#texte', this.texte.replace(/<br\s*\/?>/g, '\r\n'), {'placeholder': 'Texte', cols:20, rows: 5}, {'change': Plage.evt.texte.change, 'keyup': Plage.evt.texte.change, 'blur': Plage.evt.texte.change});
+		var input = this.createElement('textarea#texte', this.texte.replace(/<br\s*\/?>/g, '\r\n'), {'placeholder': 'Texte', cols:20, rows: 5}, {'change': this.evt.texte.change, 'keyup': this.evt.texte.change, 'blur': this.evt.texte.change});
 		input.plage = this;
 		return this.form_wrap(input, 'Texte');
 	}
 	form_supprimer() {
 		var input = [];
-		input[0] = this.createElement('input#supprimer', null, {'value': 'Supprimer', 'type': 'button'}, Plage.evt.supprimer);
-		input[1] = this.createElement('input#dupliquer', null, {'value': 'Dupliquer', 'type': 'button'}, Plage.evt.dupliquer);
+		input[0] = this.createElement('input#supprimer', null, {'value': 'Supprimer', 'type': 'button'}, this.evt.supprimer);
+		input[1] = this.createElement('input#dupliquer', null, {'value': 'Dupliquer', 'type': 'button'}, this.evt.dupliquer);
 		input[0].plage = this;
 		input[1].plage = this;
 		return this.form_wrap(input);
@@ -244,7 +244,7 @@ class Plage extends DOM {
 		return this;
 	}
 	editer() {
-		Plage.deposerTout();
+		this.deposerTout();
 		this.form = document.getElementById('options').appendChild(this.dom_form());
 		this._dom.classList.add('courant');
 		this._dom.appendChild(this.html_btsPlage());
@@ -261,7 +261,7 @@ class Plage extends DOM {
 		this._dom.parentNode.removeChild(this._dom);
 		return this;
 	}
-	static deposerTout() {
+	deposerTout() {
 		var plage;
 		while (plage = document.querySelector('.courant'), plage) {
 			   plage.obj.deposer();
@@ -348,10 +348,47 @@ class Plage extends DOM {
 		}
 		return resultat;
 	}
-	static init() {
-		this.prototype.defaut = {};	// Les propriétés par défaut d'une plage.
-		this.types = {};	// {Object}. Les types de plage
-		this.evt = {
+	setType(id, data) {
+		if (!id || id === 'defaut') {
+			this.copierProps(data, this.defaut);
+			return;
+		}
+		if (!this.types[id]) {
+			this.types[id] = Object.create(this.defaut);
+		}
+		data.id = id;
+		this.copierProps(data, this.types[id]);
+		this.stylesheet.insertRule('div.plage[data-type="' + id + '"] {}');
+		data.regle = this.stylesheet.cssRules[0];
+		for (let k in data.css) {
+			data.regle.style[k] = data.css[k];
+		}
+		return data;
+	}
+	getType(id) {
+		if (this.types[id]) {
+			return this.types[id];
+		} else {
+			return this.defaut;
+		}
+	}
+	static appliquerTheme(types) {
+		if (types instanceof Array) {
+			types.forEach(function (t) {
+				let k = t.id;
+				delete t.id;
+				this.prototype.setType(k, t);
+			}, this);
+		} else {
+			for (let k in types) {
+				let t = types[k];
+				delete t.id;
+				this.prototype.setType(k, t);
+			}
+		}
+	}
+	static setEvents() {
+		this.prototype.evt = {
 			typePlage: {
 				change:function() {
 					this.form.obj.setProperty('typePlage', this.value);
@@ -455,6 +492,12 @@ class Plage extends DOM {
 				}
 			}
 		};
+	}
+	static init() {
+		this.prototype.defaut = {};	// Les propriétés par défaut d'une plage.
+		this.prototype.types = {};	// {Object}. Les types de plage
+		this.initStylesheet();
+		this.setEvents();
 	}
 }
 Plage.init();

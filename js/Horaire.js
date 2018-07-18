@@ -50,7 +50,7 @@ class Horaire extends DOM {
 	}
 	get html_titre() {
 		var resultat = this._titre.split("|");
-		resultat = resultat.map(t=>"<span>"+t+"</span>");
+		resultat = resultat.map(t => "<span>" + t + "</span>");
 		resultat = resultat.join("");
 		return resultat;
 	}
@@ -70,7 +70,7 @@ class Horaire extends DOM {
 		return this._plages;
 	}
 	set plages(plages) {
-		plages.forEach(p=>this.ajouterPlage(p));
+		plages.forEach(p => this.ajouterPlage(p));
 	}
 	initAffichage() {
 		App.mode = App.MODE_AFFICHAGE;
@@ -140,7 +140,7 @@ class Horaire extends DOM {
 	dom_creer() {
 		var resultat;
 		resultat = this.createElement("div#horaire", this.dom_caption());
-//		resultat.style.height = this.hauteur + "in";
+		//		resultat.style.height = this.hauteur + "in";
 		resultat.appendChild(this.grille);
 		return resultat;
 	}
@@ -278,19 +278,19 @@ class Horaire extends DOM {
 		return resultat;
 	}
 	dom_code() {
-			var resultat = this.createElement("textarea#code", null, {
-				"cols": "60",
-				rows: "10",
-				"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
-			}, this.evt.code);
-			resultat.horaire = this;
-			return resultat;
-		}
-		/*codeIframe() {
-			var resultat = this.createElement("input#code-iframe", null, {"readonly": true, "value": this.dom_iframe().outerHTML}, this.evt.codeIframe);
-			resultat.horaire = this;
-			return resultat;
-		}*/
+		var resultat = this.createElement("textarea#code", null, {
+			"cols": "60",
+			rows: "10",
+			"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
+		}, this.evt.code);
+		resultat.horaire = this;
+		return resultat;
+	}
+	/*codeIframe() {
+		var resultat = this.createElement("input#code-iframe", null, {"readonly": true, "value": this.dom_iframe().outerHTML}, this.evt.codeIframe);
+		resultat.horaire = this;
+		return resultat;
+	}*/
 	dom_code_lien() {
 		var resultat;
 		resultat = '<a href="' + this.toUrl() + '">' + this.titre + '</a>';
@@ -388,7 +388,7 @@ class Horaire extends DOM {
 			return false;
 		}
 		for (let i = debut; i < debut + duree; i += 1) {
-			var plage = this.plages.find((p)=>(p.jour === jour && i >= p.debut && i < p.debut + p.duree));
+			var plage = this.plages.find((p) => (p.jour === jour && i >= p.debut && i < p.debut + p.duree));
 			if (plage) {
 				return plage;
 			}
@@ -400,7 +400,10 @@ class Horaire extends DOM {
 		for (let i = heure; i + duree <= this.nbPeriodes; i += 1) {
 			let plage = this.trouverPlageA(jour, i, duree);
 			if (plage === true) {
-				return {jour: jour, heure: i};
+				return {
+					jour: jour,
+					heure: i
+				};
 			} else if (plage === false) {
 				break;
 			} else {
@@ -412,7 +415,10 @@ class Horaire extends DOM {
 			for (let i = 0; i + duree <= this.nbPeriodes; i += 1) {
 				let plage = this.trouverPlageA((jour + j) % this.jours.length, i, duree);
 				if (plage === true) {
-					return {jour: (jour + j) % this.jours.length, heure: i};
+					return {
+						jour: (jour + j) % this.jours.length,
+						heure: i
+					};
 				} else if (plage === false) {
 					break;
 				} else {
@@ -424,7 +430,10 @@ class Horaire extends DOM {
 		for (let i = 0; i + duree <= heure; i += 1) {
 			let plage = this.trouverPlageA(jour, i, duree);
 			if (plage === true) {
-				return {jour: jour, heure: i};
+				return {
+					jour: jour,
+					heure: i
+				};
 			} else if (plage === false) {
 				break;
 			} else {
@@ -641,32 +650,13 @@ class Horaire extends DOM {
 		return this;
 	}
 
-	static initTypes() {
-		this.types = {};
-		this.stylesheet = document.head.appendChild(document.createElement("style"));
-		this.stylesheet.appendChild(document.createTextNode(''));
-		this.stylesheet = this.stylesheet.sheet;
-		return this;
-	}
-	static setType(data) {
-		this.types[data.id] = data;
-		this.stylesheet.insertRule('div.plage[data-type="'+data.id+'"] {}');
-		data.regle = this.stylesheet.cssRules[0];
-		for (let k in data.css) {
-			data.regle.style[k] = data.css[k];
-		}
-		return data;
+	static appliquerTheme(theme) {
+		Plage.appliquerTheme(theme.typesPlages);
 	}
 	static init() {
 		this.lang = window.navigator.language;
-		this.initTypes();
-		App.loadJson("json/theme_standard.json", function (response) {
-			for (let k in response.typesPlages) {
-				var type = response.typesPlages[k];
-				type.id = k;
-				this.setType(type);
-			}
-		}, this);
+		this.initStylesheet();
+		App.loadJson("json/theme_standard.json", this.appliquerTheme, this);
 		this.setEvents();
 		if (location.search) {
 			var d, script;

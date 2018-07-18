@@ -66,6 +66,35 @@ class DOM {
 	setAttributes() {
 		return DOM.setAttributes.apply(this, arguments);
 	}
+	/**
+	 * Transfere les propriétés d'un objet à l'autre de facon récursive (ou non)
+	 * @param {object}  from        L'objet qui contient les propriétés
+	 * @param {object}  to          L'objet qui recoit les propriétés
+	 * @param {integer} recursif=-1 Niveau de récursivité: <0|true=infini; 0|false=non récursif, remplace par l'objet eventuel; >0=nombre de fois (niveaux) ou appliquer la récursivité
+	 */
+	copierProps(from, to, recursif = true) {
+		recursif = (recursif === false) ? 0 : (recursif === true) ? -1 : recursif;
+		for (let k in from) {
+			let val = from[k];
+			if (typeof val !== "object") {
+				to[k] = val;
+			} else if (recursif === 0) {
+				to[k] = val;
+			} else {
+				if (!to[k]) {
+					to[k] = {};
+				}
+				this.copierProps(val, to[k], recursif - 1);
+			}
+		}
+	}
+	static initStylesheet() {
+		this.stylesheet = document.head.appendChild(document.createElement("style"));
+		this.stylesheet.setAttribute("data-objet", this.name);
+		this.stylesheet.appendChild(document.createTextNode(''));
+		this.prototype.stylesheet = this.stylesheet.sheet;
+		return this;
+	}
 	static applyStyle(element, props) {
 		var k;
 		if (!props) {
