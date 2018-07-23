@@ -166,6 +166,66 @@ div.boutonsPlage {
   right: 0;
   bottom: 0;
 }
+div.boutonsPlage svg {
+  display: block;
+  fill: #cccc00;
+}
+div.boutonsPlage > * {
+  position: absolute;
+  display: flex;
+}
+div.boutonsPlage > * > * {
+  flex: 1 0 0;
+  display: flex;
+  background-color: rgba(255, 255, 0, 0.2);
+  justify-content: center;
+  align-items: center;
+}
+div.boutonsPlage > * > *:hover {
+  background-color: yellow;
+}
+div.boutonsPlage > * > *:hover svg {
+  fill: black;
+}
+div.boutonsPlage > *.heure {
+  width: 100%;
+  height: 1em;
+  flex: 1 0 0;
+}
+div.boutonsPlage > *.heure.debut {
+  top: -1em;
+}
+div.boutonsPlage > *.heure.debut > * {
+  border-radius: 50% / 100% 100% 0 0;
+}
+div.boutonsPlage > *.heure.duree {
+  bottom: -1em;
+}
+div.boutonsPlage > *.heure.duree > * {
+  border-radius: 50% / 0 0 100% 100%;
+}
+div.boutonsPlage > *.heure svg {
+  width: 1em;
+}
+div.boutonsPlage > *.jour {
+  height: 100%;
+  width: 1em;
+}
+div.boutonsPlage > *.jour.moins {
+  left: -1em;
+}
+div.boutonsPlage > *.jour.moins > * {
+  border-radius: 100% 0 0 100% / 50%;
+}
+div.boutonsPlage > *.jour.plus {
+  right: -1em;
+}
+div.boutonsPlage > *.jour.plus > * {
+  border-radius: 0 100% 100% 0 / 50%;
+}
+div.boutonsPlage > *.jour svg {
+  height: 1em;
+}
 div.jour,
 div.vide {
   background-color: #666;
@@ -216,61 +276,6 @@ div.plage:before {
 }
 div.plage:after {
   content: "";
-}
-.courant span.boutons {
-  position: absolute;
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-}
-.courant span.boutons.debut {
-  top: -0.75em;
-}
-.courant span.boutons.duree {
-  bottom: -0.75em;
-  flex-direction: row-reverse;
-}
-.courant span.boutons > * {
-  flex: 1 0 0;
-}
-.courant span.boutons > *.moins {
-  padding-bottom: .5em;
-}
-.courant span.boutons > *.plus {
-  padding-top: .5em;
-}
-span.bouton {
-  display: block;
-}
-span.bouton:hover {
-  background-color: rgba(255, 255, 0, 0.3);
-}
-span.bouton:hover svg {
-  fill: #567;
-}
-span.bouton svg {
-  fill: #BCD;
-  width: 100%;
-  height: 1em;
-  display: block;
-}
-span.bouton.jour {
-  height: 2em;
-  width: 1em;
-  position: absolute;
-  height: 100%;
-}
-span.bouton.jour svg {
-  width: 100%;
-  height: 100%;
-}
-span.bouton.jour.plus {
-  right: -0.75em;
-  padding-left: .5em;
-}
-span.bouton.jour.moins {
-  left: -0.75em;
-  padding-right: .5em;
 }
 @media screen {
   .courant {

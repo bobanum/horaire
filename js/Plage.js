@@ -1,11 +1,14 @@
 /*jslint esnext:true, browser:true, debug:true*/
-/*globals DOM, Horaire, App*/
+/*globals DOM, App*/
 // Ajouter annuler
 // toArray
 // compression base64
 // Ne pas exporter si valeurs par défaut??? pas sur
 // Form pour données globales (titre, nbjours...)
 class Plage extends DOM {
+	/**
+	 * Constructeur
+	 */
 	constructor(horaire) {
 		super();
 		this.horaire = horaire;
@@ -138,15 +141,17 @@ class Plage extends DOM {
 	}
 	html_btsPlage() {
 		var resultat, bts, bt;
-		resultat = DOM.createElement("div.boutonsPlage");
-		bts = resultat.appendChild(this.createElement('span.boutons.debut'));
+		resultat = this.createElement("div.boutonsPlage");
+		bts = resultat.appendChild(this.createElement('span.heure.debut'));
 		bt = bts.appendChild(this.html_btPlusMoins('moins', 0, this.evt.debutMoins.click));
 		bt = bts.appendChild(this.html_btPlusMoins('plus', 180, this.evt.debutPlus.click));
-		bts = resultat.appendChild(this.createElement('span.boutons.duree'));
+		bts = resultat.appendChild(this.createElement('span.heure.duree'));
 		bt = bts.appendChild(this.html_btPlusMoins('moins', 0, this.evt.dureeMoins.click));
 		bt = bts.appendChild(this.html_btPlusMoins('plus', 180, this.evt.dureePlus.click));
-		bt = resultat.appendChild(this.html_btPlusMoins('jour.moins', -90, this.evt.jourMoins.click));
-		bt = resultat.appendChild(this.html_btPlusMoins('jour.plus', 90, this.evt.jourPlus.click));
+		bts = resultat.appendChild(this.createElement('span.jour.moins'));
+		bt = bts.appendChild(this.html_btPlusMoins('jour.moins', -90, this.evt.jourMoins.click));
+		bts = resultat.appendChild(this.createElement('span.jour.plus'));
+		bt = bts.appendChild(this.html_btPlusMoins('jour.plus', 90, this.evt.jourPlus.click));
 		return resultat;
 	}
 	html_btPlusMoins(classe, angle, evt) {
@@ -268,10 +273,16 @@ class Plage extends DOM {
 		}
 		return this;
 	}
-	static fromJson(j, horaire) {
+	/**
+	 * Retourne un nouvel objet en utilisant le json donné
+	 * @param   {object}  json    Le JSON à traiter
+	 * @param   {Horaire} horaire L'objet Horaire auquel associer cet objet Plage
+	 * @returns {Plage}   La nouvelle Plage
+	 */
+	static fromJson(json, horaire) {
 		var resultat;
 		resultat = new Plage(horaire);
-		resultat.fill(j);
+		resultat.fill(json);
 		return resultat;
 	}
 	fill(j) {

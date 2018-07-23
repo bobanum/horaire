@@ -7,6 +7,9 @@
 // Form pour données globales (titre, nbjours...)
 // Éliminer les variables globales (json, horaire, etc.)
 class Horaire extends DOM {
+	/**
+	 * Constructeur
+	 */
 	constructor() {
 		super();
 		this.init();
@@ -667,7 +670,7 @@ class Horaire extends DOM {
 				});
 				document.head.appendChild(script);
 			} else if (d.h) {
-				window.json = App.decoder(d.h);
+				App.json = App.decoder(d.h);
 			}
 		}
 	}
