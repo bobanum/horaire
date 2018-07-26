@@ -33,8 +33,12 @@
   *.interface > header,
   *.interface > footer {
     background-color: #234;
-    color: white;
+    color: #dbdb24;
     padding: 0 1em 0;
+  }
+  *.interface > header img,
+  *.interface > footer img {
+    margin-right: .5ch;
   }
 }
 @media all and (min-width: 13in) {
@@ -80,7 +84,6 @@ div.champ input[type=text],
 div.champ input:not([type]),
 div.champ select,
 div.champ textarea {
-  zzzwidth: 100%;
   box-sizing: border-box;
   resize: vertical;
 }
@@ -234,12 +237,9 @@ div.vide {
 }
 @media (max-width: 13in) {
   .interface > *:nth-child(2) {
-    zzzalign-self: flex-start;
-    zzzwidth: 1em;
     background-color: #CC0 !important;
   }
   .interface > *:nth-child(2) > * {
-    zzzdisplay: none;
     position: absolute;
     right: 0;
     width: 3in;

@@ -17,14 +17,6 @@ class Plage extends DOM {
 		this._duree = 1;
 		this._texte = "";
 		this._local = "";
-		this.dom_creer();
-	}
-	get dom() {
-		if (!this._dom) {
-			this._dom = this.dom_creer();
-			this._dom.obj = this;
-		}
-		return this._dom;
 	}
 	get htmlClass() {
 		return this.getType(this.typePlage).htmlClass;
@@ -36,7 +28,7 @@ class Plage extends DOM {
 		return this._dom.getAttribute("data-type");
 	}
 	set typePlage(val) {
-		this._dom.setAttribute("data-type", val);
+		this.dom.setAttribute("data-type", val);
 		this._dom_label.innerHTML = this.getType(val).label;
 		if (this.form) {
 			this.form.typePlage.value = val;
@@ -124,9 +116,8 @@ class Plage extends DOM {
 	dom_creer() {
 		var resultat, typePlage = "C";
 		resultat = this.createElement('div.plage');
-		this._dom = resultat;
-		resultat.obj = this;
 		resultat.setAttribute("data-type", typePlage);
+		//TODO Déplacer vers la classe App
 		if (App.mode === App.MODE_EDITION) {
 			resultat.addEventListener("click", this.evt.plage.click);
 		}

@@ -8,13 +8,17 @@ class DOM {
 	 * Constructeur
 	 */
 	constructor() {
-
+		this._dom = null;
 	}
-	/**
-	 * Règle des propriétés de l'objet
-	 */
-	init() {
-
+	get dom() {
+		if (!this._dom) {
+			this._dom = this.dom_creer();
+			this._dom.obj = this;
+		}
+		return this._dom;
+	}
+	dom_creer() {
+		throw "La methode 'dim_creer' doit être surchargée.";
 	}
 	/**
 	 * Retourne un élément DOM avec un certain contenu, attributs et evenements
@@ -206,7 +210,9 @@ class DOM {
 	 * Règle les propriété de classe et les événements
 	 */
 	static init() {
-
+		["createElement", "createElementIn", "setClasses", "setAttributes",
+		 "copierProps", "applyStyle", "appendContent", "addEventListeners"]
+			.forEach(m=>this[m]=this.prototype[m]);
 	}
 }
 DOM.init();
@@ -215,6 +221,105 @@ DOM.init();
 Classe App gérant l'application
 */
 class App {
+	static afficher(horaire) {
+		if (this.mode === this.MODE_EDITION) {
+			document.body.appendChild(this.dom_interface(horaire.dom));
+		} else {
+			document.body.appendChild(horaire.dom);
+		}
+		return this;
+	}
+	static dom_interface(contenu) {
+		var resultat, panneau;
+		resultat = DOM.createElement("div.interface");
+		panneau = resultat.appendChild(DOM.createElement("header", "<h1><img src=\"images/logo.svg\"/>La maison des horaires</h1>"));
+		panneau.style.gridArea = "h";
+		panneau = resultat.appendChild(DOM.createElement("footer", "<p>&copy;</p>"));
+		panneau.style.gridArea = "f";
+		panneau = this.dom_panneau(contenu, resultat);
+		panneau.style.gridArea = "g";
+		panneau = this.dom_panneau(this.dom_options(), resultat);
+		panneau.style.gridArea = "o";
+		panneau = this.dom_panneau(this.dom_status(), resultat);
+		panneau.style.gridArea = "c";
+		return resultat;
+	}
+	static dom_panneau(contenu, conteneur) {
+		var resultat;
+		resultat = DOM.createElement("section.panneau");
+		if (conteneur) {
+			conteneur.appendChild(resultat);
+		}
+		if (contenu) {
+			resultat.appendChild(contenu);
+		}
+		return resultat;
+	}
+	static dom_options() {
+		var resultat;
+		resultat = DOM.createElement("div#options", this.dom_form());
+		return resultat;
+	}
+	static dom_form() {
+		var resultat;
+		resultat = DOM.createElement("form#formHoraire");
+		resultat.obj = this;
+		this.trForm = resultat;
+		resultat.appendChild(this.horaire.dom_form_titre());
+		return resultat;
+	}
+	static dom_status() {
+		var resultat, form;
+		resultat = DOM.createElement("div#status");
+		form = DOM.createElementIn(resultat, "form");
+		form.obj = this;
+		form.appendChild(this.dom_status_options());
+		form.appendChild(this.dom_code());
+		//		form.appendChild(this.dom_codeIframe());
+		return resultat;
+	}
+	static dom_status_options() {
+		var resultat, div;
+		resultat = DOM.createElement("div.boutons");
+		div = DOM.createElementIn(resultat, "div");
+		DOM.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "JSON"
+		}, this.evt.btn_json);
+		//		DOM.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, this.evt.btn_jsoncompresse);
+		//		DOM.createElementIn(div, "input", null, {"type": "button", "value":"Array"}, this.evt.btn_array);
+		DOM.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Compressé"
+		}, this.evt.btn_arraycompresse);
+		DOM.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Adresse"
+		}, this.evt.btn_adresse);
+		DOM.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Lien"
+		}, this.evt.btn_lien);
+		DOM.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "iFrame"
+		}, this.evt.btn_iframe);
+		div = DOM.createElementIn(resultat, "div");
+		DOM.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Visionner"
+		}, this.evt.btn_visionner);
+		return resultat;
+	}
+	static dom_code() {
+		var resultat = DOM.createElement("textarea#code", null, {
+			"cols": "60",
+			rows: "10",
+			"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
+		}, this.evt.code);
+		resultat.horaire = this;
+		return resultat;
+	}
 	/**
 	 * Ajoute un élément script pointant vers l'URL donnée
 	 * @param   {string}      url Le chemin ver le fichier script
@@ -282,7 +387,7 @@ class App {
 		} else {
 			this.horaire = new Horaire();
 		}
-		this.horaire.afficher();
+		this.afficher(this.horaire);
 	}
 	/**
 	 * Retourne la version encodée et compressée de la chaine donnée
@@ -380,6 +485,97 @@ class App {
 		this.path.app = src.slice(0,-1).join("/");
 //		this.path.script = src.join("/");
 	}
+	static setEvents() {
+		this.evt = {
+			btn_array: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.toArray(true);
+					ta = document.getElementById("code");
+					ta.innerHTML = resultat;
+					ta.select();
+				}
+			},
+			btn_arraycompresse: {
+				click: function () {
+					var resultat, ta;
+					ta = document.getElementById("code");
+					ta.innerHTML = "";
+					resultat = this.form.obj.toArray(true);
+					ta.innerHTML += "(" + resultat.length + ") " + resultat + "\n----\n";
+					resultat = App.encoder(resultat);
+					ta.innerHTML += "(" + resultat.length + ") " + resultat + "\n----\n";
+					resultat = this.form.obj.toJson(true);
+					ta.innerHTML += "(" + resultat.length + ") " + resultat + "\n----\n";
+					resultat = App.encoder(resultat);
+					ta.innerHTML += "(" + resultat.length + ") " + resultat + "\n----\n";
+					ta.select();
+				}
+			},
+			btn_json: {
+				click: function (e) {
+					var resultat, ta;
+					if (e.shiftKey) {
+						ta = document.getElementById("code");
+						resultat = JSON.parse(ta.value);
+						resultat = Horaire.fromJson(resultat);
+						resultat = resultat.toUrl();
+						resultat = resultat.replace("index.html", "edition.html");
+						window.location = resultat;
+					} else {
+						resultat = this.form.obj.toJson(true);
+						ta = document.getElementById("code");
+						ta.innerHTML = resultat;
+						ta.select();
+					}
+				}
+			},
+			btn_jsoncompresse: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.toJson(true);
+					ta = document.getElementById("code");
+					ta.innerHTML = App.encoder(resultat);
+					ta.innerHTML = "App.encoder(resultat)";
+					ta.select();
+				}
+			},
+			btn_adresse: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.toUrl();
+					ta = document.getElementById("code");
+					ta.innerHTML = resultat;
+					ta.select();
+				}
+			},
+			btn_lien: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.dom_code_lien();
+					ta = document.getElementById("code");
+					ta.innerHTML = resultat;
+					ta.select();
+				}
+			},
+			btn_iframe: {
+				click: function () {
+					var resultat, ta;
+					resultat = this.form.obj.dom_code_iframe();
+					ta = document.getElementById("code");
+					ta.innerHTML = resultat;
+					ta.select();
+				}
+			},
+			btn_visionner: {
+				click: function () {
+					var resultat;
+					resultat = this.form.obj.toUrl();
+					window.open(resultat);
+				}
+			}
+		};
+	}
 	/**
 	 * Initialise les variables statiques et evenements. Analyse l'adresse pour les propriétés de l'horaire.
 	 */
@@ -389,6 +585,7 @@ class App {
 		this.MODE_IMPRESSION = 2;
 		this.MODE_FRAME = 3;
 		this.setPaths();
+		this.setEvents();
 		if (location.href.match(/edition\.html/)) {
 			this.mode = this.MODE_EDITION;
 			document.documentElement.classList.add("edition");

@@ -9,7 +9,7 @@
 		"defaut": {
 			"htmlClass": "cours",
 			"label": "En cours",
-			"css": {
+			"zzzcss": {
 				"background-color": "gold",
 				"color": "#A52929"
 			}
@@ -17,7 +17,7 @@
 		"C": {
 			"htmlClass": "cours",
 			"label": "En cours",
-			"css": {
+			"zzzcss": {
 				"background-color": "gold",
 				"color": "#A52929"
 			}
@@ -25,7 +25,7 @@
 		"D": {
 			"htmlClass": "dispo",
 			"label": "Disponible",
-			"css": {
+			"zzzcss": {
 				"background-color": "lightgreen",
 				"color": "darkgreen"
 			}
@@ -33,7 +33,7 @@
 		"R": {
 			"htmlClass": "rv",
 			"label": "Sur rendez-vous",
-			"css": {
+			"zzzcss": {
 				"background-color": "lightblue",
 				"color": "darkblue"
 			}
@@ -41,7 +41,7 @@
 		"N": {
 			"htmlClass": "nd",
 			"label": "Non disponible",
-			"css": {
+			"zzzcss": {
 				"background-color": "#ddd",
 				"color": "#999"
 			}

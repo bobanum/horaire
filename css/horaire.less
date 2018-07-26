@@ -30,8 +30,11 @@
 		width: 100%;
 		& > header, & > footer {
 			background-color: #234;
-			color:white;
+			color:#dbdb24;
 			padding: 0 1em 0;
+			img {
+				margin-right: .5ch;
+			}
 		}
 	}
 }
@@ -93,7 +96,6 @@ div.champ {
 	& input:not([type]),
 	& select,
 	& textarea {
-		zzzwidth: 100%;
 		box-sizing: border-box;
 		resize: vertical;
 	}
@@ -250,11 +252,8 @@ div.vide {
 @media (max-width: 13in) {
 	.interface {
 		& > *:nth-child(2) {
-			zzzalign-self: flex-start;
-			zzzwidth: 1em;
 			background-color: #CC0 !important;
 			& > * {
-				zzzdisplay: none;
 				position: absolute;
 				right: 0;
 				width: 3in;

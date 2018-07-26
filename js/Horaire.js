@@ -1,44 +1,35 @@
 /*jslint esnext:true, browser:true, debug:false*/
 /*globals DOM, Plage, App*/
-// Ajouter annuler
-// toArray
-// compression base64
-// Ne pas exporter si valeurs par défaut??? pas sur
-// Form pour données globales (titre, nbjours...)
-// Éliminer les variables globales (json, horaire, etc.)
+/**
+ * Classe Horaire représentant une grille horaire
+ * @todo Ajouter annuler
+ * @todo Ne pas exporter si valeurs par défaut??? pas sur
+ * @todo Form pour données globales (titre, nbjours...)
+ * @todo Éliminer les variables globales (json, horaire, etc.)
+ * @property titre {string}	Le titre de la grille (private)
+ * @property jours {string[]}	Les jours (colonnes)
+ * @property heureDebut {integer}	L'heure du début de l'horaire
+ * @property nbPeriodes {integer}	Le nombre de périodes (rangées)
+ * @property dureePeriode {integer}	La durée dechaque période
+ * @property pause {integer}	La pause à intercaler entre les périodes
+ * @property hauteur {integer}	La hauteur en pouces de la zone horaire
+ * @property _plages {Plage[]} Les plages actuellement dans l'horaire
+ */
 class Horaire extends DOM {
 	/**
 	 * Constructeur
 	 */
 	constructor() {
 		super();
-		this.init();
-	}
-	init() {
-		this.titre = "Horaire";
+		this._titre = "Horaire";
 		this.jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
 		this.heureDebut = 8 * 60 + 0;
 		this.nbPeriodes = 11;
 		this.dureePeriode = 50;
 		this.pause = 5;
+		this.hauteur = 5; // La hauteur en pouces de la zone horaire
 		this._plages = [];
 		this._grille = null;
-		this.hauteur = 5; // La hauteur en pouces de la zone horaire
-		return this;
-	}
-	static trouverNomsJours(lang) {
-		var resultat, d;
-		lang = lang || this.lang;
-		resultat = [];
-		d = new Date();
-		d.setTime(d.getTime() + (7 - d.getDay()) * 1000 * 60 * 60 * 24);
-		for (let i = 0; i < 7; i += 1) {
-			let dd = new Date(d.getTime() + i * 1000 * 60 * 60 * 24);
-			resultat.push(dd.toLocaleString(lang, {
-				weekday: "long"
-			}));
-		}
-		return resultat;
 	}
 	get titre() {
 		return this._titre;
@@ -48,20 +39,8 @@ class Horaire extends DOM {
 		this._titre = titre;
 		dom = document.getElementById("affichage_titre");
 		if (dom) {
-			dom.innerHTML = this.html_titre;
+			dom.parentNode.replaceChild(this.dom_caption(), dom);
 		}
-	}
-	get html_titre() {
-		var resultat = this._titre.split("|");
-		resultat = resultat.map(t => "<span>" + t + "</span>");
-		resultat = resultat.join("");
-		return resultat;
-	}
-	get dom() {
-		if (!this._dom) {
-			this._dom = this.dom_creer();
-		}
-		return this._dom;
 	}
 	get grille() {
 		if (!this._grille) {
@@ -69,66 +48,15 @@ class Horaire extends DOM {
 		}
 		return this._grille;
 	}
-	get plages() {
-		return this._plages;
-	}
-	set plages(plages) {
-		plages.forEach(p => this.ajouterPlage(p));
-	}
-	initAffichage() {
-		App.mode = App.MODE_AFFICHAGE;
-		this.afficher();
-	}
-	initModif() {
-		App.mode = App.MODE_EDITION;
-		this.afficher();
-	}
-	afficher() {
-		if (App.mode === App.MODE_EDITION) {
-			document.body.appendChild(this.dom_interface(document.body));
-		} else {
-			document.body.appendChild(this.dom);
-		}
-		return this;
-	}
-	static getSearch() {
-		var resultat, s, i, n, donnee;
-		resultat = {};
-		s = location.search;
-		if (!s) {
-			return resultat;
-		}
-		s = s.substr(1).split("&");
-		for (i = 0, n = s.length; i < n; i += 1) {
-			donnee = s[i].split("=");
-			resultat[donnee.shift()] = donnee.join("=");
-		}
-		return resultat;
-	}
-	dom_interface() {
-		var resultat, panneau;
-		resultat = this.createElement("div.interface");
-		panneau = resultat.appendChild(this.createElement("header", "<h1><img src=\"images/logo.svg\"/>La maison des horaires</h1>"));
-		panneau.style.gridArea = "h";
-		panneau = resultat.appendChild(this.createElement("footer", "<p>&copy;</p>"));
-		panneau.style.gridArea = "f";
-		panneau = this.dom_panneau(this.dom, resultat);
-		panneau.style.gridArea = "g";
-		panneau = this.dom_panneau(this.dom_options(), resultat);
-		panneau.style.gridArea = "o";
-		panneau = this.dom_panneau(this.dom_status(), resultat);
-		panneau.style.gridArea = "c";
-		return resultat;
-	}
-	dom_panneau(contenu, conteneur) {
+	/**
+	 * Retourne l'élément HTML de l'horaire
+	 * @returns {HTMLElement} Un élément dom#horaire
+	 */
+	dom_creer() {
 		var resultat;
-		resultat = this.createElement("section.panneau");
-		if (conteneur) {
-			conteneur.appendChild(resultat);
-		}
-		if (contenu) {
-			resultat.appendChild(contenu);
-		}
+		resultat = this.createElement("div#horaire", this.dom_caption());
+		//		resultat.style.height = this.hauteur + "in";
+		resultat.appendChild(this.grille);
 		return resultat;
 	}
 	/**
@@ -137,21 +65,30 @@ class Horaire extends DOM {
 	 */
 	dom_caption() {
 		var caption;
-		caption = this.createElement("div.caption#affichage_titre", this.html_titre);
+		caption = this.createElement("div.caption#affichage_titre");
+		var parties = this._titre.split("|");
+		parties.forEach(function (t) {
+			this.createElementIn(caption, "span", t);
+		}, this);
 		return caption;
 	}
-	dom_creer() {
-		var resultat;
-		resultat = this.createElement("div#horaire", this.dom_caption());
-		//		resultat.style.height = this.hauteur + "in";
-		resultat.appendChild(this.grille);
-		return resultat;
-	}
+	/**
+	 * Retourne l'élément HTML représentant la grille
+	 * @returns {HTMLElement} Un élément div.grille
+	 */
 	dom_grille() {
 		var resultat;
-		resultat = document.createElement("div");
-		resultat.classList.add("grille");
-		resultat.style.gridTemplate = "1.6em repeat(" + this.nbPeriodes + ", 1fr) / 6ch repeat(" + this.jours.length + ", 1fr) 6ch";
+		resultat = this.createElement("div.grille");
+		var gridTemplate = [
+			"1.6em",
+			"repeat(" + this.nbPeriodes + ", 1fr)",
+			"/",
+			"6ch",
+			"repeat(" + this.jours.length + ", 1fr)",
+			"6ch"
+		];
+		resultat.style.gridTemplate = gridTemplate.join(" ");
+		//TODO Déplacer vers la classe App
 		if (App.mode === App.MODE_EDITION) {
 			resultat.classList.add("modif");
 		}
@@ -213,80 +150,27 @@ class Horaire extends DOM {
 		}
 		return this;
 	}
-	dom_case(classe, r, c, h, l) {
-		if (r === undefined) {
-			r = "auto";
+	/**
+	 * Retourne une case générique (sans infos) de la grille
+	 * @param   {string}  classe La classe à appliquer à la case
+	 * @param   {integer} r      La rangée
+	 * @param   {integer} c      La colonne
+	 * @param   {integer} h      La hauteur
+	 * @param   {integer} l      La largeur
+	 * @returns {string}  Un élément HTML div
+	 */
+	dom_case(classe, r = "auto", c = "auto", h = "auto", l = "auto") {
+		if (h !== "auto") {
+			h += " span";
 		}
-		if (c === undefined) {
-			c = "auto";
-		}
-		if (h === undefined) {
-			h = "auto";
-		} else {
-			h = h + " span";
-		}
-		if (l === undefined) {
-			l = "auto";
-		} else {
-			l = l + " span";
+		if (l !== "auto") {
+			l += " span";
 		}
 		var resultat = document.createElement("div");
 		if (classe) {
 			resultat.classList.add(classe);
 		}
 		resultat.style.gridArea = "" + r + " / " + c + " / " + h + " / " + l + "";
-		return resultat;
-	}
-	dom_status() {
-		var resultat, form;
-		resultat = this.createElement("div#status");
-		form = this.createElementIn(resultat, "form");
-		form.obj = this;
-		form.appendChild(this.dom_status_options());
-		form.appendChild(this.dom_code());
-		//		form.appendChild(this.dom_codeIframe());
-		return resultat;
-	}
-	dom_status_options() {
-		var resultat, div;
-		resultat = this.createElement("div.boutons");
-		div = this.createElementIn(resultat, "div");
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "JSON"
-		}, this.evt.btn_json);
-		//		this.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, this.evt.btn_jsoncompresse);
-		//		this.createElementIn(div, "input", null, {"type": "button", "value":"Array"}, this.evt.btn_array);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Compressé"
-		}, this.evt.btn_arraycompresse);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Adresse"
-		}, this.evt.btn_adresse);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Lien"
-		}, this.evt.btn_lien);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "iFrame"
-		}, this.evt.btn_iframe);
-		div = this.createElementIn(resultat, "div");
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Visionner"
-		}, this.evt.btn_visionner);
-		return resultat;
-	}
-	dom_code() {
-		var resultat = this.createElement("textarea#code", null, {
-			"cols": "60",
-			rows: "10",
-			"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
-		}, this.evt.code);
-		resultat.horaire = this;
 		return resultat;
 	}
 	/*codeIframe() {
@@ -315,19 +199,6 @@ class Horaire extends DOM {
 			"width": 768,
 			"height": 469
 		});
-		return resultat;
-	}
-	dom_options() {
-		var resultat;
-		resultat = this.createElement("div#options", this.dom_form());
-		return resultat;
-	}
-	dom_form() {
-		var resultat;
-		resultat = this.createElement("form#formHoraire");
-		resultat.obj = this;
-		this.trForm = resultat;
-		resultat.appendChild(this.dom_form_titre());
 		return resultat;
 	}
 	dom_form_titre() {
@@ -362,28 +233,28 @@ class Horaire extends DOM {
 	 * @returns {Horaire} this
 	 */
 	ajouterPlage(plage) {
-		if (plage instanceof Plage) {
-			this.plages.push(plage);
+		if (plage instanceof Array && plage[0] instanceof Array) {
+			plage.forEach(p=>this.ajouterPlage(p));
+		} else if (plage instanceof Plage) {
+			this._plages.push(plage);
 			plage.horaire = this;
 			this.grille.appendChild(plage.dom);
-			return this;
 		} else if (typeof plage === "object") {
-			return this.ajouterPlage(Plage.fromJson(plage, this));
+			this.ajouterPlage(Plage.fromJson(plage, this));
 		} else {
-			return this.ajouterPlage(JSON.parse(plage));
+			this.ajouterPlage(JSON.parse(plage));
 		}
+		return this;
 	}
 	afficherPlage(plage) {
 		plage.afficher();
 		return this;
 	}
 	gererPlages() {
-		for (var i = 0, n = this.plages.length; i < n; i += 1) {
-			this.afficherPlage(this.plages[i]);
-		}
+		this._plages.forEach(p=>this.afficherPlage(p));
 	}
 	trouverPlage(plage) {
-		return this.plages.indexOf(plage);
+		return this._plages.indexOf(plage);
 	}
 	trouverPlageA(jour, debut, duree) {
 		duree = duree || 1;
@@ -391,7 +262,7 @@ class Horaire extends DOM {
 			return false;
 		}
 		for (let i = debut; i < debut + duree; i += 1) {
-			var plage = this.plages.find((p) => (p.jour === jour && i >= p.debut && i < p.debut + p.duree));
+			var plage = this._plages.find((p) => (p.jour === jour && i >= p.debut && i < p.debut + p.duree));
 			if (plage) {
 				return plage;
 			}
@@ -453,13 +324,8 @@ class Horaire extends DOM {
 	supprimerPlage(plage) {
 		var i;
 		i = this.trouverPlage(plage);
-		this.plages.splice(i, 1);
+		this._plages.splice(i, 1);
 		return this;
-	}
-	static fromJson(j) {
-		var resultat = new Horaire();
-		resultat.fill(j);
-		return resultat;
 	}
 	fill(j) {
 		if (typeof j == "string") {
@@ -472,7 +338,7 @@ class Horaire extends DOM {
 			this.dureePeriode = j.shift();
 			this.pause = j.shift();
 			this.hauteur = j.shift();
-			this.plages = j.shift();
+			this.ajouterPlage(j.shift());
 			return this;
 		} else {
 			if (j.titre !== undefined) {
@@ -494,27 +360,43 @@ class Horaire extends DOM {
 				this.hauteur = j.hauteur;
 			}
 			if (j.plages !== undefined) {
-				this.plages = j.plages;
+				this.ajouterPlage(j.plages);
 			}
 			return this;
 		}
 	}
 	toJson(stringify) {
-		var resultat = {
-			titre: this.titre,
-			jours: this.jours,
-			heureDebut: this.heureDebut,
-			dureePeriode: this.dureePeriode,
-			pause: this.pause,
-			hauteur: this.hauteur,
-			plages: []
-		};
-		for (var i = 0, n = this.plages.length; i < n; i += 1) {
-			resultat.plages.push(this.plages[i].toJson(false));
-		}
+		var resultat = {};
+		resultat.titre = this.titre;
+		resultat.jours = this.jours;
+		resultat.heureDebut = this.heureDebut;
+		resultat.dureePeriode = this.dureePeriode;
+		resultat.pause = this.pause;
+		resultat.hauteur = this.hauteur;
+		resultat.plages = this._plages.map(p=>p.toJson(false));
 		if (stringify !== false) {
 			return JSON.stringify(resultat);
 		}
+		return resultat;
+	}
+	toArray(stringify) {
+		var resultat = [
+			this.titre,
+			this.jours,
+			this.heureDebut,
+			this.dureePeriode,
+			this.pause,
+			this.hauteur,
+			this._plages.map(p=>p.toArray(false))
+		];
+		if (stringify !== false) {
+			return JSON.stringify(resultat);
+		}
+		return resultat;
+	}
+	static fromJson(json) {
+		var resultat = new Horaire();
+		resultat.fill(json);
 		return resultat;
 	}
 	static fromArray(j) {
@@ -526,22 +408,17 @@ class Horaire extends DOM {
 		resultat.fill(j);
 		return resultat;
 	}
-	toArray(stringify) {
-		var resultat = [
-			this.titre,
-			this.jours,
-			this.heureDebut,
-			this.dureePeriode,
-			this.pause,
-			this.hauteur,
-		];
-		var plages = [];
-		for (var i = 0, n = this.plages.length; i < n; i += 1) {
-			plages.push(this.plages[i].toArray(false));
+	static getSearch() {
+		var resultat, s, i, n, donnee;
+		resultat = {};
+		s = location.search;
+		if (!s) {
+			return resultat;
 		}
-		resultat.push(plages);
-		if (stringify !== false) {
-			return JSON.stringify(resultat);
+		s = s.substr(1).split("&");
+		for (i = 0, n = s.length; i < n; i += 1) {
+			donnee = s[i].split("=");
+			resultat[donnee.shift()] = donnee.join("=");
 		}
 		return resultat;
 	}
@@ -569,95 +446,39 @@ class Horaire extends DOM {
 				input: function () {
 					this.form.obj.titre = this.value;
 				}
-			},
-			btn_array: {
-				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.toArray(true);
-					ta = document.getElementById("code");
-					ta.innerHTML = resultat;
-					ta.select();
-				}
-			},
-			btn_arraycompresse: {
-				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.toArray(true);
-					ta = document.getElementById("code");
-					ta.innerHTML = App.encoder(resultat);
-					ta.select();
-				}
-			},
-			btn_json: {
-				click: function (e) {
-					var resultat, ta;
-					if (e.shiftKey) {
-						ta = document.getElementById("code");
-						resultat = JSON.parse(ta.value);
-						resultat = Horaire.fromJson(resultat);
-						resultat = resultat.toUrl();
-						resultat = resultat.replace("index.html", "edition.html");
-						window.location = resultat;
-					} else {
-						resultat = this.form.obj.toJson(true);
-						ta = document.getElementById("code");
-						ta.innerHTML = resultat;
-						ta.select();
-					}
-				}
-			},
-			btn_jsoncompresse: {
-				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.toJson(true);
-					ta = document.getElementById("code");
-					ta.innerHTML = App.encoder(resultat);
-					ta.select();
-				}
-			},
-			btn_adresse: {
-				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.toUrl();
-					ta = document.getElementById("code");
-					ta.innerHTML = resultat;
-					ta.select();
-				}
-			},
-			btn_lien: {
-				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.dom_code_lien();
-					ta = document.getElementById("code");
-					ta.innerHTML = resultat;
-					ta.select();
-				}
-			},
-			btn_iframe: {
-				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.dom_code_iframe();
-					ta = document.getElementById("code");
-					ta.innerHTML = resultat;
-					ta.select();
-				}
-			},
-			btn_visionner: {
-				click: function () {
-					var resultat;
-					resultat = this.form.obj.toUrl();
-					window.open(resultat);
-				}
 			}
 		};
 		return this;
 	}
-
 	static appliquerTheme(theme) {
 		Plage.appliquerTheme(theme.typesPlages);
 	}
+	/**
+	 * Retourne un tableau de nom des jours dans la langue donnée
+	 * @param   {string}   lang     La langue à utiliser
+	 * @param   {integer}  debut=0  Le premier jour de la liste
+	 * @param   {integer}  nombre=7 Le nombre de jours dans la liste
+	 * @returns {string[]} Un tableau de string
+	 */
+	static trouverNomsJours(lang, debut=0, nombre=7) {
+		var resultat, dimanche, step;
+		step = 1000 * 60 * 60 * 24;
+		lang = lang || window.navigator.language;
+		resultat = [];
+		dimanche = new Date();
+		dimanche = dimanche.getTime() - dimanche.getDay() * step;
+		for (let i = dimanche + debut * step, fin = i + nombre * step; i < fin; i += step) {
+			let dd = new Date(i);
+			resultat.push(dd.toLocaleString(lang, {
+				weekday: "long"
+			}));
+		}
+		return resultat;
+	}
+	/**
+	 * Règle les propriétés de la classe et les événements
+	 */
 	static init() {
-		this.lang = window.navigator.language;
 		this.initStylesheet();
 		App.loadJson("json/theme_standard.json", this.appliquerTheme, this);
 		this.setEvents();
