@@ -200,11 +200,10 @@ class DOM {
 	 * @returns this
 	 */
 	static initStylesheet() {
-		this.stylesheet = document.head.appendChild(document.createElement("style"));
-		this.stylesheet.setAttribute("data-objet", this.name);
-		this.stylesheet.appendChild(document.createTextNode(''));
-		this.prototype.stylesheet = this.stylesheet.sheet;
-		return this;
+		var stylesheet = document.head.appendChild(document.createElement("style"));
+		stylesheet.setAttribute("data-objet", this.name);
+		stylesheet.appendChild(document.createTextNode(''));
+		return stylesheet.sheet;
 	}
 	/**
 	 * Règle les propriété de classe et les événements
@@ -257,15 +256,7 @@ class App {
 	}
 	static dom_options() {
 		var resultat;
-		resultat = DOM.createElement("div#options", this.dom_form());
-		return resultat;
-	}
-	static dom_form() {
-		var resultat;
-		resultat = DOM.createElement("form#formHoraire");
-		resultat.obj = this;
-		this.trForm = resultat;
-		resultat.appendChild(this.horaire.dom_form_titre());
+		resultat = DOM.createElement("div#options", this.horaire.dom_form());
 		return resultat;
 	}
 	static dom_status() {
@@ -275,7 +266,7 @@ class App {
 		form.obj = this;
 		form.appendChild(this.dom_status_options());
 		form.appendChild(this.dom_code());
-		//		form.appendChild(this.dom_codeIframe());
+		//		form.appendChild(this.htmlIframe());
 		return resultat;
 	}
 	static dom_status_options() {
@@ -490,7 +481,7 @@ class App {
 			btn_array: {
 				click: function () {
 					var resultat, ta;
-					resultat = this.form.obj.toArray(true);
+					resultat = this.form.obj.horaire.toArray(true);
 					ta = document.getElementById("code");
 					ta.innerHTML = resultat;
 					ta.select();
@@ -501,11 +492,11 @@ class App {
 					var resultat, ta;
 					ta = document.getElementById("code");
 					ta.innerHTML = "";
-					resultat = this.form.obj.toArray(true);
+					resultat = this.form.obj.horaire.toArray(true);
 					ta.innerHTML += "(" + resultat.length + ") " + resultat + "\n----\n";
 					resultat = App.encoder(resultat);
 					ta.innerHTML += "(" + resultat.length + ") " + resultat + "\n----\n";
-					resultat = this.form.obj.toJson(true);
+					resultat = this.form.obj.horaire.toJson(true);
 					ta.innerHTML += "(" + resultat.length + ") " + resultat + "\n----\n";
 					resultat = App.encoder(resultat);
 					ta.innerHTML += "(" + resultat.length + ") " + resultat + "\n----\n";
@@ -523,7 +514,7 @@ class App {
 						resultat = resultat.replace("index.html", "edition.html");
 						window.location = resultat;
 					} else {
-						resultat = this.form.obj.toJson(true);
+						resultat = this.form.obj.horaire.toJson(true);
 						ta = document.getElementById("code");
 						ta.innerHTML = resultat;
 						ta.select();
@@ -533,7 +524,7 @@ class App {
 			btn_jsoncompresse: {
 				click: function () {
 					var resultat, ta;
-					resultat = this.form.obj.toJson(true);
+					resultat = this.form.obj.horaire.toJson(true);
 					ta = document.getElementById("code");
 					ta.innerHTML = App.encoder(resultat);
 					ta.innerHTML = "App.encoder(resultat)";
@@ -543,7 +534,7 @@ class App {
 			btn_adresse: {
 				click: function () {
 					var resultat, ta;
-					resultat = this.form.obj.toUrl();
+					resultat = this.form.obj.horaire.toUrl();
 					ta = document.getElementById("code");
 					ta.innerHTML = resultat;
 					ta.select();
@@ -552,7 +543,7 @@ class App {
 			btn_lien: {
 				click: function () {
 					var resultat, ta;
-					resultat = this.form.obj.dom_code_lien();
+					resultat = this.form.obj.horaire.html_lien();
 					ta = document.getElementById("code");
 					ta.innerHTML = resultat;
 					ta.select();
@@ -561,7 +552,7 @@ class App {
 			btn_iframe: {
 				click: function () {
 					var resultat, ta;
-					resultat = this.form.obj.dom_code_iframe();
+					resultat = this.form.obj.horaire.html_iframe();
 					ta = document.getElementById("code");
 					ta.innerHTML = resultat;
 					ta.select();
@@ -570,7 +561,7 @@ class App {
 			btn_visionner: {
 				click: function () {
 					var resultat;
-					resultat = this.form.obj.toUrl();
+					resultat = this.form.obj.horaire.toUrl();
 					window.open(resultat);
 				}
 			}

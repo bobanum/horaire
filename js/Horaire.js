@@ -6,6 +6,7 @@
  * @todo Ne pas exporter si valeurs par défaut??? pas sur
  * @todo Form pour données globales (titre, nbjours...)
  * @todo Éliminer les variables globales (json, horaire, etc.)
+ *       @todo Bouton annuler ou ok
  * @property titre {string}	Le titre de la grille (private)
  * @property jours {string[]}	Les jours (colonnes)
  * @property heureDebut {integer}	L'heure du début de l'horaire
@@ -104,8 +105,8 @@ class Horaire extends DOM {
 	 */
 	dom_grille_ajouterJours(grille) {
 		var i, n, plage;
-		grille.appendChild(this.dom_case("vide", 1, 1));
-		grille.appendChild(this.dom_case("vide", 1, this.jours.length + 2));
+		grille.appendChild(this.dom_case("jour", 1, 1));
+		grille.appendChild(this.dom_case("jour", 1, this.jours.length + 2));
 		for (i = 0, n = this.jours.length; i < n; i += 1) {
 			plage = grille.appendChild(this.dom_case("jour", 1, i + 2));
 			plage.innerHTML = this.jours[i];
@@ -173,32 +174,35 @@ class Horaire extends DOM {
 		resultat.style.gridArea = "" + r + " / " + c + " / " + h + " / " + l + "";
 		return resultat;
 	}
-	/*codeIframe() {
-		var resultat = this.createElement("input#code-iframe", null, {"readonly": true, "value": this.dom_iframe().outerHTML}, this.evt.codeIframe);
-		resultat.horaire = this;
-		return resultat;
-	}*/
-	dom_code_lien() {
+	/**
+	 * Retourne le code HTML d'un lien vers la page de l'horaire
+	 * @returns {string} Le HTML d'un a
+	 */
+	html_lien() {
 		var resultat;
 		resultat = '<a href="' + this.toUrl() + '">' + this.titre + '</a>';
 		return resultat;
 	}
-	dom_code_iframe() {
+	/**
+	 * Retourne le code HTML d'un iframe contenant la page de l'horaire
+	 * @returns {string} Le HTML d'un iframe
+	 */
+	html_iframe(largeur = 768, hauteur = 469) {
 		var resultat;
-		resultat = '<iframe style="width:768px;height:469px;border:none;" src="' + this.toUrl() + '"></iframe>';
+		resultat = '<iframe style="width:"' + largeur + '"px;height:"' + hauteur + '"px;border:none;" src="' + this.toUrl() + '"></iframe>';
 		return resultat;
 	}
-	dom_iframe() {
-		var resultat, adresse;
-		adresse = this.iframe_src();
-		resultat = this.createElement("iframe", null, {
-			"src": adresse
-		});
-		this.applyStyle(resultat, {
-			"border": "none",
-			"width": 768,
-			"height": 469
-		});
+	/**
+	 * Retourne l'élément HTML du formulaire gérant l'ensemble de l'horaire
+	 * @todo Ajouter la gestion des themes et grilles
+	 * @returns {HTMLElement} L'élément form#formHoraire
+	 */
+	dom_form() {
+		var resultat;
+		resultat = DOM.createElement("form#formHoraire");
+		resultat.obj = this;
+		this.trForm = resultat;
+		resultat.appendChild(this.dom_form_titre());
 		return resultat;
 	}
 	dom_form_titre() {
@@ -233,8 +237,10 @@ class Horaire extends DOM {
 	 * @returns {Horaire} this
 	 */
 	ajouterPlage(plage) {
-		if (plage instanceof Array && plage[0] instanceof Array) {
-			plage.forEach(p=>this.ajouterPlage(p));
+		if (!plage || plage.length === 0) {
+			return this;
+		} else if (plage instanceof Array && plage[0] instanceof Array) {
+			plage.forEach(p => this.ajouterPlage(p));
 		} else if (plage instanceof Plage) {
 			this._plages.push(plage);
 			plage.horaire = this;
@@ -251,7 +257,7 @@ class Horaire extends DOM {
 		return this;
 	}
 	gererPlages() {
-		this._plages.forEach(p=>this.afficherPlage(p));
+		this._plages.forEach(p => this.afficherPlage(p));
 	}
 	trouverPlage(plage) {
 		return this._plages.indexOf(plage);
@@ -373,7 +379,7 @@ class Horaire extends DOM {
 		resultat.dureePeriode = this.dureePeriode;
 		resultat.pause = this.pause;
 		resultat.hauteur = this.hauteur;
-		resultat.plages = this._plages.map(p=>p.toJson(false));
+		resultat.plages = this._plages.map(p => p.toJson(false));
 		if (stringify !== false) {
 			return JSON.stringify(resultat);
 		}
@@ -387,7 +393,7 @@ class Horaire extends DOM {
 			this.dureePeriode,
 			this.pause,
 			this.hauteur,
-			this._plages.map(p=>p.toArray(false))
+			this._plages.map(p => p.toArray(false))
 		];
 		if (stringify !== false) {
 			return JSON.stringify(resultat);
@@ -451,6 +457,17 @@ class Horaire extends DOM {
 		return this;
 	}
 	static appliquerTheme(theme) {
+		if (theme.css) {
+			for (let selecteur in theme.css) {
+				this.stylesheet.insertRule("div#horaire " + selecteur + " {" + theme.css[selecteur] + "}");
+			}
+		}
+		if (theme.typesPlages) {
+			for (let k in theme.typesPlages) {
+				this.stylesheet.insertRule("div.plage." + theme.typesPlages.htmlClass + " {" + theme.typesPlages[k].css + "}");
+			}
+		}
+		this.stylesheet.backgroundColor = "red";
 		Plage.appliquerTheme(theme.typesPlages);
 	}
 	/**
@@ -460,7 +477,7 @@ class Horaire extends DOM {
 	 * @param   {integer}  nombre=7 Le nombre de jours dans la liste
 	 * @returns {string[]} Un tableau de string
 	 */
-	static trouverNomsJours(lang, debut=0, nombre=7) {
+	static trouverNomsJours(lang, debut = 0, nombre = 7) {
 		var resultat, dimanche, step;
 		step = 1000 * 60 * 60 * 24;
 		lang = lang || window.navigator.language;
@@ -479,7 +496,7 @@ class Horaire extends DOM {
 	 * Règle les propriétés de la classe et les événements
 	 */
 	static init() {
-		this.initStylesheet();
+		this.stylesheet = this.initStylesheet();
 		App.loadJson("json/theme_standard.json", this.appliquerTheme, this);
 		this.setEvents();
 		if (location.search) {

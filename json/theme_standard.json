@@ -1,51 +1,36 @@
 {
+	"nom": "Standard",
 	"css": {
-		"couleurBordures": "black",
-		"couleurJours": "#666",
-		"couleurHeures": "#CCC",
-		"epaisseurExterieur": "3px",
-		"epaisseurInterieur": "1px"
+		"div.caption": "background-color:black;color:white;font-size:.5em;",
+		"div.grille": "background-color:black;padding: 3px; grid-gap:1px;",
+		"div.jour": "background-color:black;color:white;",
+		"div.heure": "background-color:#CCC;"
 	},
 	"typesPlages" : {
 		"defaut": {
 			"htmlClass": "plage",
 			"label": "Plage",
-			"css": {
-				"background-color": "white",
-				"color": "black"
-			}
+			"css": "background-color:white;color:black"
 		},
 		"C": {
 			"htmlClass": "cours",
 			"label": "En cours",
-			"css": {
-				"background-color": "gold",
-				"color": "#A52929"
-			}
+			"css": "background-color:gold;color:#A52929"
 		},
 		"D": {
 			"htmlClass": "dispo",
 			"label": "Disponible",
-			"css": {
-				"background-color": "lightgreen",
-				"color": "darkgreen"
-			}
+			"css": "background-color:lightgreen;color:darkgreen"
 		},
 		"R": {
 			"htmlClass": "rv",
 			"label": "Sur rendez-vous",
-			"css": {
-				"background-color": "lightblue",
-				"color": "darkblue"
-			}
+			"css": "background-color:lightblue;color:darkblue"
 		},
 		"N": {
 			"htmlClass": "nd",
 			"label": "Non disponible",
-			"css": {
-				"background-color": "#ddd",
-				"color": "#999"
-			}
+			"css": "background-color:#ddd;color:#999"
 		}
 	}
 }

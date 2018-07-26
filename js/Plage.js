@@ -360,11 +360,11 @@ class Plage extends DOM {
 		}
 		data.id = id;
 		this.copierProps(data, this.types[id]);
-		this.stylesheet.insertRule('div.plage[data-type="' + id + '"] {}');
-		data.regle = this.stylesheet.cssRules[0];
-		for (let k in data.css) {
-			data.regle.style[k] = data.css[k];
-		}
+//		this.stylesheet.insertRule('div.plage[data-type="' + id + '"] {}');
+//		data.regle = this.stylesheet.cssRules[0];
+//		for (let k in data.css) {
+//			data.regle.style[k] = data.css[k];
+//		}
 		return data;
 	}
 	getType(id) {
@@ -498,7 +498,7 @@ class Plage extends DOM {
 	static init() {
 		this.prototype.defaut = {};	// Les propriétés par défaut d'une plage.
 		this.prototype.types = {};	// {Object}. Les types de plage
-		this.initStylesheet();
+		this.stylesheet = this.initStylesheet();
 		this.setEvents();
 	}
 }
