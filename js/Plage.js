@@ -143,6 +143,10 @@ class Plage extends DOM {
 		bt = bts.appendChild(this.html_btPlusMoins('jour.moins', -90, this.evt.jourMoins.click));
 		bts = resultat.appendChild(this.createElement('span.jour.plus'));
 		bt = bts.appendChild(this.html_btPlusMoins('jour.plus', 90, this.evt.jourPlus.click));
+		bts = resultat.appendChild(this.createElement('span.supprimer'));
+		bt = bts.appendChild(this.html_btTrash(this.evt.supprimer.click));
+		bts = resultat.appendChild(this.createElement('span.dupliquer'));
+		bt = bts.appendChild(this.html_btDup(this.evt.dupliquer.click));
 		return resultat;
 	}
 	html_btPlusMoins(classe, angle, evt) {
@@ -157,6 +161,30 @@ class Plage extends DOM {
 		svg += '<path transform="rotate('+angle+')" d="'+d+'"/>';
 		svg += '</svg>';
 		resultat = this.createElement('span.bouton.'+classe+'', svg);
+		resultat.addEventListener("click", evt);
+		resultat.obj = this;
+		return resultat;
+	}
+	html_btTrash(evt) {
+		var resultat, d, svg;
+		d = "M 5,0 V 1 H 0 V 3 H 1 V 2 h 10 v 1 h 1 V 1 H 7 V 0 Z M 2,3 v 9 h 8 V 3 H 8 v 8 H 7 V 3 H 5 v 8 H 4 V 3 Z";
+		svg = '';
+		svg += '<svg viewBox="0 0 12 12" width="12" height="12">';
+		svg += '<path d="'+d+'"/>';
+		svg += '</svg>';
+		resultat = this.createElement('span.bouton.trash', svg);
+		resultat.addEventListener("click", evt);
+		resultat.obj = this;
+		return resultat;
+	}
+	html_btDup(evt) {
+		var resultat, d, svg;
+		d = "M 0,0 V 10 H 3 V 9 H 1 V 1 H 6 L 5,0 Z m 4,2 v 10 h 8 V 5 L 9,2 Z m 1,1 h 3 v 3 h 3 v 5 H 5 Z M 9,3.4140625 10.585938,5 H 9 Z";
+		svg = '';
+		svg += '<svg viewBox="0 0 12 12" width="12" height="12">';
+		svg += '<path d="'+d+'"/>';
+		svg += '</svg>';
+		resultat = this.createElement('span.bouton.trash', svg);
 		resultat.addEventListener("click", evt);
 		resultat.obj = this;
 		return resultat;
@@ -256,6 +284,18 @@ class Plage extends DOM {
 		this.horaire.supprimerPlage(this);
 		this._dom.parentNode.removeChild(this._dom);
 		return this;
+	}
+	dupliquer() {
+		var p, t, j;
+		this.deposer();
+		t = this.horaire.trouverTrou(this.jour, this.debut + this.duree, this.duree);
+		j = this.toJson();
+		p = Plage.fromJson(j, this.horaire);
+		p.jour = t.jour;
+		p.debut = t.heure;
+		this.horaire.ajouterPlage(p);
+		p.editer();
+		return;
 	}
 	deposerTout() {
 		var plage;
@@ -360,11 +400,6 @@ class Plage extends DOM {
 		}
 		data.id = id;
 		this.copierProps(data, this.types[id]);
-//		this.stylesheet.insertRule('div.plage[data-type="' + id + '"] {}');
-//		data.regle = this.stylesheet.cssRules[0];
-//		for (let k in data.css) {
-//			data.regle.style[k] = data.css[k];
-//		}
 		return data;
 	}
 	getType(id) {
@@ -422,22 +457,19 @@ class Plage extends DOM {
 				}
 			},
 			supprimer: {
-				click:function() {
-					this.form.obj.supprimer();
+				click:function(e) {
+					e.stopPropagation();
+					if (confirm("Voulez-vous vraiment supprimer cette plage horaire ?")) {
+						var obj = this.obj || this.form.obj;
+						obj.supprimer();
+					}
 				}
 			},
 			dupliquer: {
-				click:function() {
-					var p, t, j;
-					this.form.obj.deposer();
-					t = this.form.obj.horaire.trouverTrou(this.form.obj.jour, this.form.obj.debut + this.form.obj.duree, this.form.obj.duree);
-					j = this.form.obj.toJson();
-					p = Plage.fromJson(j, this.form.obj.horaire);
-					p.jour = t.jour;
-					p.debut = t.heure;
-					this.form.obj.horaire.ajouterPlage(p);
-					p.editer();
-					return;
+				click:function(e) {
+					e.stopPropagation();
+					var obj = this.obj || this.form.obj;
+					obj.dupliquer();
 				}
 			},
 			debutMoins: {

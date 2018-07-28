@@ -2,6 +2,7 @@
 	margin: .25in;
 	size: 8.5in 11in;
 }
+
 @media all {
 	html {
 		height: 100%;
@@ -28,9 +29,10 @@
 		grid-gap: 0.5em 0.5em;
 		height: 100%;
 		width: 100%;
-		& > header, & > footer {
+		& > header,
+		& > footer {
 			background-color: #234;
-			color:#dbdb24;
+			color: #dbdb24;
 			padding: 0 1em 0;
 			img {
 				margin-right: .5ch;
@@ -38,36 +40,22 @@
 		}
 	}
 }
+
 @media all and (min-width: 13in) {
 	*.interface {
 		display: grid;
 		grid-template-areas: "h h h" "o g c" "f f f";
 		grid-template-rows: auto 1fr auto;
 		grid-template-columns: 20em 1fr 20em;
-		& > header, & > footer {
+		& > header,
+		& > footer {
 			background-color: #234;
-			color:white;
+			color: white;
 			padding: 0 1em 0;
 		}
 	}
 }
-//@media all and (min-width: 13in) {
-//	*.interface {
-//		background-color: yellow;
-//		display: grid;
-//		grid-template-areas: "h h h" "o g c" "f f f";
-//		grid-template-rows: auto 1fr auto;
-//		grid-template-columns: 20em 1fr 20em;
-//		grid-gap: 0.5em 0.5em;
-//		height: 100%;
-//		width: 1100px;
-//		& > header, & > footer {
-//			background-color: #234;
-//			color:white;
-//			padding: 0 1em 0;
-//		}
-//	}
-//}
+
 div#options {
 	box-sizing: border-box;
 	height: 100%;
@@ -79,6 +67,7 @@ div#options {
 		width: 5em;
 	}
 }
+
 div.champ {
 	display: flex;
 	align-items: center;
@@ -100,12 +89,14 @@ div.champ {
 		resize: vertical;
 	}
 }
+
 div#contenu {
 	flex: 1 0 8in;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 }
+
 div#status {
 	background: #ccc;
 	width: 100%;
@@ -124,6 +115,7 @@ div#status {
 		resize: vertical;
 	}
 }
+
 div#horaire {
 	width: 100%;
 	height: 100%;
@@ -136,7 +128,7 @@ div#horaire {
 		flex: 0 0 auto;
 		display: flex;
 		justify-content: space-between;
-		&>span:only-child {
+		& > span:only-child {
 			text-align: center;
 			flex: 1 0 0;
 		}
@@ -145,6 +137,7 @@ div#horaire {
 		flex: 1 0 0;
 	}
 }
+
 div.grille {
 	@gap: 1px;
 	display: grid;
@@ -176,79 +169,144 @@ div.grille {
 		background-color: white;
 	}
 }
+
 div.boutonsPlage {
+	@epaisseur: 1em;
+	@fond: rgba(0, 0, 0, .4);
+	@couleur: white;
+	@couleur: hsl(60, 60%, 60%);
+	@hover-fond: yellow;
+	@hover-couleur: black;
 	position: absolute;
 	top: 0;
 	left: 0;
 	right: 0;
 	bottom: 0;
-	& svg {
-		display: block;
-		fill: hsl(60, 100%, 40%);
-	}
 	& > * {
 		position: absolute;
 		display: flex;
 		& > * {
 			flex: 1 0 0;
 			display: flex;
-			background-color: rgba(255, 255, 0, 0.2);
+			background-color: @fond;
 			justify-content: center;
 			align-items: center;
+			& svg {
+				display: block;
+				fill: @couleur;
+			}
 			&:hover {
-				background-color: yellow;
+				background-color: @hover-fond;
 				svg {
-					fill: black;
+					fill: @hover-couleur;
 				}
-			}
-		}
-		&.heure {
-			width: 100%;
-			height: 1em;
-			flex: 1 0 0;
-			&.debut {
-				top: -1em;
-				& > * {
-					border-radius: 50% e("/") 100% 100% 0 0;
-				}
-			}
-			&.duree {
-				bottom: -1em;
-				& > * {
-					border-radius: 50% e("/") 0 0 100% 100%;
-				}
-			}
-			& svg {
-				width: 1em;
-			}
-		}
-		&.jour {
-			height: 100%;
-			width: 1em;
-			&.moins {
-				left:-1em;
-				& > * {
-					border-radius: 100% 0 0 100% e("/") 50%;
-				}
-			}
-			&.plus {
-				right:-1em;
-				& > * {
-					border-radius: 0 100% 100% 0 e("/") 50%;
-				}
-			}
-			& svg {
-				height: 1em;
 			}
 		}
 	}
+	& > :nth-child(1),
+	& > :nth-child(2) {
+		width: 100%;
+		height: @epaisseur;
+		& svg {
+			width: @epaisseur;
+		}
+	}
+	& > :nth-child(3),
+	& > :nth-child(4) {
+		height: 100%;
+		width: @epaisseur;
+		& svg {
+			height: @epaisseur;
+		}
+	}
+	& > :nth-child(1) {
+		top: -@epaisseur;
+		& > :first-child {
+			border-top-left-radius: 100%;
+			padding-left: 15%;
+		}
+		& > :last-child {
+			border-top-right-radius: 100%;
+			padding-right: 15%;
+		}
+		& > :only-child {
+			border-top-left-radius: 50% 100%;
+			border-top-right-radius: 50% 100%;
+			padding: 0;
+		}
+	}
+	& > :nth-child(2) {
+		bottom: -@epaisseur;
+		& > :first-child {
+			border-bottom-left-radius: 100%;
+			padding-left: 15%;
+		}
+		& > :last-child {
+			border-bottom-right-radius: 100%;
+			padding-right: 15%;
+		}
+		& > :only-child {
+			border-bottom-left-radius: 50% 100%;
+			border-bottom-right-radius: 50% 100%;
+			padding: 0;
+		}
+	}
+	& > :nth-child(3) {
+		flex-direction: column;
+		left: -@epaisseur;
+		& > :first-child {
+			border-top-left-radius: 100%;
+			padding-top: 15%;
+		}
+		& > :last-child {
+			border-bottom-left-radius: 100%;
+			padding-bottom: 15%;
+		}
+		& > :only-child {
+			border-top-left-radius: 100% 50%;
+			border-bottom-left-radius: 100% 50%;
+			padding: 0;
+		}
+	}
+	& > :nth-child(4) {
+		flex-direction: column;
+		right: -@epaisseur;
+		& > :first-child {
+			border-top-right-radius: 100%;
+			padding-top: 15%;
+		}
+		& > :last-child {
+			border-bottom-right-radius: 100%;
+			padding-bottom: 15%;
+		}
+		& > :only-child {
+			border-top-right-radius: 100% 50%;
+			border-bottom-right-radius: 100% 50%;
+			padding: 0;
+		}
+	}
+	& > :nth-child(5),
+	& > :nth-child(6) {
+		bottom: -@epaisseur;
+		& > * {
+			border-radius: 100%;
+			padding: 3px;
+		}
+	}
+	& > :nth-child(5) {
+		left: -@epaisseur;
+	}
+	& > :nth-child(6) {
+		right: -@epaisseur;
+	}
 }
-div.jour,
-div.vide {
+
+div.jour {
 	background-color: #666;
 	color: white;
 	font-weight: bold;
 }
+
 @media (max-width: 13in) {
 	.interface {
 		& > *:nth-child(2) {
@@ -269,12 +327,14 @@ div.vide {
 		}
 	}
 }
+
 @media screen {
 	div#horaire > .modif .plage:not(.courant):hover {
 		position: relative;
 		box-shadow: 0 0 1em rgba(0, 0, 0, .5);
 	}
 }
+
 div.plage {
 	padding: 0 1ch;
 	text-align: center;
@@ -285,7 +345,7 @@ div.plage {
 	& > div.local {
 		font-style: italic;
 	}
-	& >:empty {
+	& > :empty {
 		display: none;
 	}
 	&:before {
@@ -295,6 +355,7 @@ div.plage {
 		content: "";
 	}
 }
+
 @media screen {
 	.courant {
 		box-shadow: .2em .2em 1em rgba(0, 0, 0, .5);
@@ -303,16 +364,19 @@ div.plage {
 		top: -.1em;
 	}
 }
+
 #formPlage {
 	padding-top: .5em;
 	margin-top: .5em;
 	border-top: 1px solid black;
 }
+
 textarea#code,
 input#code-iframe {
 	width: 100%;
 	margin-top: 1em;
 }
+
 @media print {
 	#status,
 	#options {

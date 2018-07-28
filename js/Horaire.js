@@ -464,7 +464,7 @@ class Horaire extends DOM {
 		}
 		if (theme.typesPlages) {
 			for (let k in theme.typesPlages) {
-				this.stylesheet.insertRule("div.plage." + theme.typesPlages.htmlClass + " {" + theme.typesPlages[k].css + "}");
+				this.stylesheet.insertRule("div.plage[data-type=" + k + "] {" + theme.typesPlages[k].css + "}");
 			}
 		}
 		this.stylesheet.backgroundColor = "red";
