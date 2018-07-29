@@ -43,7 +43,7 @@ class Plage extends DOM {
 		} else if (val > this.horaire.nbPeriodes - 1) {
 			val = this.horaire.nbPeriodes - 1;
 		}
-		if (val + this._duree > this.horaire.nbPeriodes - 2) {
+		if (val + this._duree > this.horaire.nbPeriodes) {
 			this.duree = this.horaire.nbPeriodes - val;
 		}
 		this._debut = val;
@@ -496,37 +496,97 @@ class Plage extends DOM {
 			debutMoins: {
 				click: function (e) {
 					e.stopPropagation();
-					this.obj.debut--;
+					var obj = this.obj;
+					var diff = obj.debut;
+					if (obj.debut === 0) {
+						return;
+					}
+					if (e.shiftKey && (e.ctrlKey || e.metaKey)) {
+						obj.debut -= diff;
+						obj.duree += diff;
+					} else if (e.shiftKey) {
+						obj.debut = 0;
+					} else if (e.ctrlKey || e.metaKey) {
+						obj.debut--;
+						obj.duree++;
+					} else {
+						obj.debut--;
+					}
 				}
 			},
 			debutPlus: {
 				click: function (e) {
 					e.stopPropagation();
-					this.obj.debut++;
+					var obj = this.obj;
+					var diff = obj.horaire.nbPeriodes - obj.debut - obj.duree;
+					if (e.shiftKey && (e.ctrlKey || e.metaKey)) {
+						obj.debut += obj.duree - 1;
+						obj.duree = 1;
+					} else if (e.shiftKey) {
+						obj.debut += diff;
+					} else if (e.ctrlKey || e.metaKey) {
+						obj.duree--;
+						obj.debut++;
+					} else {
+						obj.debut++;
+					}
 				}
 			},
 			dureeMoins: {
 				click: function (e) {
 					e.stopPropagation();
-					this.obj.duree--;
+					var obj = this.obj;
+					if (e.shiftKey && (e.ctrlKey || e.metaKey)) {
+						obj.duree = 1;
+					} else if (e.shiftKey) {
+						obj.debut = 0;
+					} else if (e.ctrlKey || e.metaKey) {
+						if (obj.debut === 0) {
+							obj.duree--;
+						} else {
+							obj.debut--;
+						}
+					} else {
+						obj.duree--;
+					}
 				}
 			},
 			dureePlus: {
 				click: function (e) {
 					e.stopPropagation();
-					this.obj.duree++;
+					var obj = this.obj;
+					var diff = obj.horaire.nbPeriodes - obj.debut - obj.duree;
+					if (e.shiftKey && (e.ctrlKey || e.metaKey)) {
+						obj.duree += diff;
+					} else if (e.shiftKey) {
+						obj.debut += diff;
+					} else if (e.ctrlKey || e.metaKey) {
+						obj.debut++;
+					} else {
+						obj.duree++;
+					}
 				}
 			},
 			jourMoins: {
 				click: function (e) {
 					e.stopPropagation();
-					this.obj.jour--;
+					var obj = this.obj;
+					if (e.shiftKey) {
+						obj.jour = 0;
+					} else {
+						obj.jour--;
+					}
 				}
 			},
 			jourPlus: {
 				click: function (e) {
 					e.stopPropagation();
-					this.obj.jour++;
+					var obj = this.obj;
+					if (e.shiftKey) {
+						obj.jour = obj.horaire.nbJours - 1;
+					} else {
+						obj.jour++;
+					}
 				}
 			},
 			trForm: {

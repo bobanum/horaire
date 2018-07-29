@@ -49,6 +49,9 @@ class Horaire extends DOM {
 		}
 		return this._grille;
 	}
+	get nbJours() {
+		return this.jours.length;
+	}
 	/**
 	 * Retourne l'élément HTML de l'horaire
 	 * @returns {HTMLElement} Un élément dom#horaire
