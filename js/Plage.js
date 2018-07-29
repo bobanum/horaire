@@ -200,7 +200,7 @@ class Plage extends DOM {
 		resultat.appendChild(this.form_duree());
 		resultat.appendChild(this.form_local());
 		resultat.appendChild(this.form_texte());
-		resultat.appendChild(this.form_supprimer());
+		resultat.appendChild(this.form_actions());
 		return resultat;
 	}
 	form_typePlage() {
@@ -255,12 +255,14 @@ class Plage extends DOM {
 		input.plage = this;
 		return this.form_wrap(input, 'Texte');
 	}
-	form_supprimer() {
-		var input = [];
-		input[0] = this.createElement('input#supprimer', null, {'value': 'Supprimer', 'type': 'button'}, this.evt.supprimer);
-		input[1] = this.createElement('input#dupliquer', null, {'value': 'Dupliquer', 'type': 'button'}, this.evt.dupliquer);
-		input[0].plage = this;
-		input[1].plage = this;
+	form_actions() {
+		var input = [
+			this.createElement('input#supprimer', null, {'value': 'Supprimer', 'type': 'button'}, this.evt.supprimer),
+			this.createElement('input#dupliquer', null, {'value': 'Dupliquer', 'type': 'button'}, this.evt.dupliquer),
+//			this.createElement('input#accepter', null, {'value': 'Accepter', 'type': 'button'}, this.evt.accepter),
+			this.createElement('input#annuler', null, {'value': 'Annuler', 'type': 'button'}, this.evt.annuler),
+		];
+		input.forEach(i=>i.plage=this);
 		return this.form_wrap(input);
 	}
 	setProperty(prop, val) {
@@ -270,10 +272,12 @@ class Plage extends DOM {
 	editer() {
 		this.deposerTout();
 		this.form = document.getElementById('options').appendChild(this.dom_form());
+		this.bkp = this.toJson();
 		this._dom.classList.add('courant');
 		this._dom.appendChild(this.html_btsPlage());
 	}
 	deposer() {
+		delete this.bkp;
 		this._dom.classList.remove("courant");
 		this.form.parentNode.removeChild(this.form);
 		this._dom.removeChild(this._dom.lastChild);
@@ -295,7 +299,10 @@ class Plage extends DOM {
 		p.debut = t.heure;
 		this.horaire.ajouterPlage(p);
 		p.editer();
-		return;
+	}
+	annuler() {
+		this.fill(this.bkp);
+		this.deposer();
 	}
 	deposerTout() {
 		var plage;
@@ -470,6 +477,20 @@ class Plage extends DOM {
 					e.stopPropagation();
 					var obj = this.obj || this.form.obj;
 					obj.dupliquer();
+				}
+			},
+			accepter: {
+				click:function(e) {
+					e.stopPropagation();
+					var obj = this.obj || this.form.obj;
+					obj.deposer();
+				}
+			},
+			annuler: {
+				click:function(e) {
+					e.stopPropagation();
+					var obj = this.obj || this.form.obj;
+					obj.annuler();
 				}
 			},
 			debutMoins: {
