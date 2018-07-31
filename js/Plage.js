@@ -1,11 +1,10 @@
 /*jslint esnext:true, browser:true, debug:true*/
-/*globals DOM, App*/
-// Ajouter annuler
-// toArray
-// compression base64
-// Ne pas exporter si valeurs par défaut??? pas sur
-// Form pour données globales (titre, nbjours...)
-class Plage extends DOM {
+//TODO Ajouter annuler
+//TODO Ne pas exporter si valeurs par défaut??? pas sur
+//TODO Form pour données globales (titre, nbjours...)
+import DOM from "./DOM.js";
+import App from "./App.js";
+export default class Plage extends DOM {
 	/**
 	 * Constructeur
 	 */
@@ -18,10 +17,7 @@ class Plage extends DOM {
 		this._texte = "";
 		this._local = "";
 	}
-	get htmlClass() {
-		return this.getType(this.typePlage).htmlClass;
-	}
-	get css() {
+	get zzzcss() {
 		return this.getType(this.typePlage).css;
 	}
 	get typePlage() {
@@ -416,7 +412,7 @@ class Plage extends DOM {
 			return this.defaut;
 		}
 	}
-	static appliquerTheme(types) {
+	static appliquerTypes(types) {
 		if (types instanceof Array) {
 			types.forEach(function (t) {
 				let k = t.id;

@@ -8,7 +8,7 @@
 // http://pieroxy.net/blog/pages/lz-string/testing.html
 //
 // LZ-based compression algorithm, version 1.4.4
-class LZString {
+export default class LZString {
 	constructor() {}
 	static init() {
 		// private property

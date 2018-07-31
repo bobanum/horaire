@@ -1,5 +1,7 @@
 /*jslint esnext:true, browser:true, debug:false*/
-/*globals DOM, Plage, App*/
+import DOM from "./DOM.js";
+import App from "./App.js";
+import Plage from "./Plage.js";
 /**
  * Classe Horaire représentant une grille horaire
  * @todo Ajouter annuler
@@ -16,7 +18,7 @@
  * @property hauteur {integer}	La hauteur en pouces de la zone horaire
  * @property _plages {Plage[]} Les plages actuellement dans l'horaire
  */
-class Horaire extends DOM {
+export default class Horaire extends DOM {
 	/**
 	 * Constructeur
 	 */
@@ -459,6 +461,18 @@ class Horaire extends DOM {
 		};
 		return this;
 	}
+	static appliquerGrille(grille) {
+		if (grille.typesPlages) {
+			Plage.appliquerTypes(grille.typesPlages);
+		}
+//		if (theme.css) {
+//			for (let selecteur in theme.css) {
+//				this.stylesheet.insertRule("div#horaire " + selecteur + " {" + theme.css[selecteur] + "}");
+//			}
+//		}
+//		this.stylesheet.backgroundColor = "red";
+//		Plage.appliquerTypes(theme.typesPlages);
+	}
 	static appliquerTheme(theme) {
 		if (theme.css) {
 			for (let selecteur in theme.css) {
@@ -471,7 +485,7 @@ class Horaire extends DOM {
 			}
 		}
 		this.stylesheet.backgroundColor = "red";
-		Plage.appliquerTheme(theme.typesPlages);
+		Plage.appliquerTypes(theme.typesPlages);
 	}
 	/**
 	 * Retourne un tableau de nom des jours dans la langue donnée
@@ -495,13 +509,18 @@ class Horaire extends DOM {
 		}
 		return resultat;
 	}
-	/**
-	 * Règle les propriétés de la classe et les événements
-	 */
-	static init() {
-		this.stylesheet = this.initStylesheet();
-		App.loadJson("json/theme_standard.json", this.appliquerTheme, this);
-		this.setEvents();
+	static load() {
+		console.log("loadhoraire");
+		App.loadJson(["json/grille_cstj.json", "json/theme_standard.json"]).then(v => {
+			this.appliquerGrille(v[0]);
+			this.appliquerTheme(v[1]);
+			if (App.json) {
+				App.horaire = this.fromArray(App.json);
+			} else {
+				App.horaire = new this();
+			}
+			App.afficher(App.horaire);
+		});
 		if (location.search) {
 			var d, script;
 			d = this.getSearch();
@@ -514,6 +533,22 @@ class Horaire extends DOM {
 				App.json = App.decoder(d.h);
 			}
 		}
+	}
+	/**
+	 * Règle les propriétés de la classe et les événements
+	 */
+	static init() {
+		this.prototype.jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
+		this.prototype.heureDebut = 8 * 60 + 0;
+		this.prototype.nbPeriodes = 11;
+		this.prototype.dureePeriode = 50;
+		this.prototype.pause = 5;
+		this.prototype.hauteur = 5; // La hauteur en pouces de la zone horaire
+		this.stylesheet = this.initStylesheet();
+		window.addEventListener("load", function () {
+			Horaire.load();
+		});
+		this.setEvents();
 	}
 }
 Horaire.init();

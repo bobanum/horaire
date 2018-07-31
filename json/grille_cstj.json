@@ -7,44 +7,19 @@
 	"theme": "standard",
 	"typesPlages" : {
 		"defaut": {
-			"htmlClass": "cours",
-			"label": "En cours",
-			"zzzcss": {
-				"background-color": "gold",
-				"color": "#A52929"
-			}
+			"label": "En cours"
 		},
 		"C": {
-			"htmlClass": "cours",
-			"label": "En cours",
-			"zzzcss": {
-				"background-color": "gold",
-				"color": "#A52929"
-			}
+			"label": "En cours"
 		},
 		"D": {
-			"htmlClass": "dispo",
-			"label": "Disponible",
-			"zzzcss": {
-				"background-color": "lightgreen",
-				"color": "darkgreen"
-			}
+			"label": "Disponible"
 		},
 		"R": {
-			"htmlClass": "rv",
-			"label": "Sur rendez-vous",
-			"zzzcss": {
-				"background-color": "lightblue",
-				"color": "darkblue"
-			}
+			"label": "Sur rendez-vous"
 		},
 		"N": {
-			"htmlClass": "nd",
-			"label": "Non disponible",
-			"zzzcss": {
-				"background-color": "#ddd",
-				"color": "#999"
-			}
+			"label": "Non disponible"
 		}
 	}
 }
