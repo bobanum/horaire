@@ -202,6 +202,7 @@ export default class Horaire extends DOM {
 		resultat.obj = this;
 		this.trForm = resultat;
 		resultat.appendChild(this.dom_form_titre());
+		resultat.appendChild(this.dom_form_themes());
 		return resultat;
 	}
 	dom_form_titre() {
@@ -212,6 +213,18 @@ export default class Horaire extends DOM {
 			"placeholder": "Titre"
 		}, this.evt.input_titre);
 		return this.form_wrap(input, "Titre");
+	}
+	dom_form_themes() {
+		var select, option;
+		select = this.createElement("select#theme", null, {
+		}, this.evt.select_theme);
+		option = this.createElementIn(select, "option", "Standard", {
+			value: "standard",
+		});
+		option = this.createElementIn(select, "option", "Autre", {
+			value: "autre",
+		});
+		return this.form_wrap(select, "Thème");
 	}
 	toUrl() {
 		var url = "";
@@ -451,6 +464,13 @@ export default class Horaire extends DOM {
 				input: function () {
 					this.form.obj.titre = this.value;
 				}
+			},
+			select_theme: {
+				input: function () {
+					return App.loadJson("json/theme_"+this.value+".json").then(t => {
+						Horaire.appliquerTheme(t);
+					});
+				}
 			}
 		};
 		return this;
@@ -539,6 +559,7 @@ export default class Horaire extends DOM {
 	 * Règle les propriétés de la classe et les événements
 	 */
 	static init() {
+		this.prototype.grille = null;
 		this.prototype.jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
 		this.prototype.heureDebut = 8 * 60 + 0;
 		this.prototype.nbPeriodes = 11;

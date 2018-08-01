@@ -1,18 +1,20 @@
 {
 	"nom": "Autre",
 	"css": {
-		"": "font-family:arial;",
-		"div.caption": "font-size:2em;",
-		"div.grille": "background-color:black;padding: 6px; grid-gap:3px;",
+		"": "font-family:papyrus;",
+		"*": "line-height: 1;",
+		"div.caption": "font-size:2em;border-radius: .3em;",
+		"div.grille": "border-radius: .5em;background-color:black;padding: .2em; grid-gap:.1em .2em;",
 		"div.jour": "background-color:black;color:white;",
-		"div.heure": "background-color:#CCC;"
+		"div.heure": "background-color:#CCC;",
+		".case": "border-radius: .3em;"
 	},
 	"typesPlages" : {
 		"defaut": {
 			"css": "background-color:white;color:black"
 		},
 		"C": {
-			"css": "background-color:fuschia;color:#A52929"
+			"css": "background-color:fuchsia;color:#A52929"
 		},
 		"D": {
 			"css": "background-color:darkgreen;color:white"
