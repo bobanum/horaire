@@ -25,12 +25,6 @@ export default class Horaire extends DOM {
 	constructor() {
 		super();
 		this._titre = "Horaire";
-		this.jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
-		this.heureDebut = 8 * 60 + 0;
-		this.nbPeriodes = 11;
-		this.dureePeriode = 50;
-		this.pause = 5;
-		this.hauteur = 5; // La hauteur en pouces de la zone horaire
 		this._plages = [];
 		this._grille = null;
 	}
@@ -464,16 +458,14 @@ export default class Horaire extends DOM {
 	static appliquerGrille(grille) {
 		if (grille.typesPlages) {
 			Plage.appliquerTypes(grille.typesPlages);
+			delete grille.typesPlages;
 		}
-//		if (theme.css) {
-//			for (let selecteur in theme.css) {
-//				this.stylesheet.insertRule("div#horaire " + selecteur + " {" + theme.css[selecteur] + "}");
-//			}
-//		}
-//		this.stylesheet.backgroundColor = "red";
-//		Plage.appliquerTypes(theme.typesPlages);
+		DOM.copierProps(grille, this.prototype);
 	}
 	static appliquerTheme(theme) {
+		while (this.stylesheet.rules.length) {
+			this.stylesheet.removeRule(this.stylesheet.rules[0]);
+		}
 		if (theme.css) {
 			for (let selecteur in theme.css) {
 				this.stylesheet.insertRule("div#horaire " + selecteur + " {" + theme.css[selecteur] + "}");
@@ -514,6 +506,15 @@ export default class Horaire extends DOM {
 		App.loadJson(["json/grille_cstj.json", "json/theme_standard.json"]).then(v => {
 			this.appliquerGrille(v[0]);
 			this.appliquerTheme(v[1]);
+			if (this.prototype.theme) {
+				return App.loadJson("json/theme_"+this.prototype.theme+".json").then(t => {
+					this.appliquerTheme(t);
+				});
+			} else {
+				return true;
+			}
+		}).then(a=>{
+			console.log(a, arguments);
 			if (App.json) {
 				App.horaire = this.fromArray(App.json);
 			} else {

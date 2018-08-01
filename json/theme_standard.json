@@ -2,8 +2,8 @@
 	"nom": "Standard",
 	"css": {
 		"": "font-family:arial;",
-		"div.caption": "font-size:2em;",
-		"div.grille": "background-color:black;padding: 3px; grid-gap:1px;",
+		"div.caption": "font-size:1.5em;",
+		"div.grille": "background-color:black;padding: .2em; grid-gap:.1em;",
 		"div.jour": "background-color:black;color:white;",
 		"div.heure": "background-color:#CCC;"
 	},

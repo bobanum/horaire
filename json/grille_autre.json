@@ -1,0 +1,25 @@
+{
+	"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"],
+	"heureDebut": 480,
+	"dureePeriode": 50,
+	"pause": 10,
+	"hauteur": 5,
+	"theme": "standard",
+	"typesPlages" : {
+		"defaut": {
+			"label": "En cours"
+		},
+		"C": {
+			"label": "En cours"
+		},
+		"D": {
+			"label": "Disponible"
+		},
+		"R": {
+			"label": "Sur rendez-vous"
+		},
+		"N": {
+			"label": "Non disponible"
+		}
+	}
+}
