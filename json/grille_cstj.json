@@ -2,13 +2,11 @@
 	"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"],
 	"heureDebut": 480,
 	"dureePeriode": 50,
+	"nbPeriodes": 11,
 	"pause": 5,
 	"hauteur": 5,
 	"theme": "standard",
 	"typesPlages" : {
-		"defaut": {
-			"label": "En cours"
-		},
 		"C": {
 			"label": "En cours"
 		},

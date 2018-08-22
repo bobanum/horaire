@@ -26,7 +26,7 @@ export default class Horaire extends DOM {
 		super();
 		this._titre = "Horaire";
 		this._plages = [];
-		this._grille = null;
+		this._grille_dom = null;
 	}
 	get titre() {
 		return this._titre;
@@ -39,14 +39,136 @@ export default class Horaire extends DOM {
 			dom.parentNode.replaceChild(this.dom_caption(), dom);
 		}
 	}
-	get grille() {
-		if (!this._grille) {
-			this._grille = this.dom_grille();
+	get grille_dom() {
+		if (!this._grille_dom) {
+			this._grille_dom = this.dom_grille();
 		}
-		return this._grille;
+		return this._grille_dom;
+	}
+	get grille() {
+		if (typeof this._grille === "string") {
+			return Horaire.grilles[this._grille];
+		} else if (typeof this._grille === "undefined") {
+			return Horaire.grilles[Horaire.grille_defaut];
+		} else {
+			return this._grille;
+		}
+	}
+	set grille(val) {
+		this.setGrille(val);
+	}
+	/**
+	 * Détermine la grille à utiliser et retourne une promesse résolue après chargement au json au besoin
+	 * @param   {Array|array[]|object|string} val La grille à utiliser
+	 * @returns {Promise}                     Une promesse résolue après chargement au json au besoin
+	 */
+	setGrille(val) {
+		//TODO Rassembler en une seule promesse
+		var promesse;
+		if (!val) {
+			return Promise.resolve(false);
+		}
+		if (val instanceof Array) {
+			promesse = Promise.resolve(this.grilleFromArray(val));
+		}else if (typeof val === "object") {
+			promesse = Promise.resolve(val);
+		}else if (Horaire.grilles[val]) {
+			promesse = Promise.resolve(Horaire.grilles[val]);
+		} else {
+			promesse = App.loadJson(Horaire.url_grille(val)).then(grille=>{
+				Horaire.grilles[val] = grille;
+				return grille;
+			});
+		}
+		return promesse.then(grille => {
+			this._grille = this._grille || {};
+			DOM.copierProps(grille, this._grille);
+			this.appliquerGrille(grille);
+			//TODO Voir à ne pas changer le theme (si choisi) si on change de grille
+			if (grille.theme) {
+				return this.setTheme(grille.theme);
+			}
+		});
+	}
+	get theme() {
+		if (!this._theme) {
+			return this.grille.theme;
+		} else if (typeof this._theme === "string") {
+			return Horaire.themes[this._theme];
+		} else {
+			return this._theme;
+		}
+	}
+	set theme(val) {
+		this.setTheme(val);
+	}
+	setTheme(val) {
+		var promesse;
+		if (!val) {
+			return Promise.resolve(false);
+		}
+		if (typeof val === "object") {
+			promesse = Promise.resolve(val);
+		} else if (Horaire.themes[val]) {
+			promesse = Promise.resolve(Horaire.themes[val]);
+		} else {
+			promesse = App.loadJson(Horaire.url_theme(val)).then(theme=>{
+				Horaire.themes[val] = theme;
+				return theme;
+			});
+		}
+		promesse.then(theme => {
+			this._theme = theme;
+			return this.appliquerTheme(this.theme);
+		});
 	}
 	get nbJours() {
-		return this.jours.length;
+		return this._grille.jours.length;
+	}
+	get jours() {
+		return this.grille.jours;
+	}
+	set jours(val) {
+		this.grille.jours = val;
+	}
+	get heureDebut() {
+		return this.grille.heureDebut;
+	}
+	set heureDebut(val) {
+		this.grille.heureDebut = val;
+	}
+	get dureePeriode() {
+		return this.grille.dureePeriode;
+	}
+	set dureePeriode(val) {
+		this.grille.dureePeriode = val;
+	}
+	get nbPeriodes() {
+		return this.grille.nbPeriodes;
+	}
+	set nbPeriodes(val) {
+		this.grille.nbPeriodes = val;
+	}
+	get pause() {
+		return this.grille.pause;
+	}
+	set pause(val) {
+		this.grille.pause = val;
+	}
+	get hauteur() {
+		return this.grille.hauteur;
+	}
+	set hauteur(val) {
+		this.grille.hauteur = val;
+	}
+	get types() {
+		return this._grille.typesPlages;
+	}
+	static url_grille(nom) {
+		return "json/grille_" + nom + ".json";
+	}
+	static url_theme(nom) {
+		return "json/theme_" + nom + ".json";
 	}
 	/**
 	 * Retourne l'élément HTML de l'horaire
@@ -56,7 +178,7 @@ export default class Horaire extends DOM {
 		var resultat;
 		resultat = this.createElement("div#horaire", this.dom_caption());
 		//		resultat.style.height = this.hauteur + "in";
-		resultat.appendChild(this.grille);
+		resultat.appendChild(this.grille_dom);
 		return resultat;
 	}
 	/**
@@ -84,7 +206,7 @@ export default class Horaire extends DOM {
 			"repeat(" + this.nbPeriodes + ", 1fr)",
 			"/",
 			"6ch",
-			"repeat(" + this.jours.length + ", 1fr)",
+			"repeat(" + this.nbJours + ", 1fr)",
 			"6ch"
 		];
 		resultat.style.gridTemplate = gridTemplate.join(" ");
@@ -103,13 +225,17 @@ export default class Horaire extends DOM {
 	 * @returns {Horaire}     this
 	 */
 	dom_grille_ajouterJours(grille) {
-		var i, n, plage;
 		grille.appendChild(this.dom_case("jour", 1, 1));
-		grille.appendChild(this.dom_case("jour", 1, this.jours.length + 2));
-		for (i = 0, n = this.jours.length; i < n; i += 1) {
-			plage = grille.appendChild(this.dom_case("jour", 1, i + 2));
-			plage.innerHTML = this.jours[i];
-		}
+		grille.appendChild(this.dom_case("jour", 1, this.nbJours + 2));
+//		for (i = 0, n = this.jours.length; i < n; i += 1) {
+//			plage = grille.appendChild(this.dom_case("jour", 1, i + 2));
+//			plage.innerHTML = this.jours[i];
+//		}
+		this.jours.forEach((j, i)=>{
+			var plage = grille.appendChild(this.dom_case("jour", 1, i + 2));
+			plage.innerHTML = j;
+
+		});
 		return this;
 	}
 	/**
@@ -118,10 +244,11 @@ export default class Horaire extends DOM {
 	 * @returns {Horaire}     this
 	 */
 	dom_grille_ajouterCases(grille) {
-		var j, i, plage;
-		for (i = 0; i < this.jours.length; i += 1) {
-			for (j = 0; j < this.nbPeriodes; j += 1) {
+		var plage;
+		for (let i = 0, n = this.nbJours; i < n; i += 1) {
+			for (let j = 0, m = this.nbPeriodes; j < m; j += 1) {
 				plage = grille.appendChild(this.dom_case("case", j + 2, i + 2));
+				//TODO Déplacer vers la classe App
 				if (App.mode === App.MODE_EDITION) {
 					plage.addEventListener("click", this.evt.plage.click);
 				}
@@ -137,8 +264,9 @@ export default class Horaire extends DOM {
 	 */
 	dom_grille_ajouterHeures(grille) {
 		var debut, fin, j, i, col, plage;
+		var nbJours = this.nbJours;
 		for (i = 0; i < 2; i += 1) {
-			col = i * (this.jours.length + 1) + 1;
+			col = i * (nbJours + 1) + 1;
 			for (j = 0; j < this.nbPeriodes; j += 1) {
 				debut = this.heureDebut + j * (this.dureePeriode + this.pause);
 				fin = debut + this.dureePeriode;
@@ -256,7 +384,7 @@ export default class Horaire extends DOM {
 		} else if (plage instanceof Plage) {
 			this._plages.push(plage);
 			plage.horaire = this;
-			this.grille.appendChild(plage.dom);
+			this.grille_dom.appendChild(plage.dom);
 		} else if (typeof plage === "object") {
 			this.ajouterPlage(Plage.fromJson(plage, this));
 		} else {
@@ -303,12 +431,12 @@ export default class Horaire extends DOM {
 			}
 		}
 		//Regarder les autres jours
-		for (let j = 1; j < this.jours.length; j += 1) {
-			for (let i = 0; i + duree <= this.nbPeriodes; i += 1) {
-				let plage = this.trouverPlageA((jour + j) % this.jours.length, i, duree);
+		for (let j = 1, m = this.nbJours; j < m; j += 1) {
+			for (let i = 0, n = this.nbPeriodes; i + duree <= n; i += 1) {
+				let plage = this.trouverPlageA((jour + j) % m, i, duree);
 				if (plage === true) {
 					return {
-						jour: (jour + j) % this.jours.length,
+						jour: (jour + j) % m,
 						heure: i
 					};
 				} else if (plage === false) {
@@ -345,43 +473,59 @@ export default class Horaire extends DOM {
 		this._plages.splice(i, 1);
 		return this;
 	}
-	fill(j) {
-		if (typeof j == "string") {
-			return this.fill(JSON.parse(j));
-		} else if (j instanceof Array) {
-			j = [].slice.call(j, 0);
-			this.titre = j.shift();
-			this.jours = j.shift();
-			this.heureDebut = j.shift();
-			this.dureePeriode = j.shift();
-			this.pause = j.shift();
-			this.hauteur = j.shift();
-			this.ajouterPlage(j.shift());
-			return this;
+	fill(data) {
+		if (typeof data == "string") {
+			this.fill(JSON.parse(data));
+			return Promise.resolve(this);
+		} else if (data instanceof Array) {
+			data = Array.from(data);	//TODO Voir la pertinence de faire une copie
+			return this.setGrille(data[2]).then(() => this.setTheme(data[3])).then(() => {
+				this.titre = data[0];
+				this.ajouterPlage(data[1]);
+				return Promise.resolve(this);
+			});
 		} else {
-			if (j.titre !== undefined) {
-				this.titre = j.titre;
+			if (data.titre !== undefined) {
+				this.titre = data.titre;
 			}
-			if (j.jours !== undefined) {
-				this.jours = j.jours;
+			if (data.jours !== undefined) {
+				this.jours = data.jours;
 			}
-			if (j.heureDebut !== undefined) {
-				this.heureDebut = j.heureDebut;
+			if (data.heureDebut !== undefined) {
+				this.heureDebut = data.heureDebut;
 			}
-			if (j.dureePeriode !== undefined) {
-				this.dureePeriode = j.dureePeriode;
+			if (data.dureePeriode !== undefined) {
+				this.dureePeriode = data.dureePeriode;
 			}
-			if (j.pause !== undefined) {
-				this.pause = j.pause;
+			if (data.pause !== undefined) {
+				this.pause = data.pause;
 			}
-			if (j.hauteur !== undefined) {
-				this.hauteur = j.hauteur;
+			if (data.hauteur !== undefined) {
+				this.hauteur = data.hauteur;
 			}
-			if (j.plages !== undefined) {
-				this.ajouterPlage(j.plages);
+			if (data.plages !== undefined) {
+				this.ajouterPlage(data.plages);
 			}
-			return this;
+			return Promise.resolve(this);
 		}
+	}
+	grilleFromArray(array) {
+		var resultat = {};
+		Horaire.proprietesGrille.forEach(propriete=>{
+			resultat[propriete] = array.shift();
+		});
+		return resultat;
+	}
+	grilleToArray() {
+		var resultat = this._grille;
+		if (!resultat) {
+			return false;
+		}
+		if (typeof resultat === "string") {
+			return resultat;
+		}
+		resultat = Horaire.proprietesGrille.map(propriete=>resultat[propriete]);
+		return resultat;
 	}
 	toJson(stringify) {
 		var resultat = {};
@@ -400,13 +544,16 @@ export default class Horaire extends DOM {
 	toArray(stringify) {
 		var resultat = [
 			this.titre,
-			this.jours,
-			this.heureDebut,
-			this.dureePeriode,
-			this.pause,
-			this.hauteur,
-			this._plages.map(p => p.toArray(false))
+			this._plages.map(p => p.toArray(false)),
 		];
+		var g = this.grilleToArray();
+		if (g) {
+			resultat.push(g);
+		}
+		var th = this._theme;
+		if (th) {
+			resultat.push(th);
+		}
 		if (stringify !== false) {
 			return JSON.stringify(resultat);
 		}
@@ -417,19 +564,19 @@ export default class Horaire extends DOM {
 		resultat.fill(json);
 		return resultat;
 	}
-	static fromArray(j) {
-		if (typeof j == "string") {
-			j = JSON.parse(j);
+	static fromArray(data) {
+		if (typeof data == "string") {
+			data = JSON.parse(data);
 		}
 		var resultat = new Horaire();
-		App.horaire = resultat;
-		resultat.fill(j);
+		App.horaire = resultat;	//TODO Vérifier la pertinence
+		resultat.fill(data);
 		return resultat;
 	}
-	static getSearch() {
+	static zzzgetSearch() {
 		var resultat, s, i, n, donnee;
 		resultat = {};
-		s = location.search;
+		s = location.href;
 		if (!s) {
 			return resultat;
 		}
@@ -468,35 +615,35 @@ export default class Horaire extends DOM {
 			select_theme: {
 				input: function () {
 					return App.loadJson("json/theme_"+this.value+".json").then(t => {
-						Horaire.appliquerTheme(t);
+						App.horaire.appliquerTheme(t);
 					});
 				}
 			}
 		};
 		return this;
 	}
-	static appliquerGrille(grille) {
+	appliquerGrille(grille) {
 		if (grille.typesPlages) {
 			Plage.appliquerTypes(grille.typesPlages);
-			delete grille.typesPlages;
+//			delete grille.typesPlages;
 		}
-		DOM.copierProps(grille, this.prototype);
+		DOM.copierProps(grille, this);
 	}
-	static appliquerTheme(theme) {
-		while (this.stylesheet.rules.length) {
-			this.stylesheet.removeRule(this.stylesheet.rules[0]);
+	appliquerTheme(theme) {
+		var ss = Horaire.stylesheet;
+		while (ss.rules.length) {
+			ss.removeRule(ss.rules[0]);
 		}
 		if (theme.css) {
 			for (let selecteur in theme.css) {
-				this.stylesheet.insertRule("div#horaire " + selecteur + " {" + theme.css[selecteur] + "}");
+				ss.insertRule("div#horaire " + selecteur + " {" + theme.css[selecteur] + "}");
 			}
 		}
 		if (theme.typesPlages) {
 			for (let k in theme.typesPlages) {
-				this.stylesheet.insertRule("div.plage[data-type=" + k + "] {" + theme.typesPlages[k].css + "}");
+				ss.insertRule("div.plage[data-type=" + k + "] {" + theme.typesPlages[k].css + "}");
 			}
 		}
-		this.stylesheet.backgroundColor = "red";
 		Plage.appliquerTypes(theme.typesPlages);
 	}
 	/**
@@ -522,54 +669,53 @@ export default class Horaire extends DOM {
 		return resultat;
 	}
 	static load() {
-		console.log("loadhoraire");
-		App.loadJson(["json/grille_cstj.json", "json/theme_standard.json"]).then(v => {
-			this.appliquerGrille(v[0]);
-			this.appliquerTheme(v[1]);
-			if (this.prototype.theme) {
-				return App.loadJson("json/theme_"+this.prototype.theme+".json").then(t => {
-					this.appliquerTheme(t);
+		App.horaire = new this();
+		return App.loadJson(this.url_grille(this.grille_defaut)).then(g => {
+			this.grilles[this.grille_defaut] = g;
+				App.horaire.appliquerGrille(g);
+			return App.horaire.setGrille(this.grille_defaut);
+//				var theme = horaire.theme || "standard";
+//				return App.loadJson("json/theme_"+theme+".json");
+//			}).then(t=> {
+//				return horaire.appliquerTheme(t);
+		}).then(()=>{
+			if (localStorage.json_horaire) {
+				return Promise.resolve(App.decoder(localStorage.json_horaire)).then(json => {
+					return App.horaire.fill(json);
 				});
 			} else {
-				return true;
+				return Promise.resolve();
 			}
-		}).then(a=>{
-			console.log(a, arguments);
-			if (App.json) {
-				App.horaire = this.fromArray(App.json);
-			} else {
-				App.horaire = new this();
-			}
-			App.afficher(App.horaire);
+		}).then(() => {
+			return App.afficher(App.horaire);
 		});
-		if (location.search) {
-			var d, script;
-			d = this.getSearch();
-			if (d.session && d.nom) {
-				script = DOM.createElement("script", null, {
-					"src": d.session + d.nom + ".js"
-				});
-				document.head.appendChild(script);
-			} else if (d.h) {
-				App.json = App.decoder(d.h);
-			}
-		}
 	}
 	/**
 	 * Règle les propriétés de la classe et les événements
 	 */
 	static init() {
-		this.prototype.grille = null;
-		this.prototype.jours = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"];
-		this.prototype.heureDebut = 8 * 60 + 0;
-		this.prototype.nbPeriodes = 11;
-		this.prototype.dureePeriode = 50;
-		this.prototype.pause = 5;
-		this.prototype.hauteur = 5; // La hauteur en pouces de la zone horaire
+		this.themes = {};
+		this.grilles = {};
+		this.grille_defaut = "cstj";
+		this.theme_defaut = "standard";
+		this.proprietesGrille = ["jours", "heureDebut", "dureePeriode", "nbPeriodes", "pause", "hauteur", "theme"];
+//		this.prototype._grille = {
+//			jours: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"],
+//			heureDebut: 8 * 60 + 0,
+//			nbPeriodes: 11,
+//			dureePeriode: 50,
+//			pause: 5,
+//			hauteur: 5, // La hauteur en pouces de la zone horaire
+//		};
 		this.stylesheet = this.initStylesheet();
-		window.addEventListener("load", function () {
-			Horaire.load();
+		var p = new Promise(resolve => {
+			window.addEventListener("load", function () {
+				resolve(Horaire.load());
+			});
+		}).then(() => {
+			console.log("fini");
 		});
+		console.log(p, "fin init horaire");
 		this.setEvents();
 	}
 }

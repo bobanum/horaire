@@ -117,7 +117,7 @@ export default class Plage extends DOM {
 		if (App.mode === App.MODE_EDITION) {
 			resultat.addEventListener("click", this.evt.plage.click);
 		}
-		this._dom_label = resultat.appendChild(this.createElement('div.etat', this.getType(typePlage).label));
+		this._dom_label = resultat.appendChild(this.createElement('div.etat', ""));
 		this._dom_local = resultat.appendChild(this.createElement('div.local', ""));
 		this._dom_texte = resultat.appendChild(this.createElement('div.texte', ""));
 		resultat.style.gridRowStart = this.debut + 2;
@@ -202,7 +202,7 @@ export default class Plage extends DOM {
 	form_typePlage() {
 		var select, i;
 		select = this.createElement('select#typePlage', null, null, this.evt.typePlage);
-		for (i in this.types) {
+		for (i in this.horaire.types) {
 			select.appendChild(this.createElement('option', this.getType(i).label, {'value': i}));
 		}
 		select.value = this.typePlage;

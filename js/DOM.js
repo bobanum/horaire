@@ -107,9 +107,9 @@ export default class DOM {
 		recursif = (recursif === false) ? 0 : (recursif === true) ? -1 : recursif;
 		for (let k in from) {
 			let val = from[k];
-			if (typeof val !== "object") {
-				to[k] = val;
-			} else if (recursif === 0) {
+			if (val === undefined) {
+				delete to[k];
+			} else if (typeof val !== "object" || val instanceof Array || recursif === 0) {
 				to[k] = val;
 			} else {
 				if (!to[k]) {

@@ -64,7 +64,10 @@ export default class App {
 			"value": "JSON"
 		}, this.evt.btn_json);
 		//		DOM.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, this.evt.btn_jsoncompresse);
-		//		DOM.createElementIn(div, "input", null, {"type": "button", "value":"Array"}, this.evt.btn_array);
+		DOM.createElementIn(div, "input", null, {
+			"type": "button",
+			"value":"Array"
+		}, this.evt.btn_array);
 		DOM.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Compressé"
@@ -257,6 +260,48 @@ export default class App {
 		return resultat;
 	}
 	/**
+	 * Retourne un objet générique contenant les données d'une adresse donnée ou de l'adresse de la page
+	 * @param   {string} url L'adresse à analyser
+	 * @returns {object} Un objet des données
+	 */
+	static search_parse(url) {
+		var resultat, donnees;
+		url = url || location.search;
+		url = url.split("?").slice(1).join("?");
+		if (!url) {
+			return resultat;
+		}
+		donnees = url.split("&");
+		resultat = {};
+		donnees.forEach((d) => {
+			var parts = d.split("=");
+			resultat[parts[0]] = parts.slice(1).join("=");
+		});
+		return resultat;
+	}
+	/**
+	 * Retourne une url contenant les données fournies
+	 * @param   {object} obj Un objet générique des données à afficher
+	 * @param   {string} url = "" Une URL optionnelle à placer devant les données
+	 * @returns {string} L'url désirée
+	 */
+	static search_stringify(obj, url = "") {
+		var resultat = [];
+		for (let k in obj) {
+			if (obj[k] === "") {
+				resultat.push(k);
+			} else {
+				resultat.push(k + "=" + obj[k]);
+			}
+		}
+		resultat = resultat.join("&");
+		if (resultat === "") {
+			return url;
+		} else {
+			return url + "?" + resultat;
+		}
+	}
+	/**
 	 * Définit les adresse du script et de la page. Est appelé par le init.
 	 */
 	static setPaths() {
@@ -370,9 +415,9 @@ export default class App {
 		this.MODE_EDITION = 1;
 		this.MODE_IMPRESSION = 2;
 		this.MODE_FRAME = 3;
-//		this.setPaths();
-		this.setEvents();
-		if (location.href.match(/edition\.html/)) {
+		var data;
+		data = App.search_parse(location.href);
+		if (location.href.match(/edition\.html/) || data.edition !== undefined) {
 			this.mode = this.MODE_EDITION;
 			document.documentElement.classList.add("edition");
 		} else if (location.href.match(/impression\.html/)) {
@@ -385,6 +430,15 @@ export default class App {
 			this.mode = this.MODE_AFFICHAGE;
 			document.documentElement.classList.add("affichage");
 		}
+		if (data.h) {
+			window.localStorage.json_horaire = data.h;
+			delete data.h;
+			if (data.edition !== undefined) {
+				window.location.href = App.search_stringify(data, location.origin + location.pathname);
+			}
+		}
+//		this.setPaths();
+		this.setEvents();
 		window.addEventListener("load", function() {
 			App.load();
 		});
