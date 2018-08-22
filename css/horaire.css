@@ -360,3 +360,27 @@ input#code-iframe {
     display: none;
   }
 }
+@page tetebeche {
+  margin: 0;
+  size: 8.5in 11in;
+}
+html.tetebeche body {
+  margin: 0;
+  width: 8.5in;
+  height: 11in;
+  page: tetebeche;
+}
+html.tetebeche div.moitie {
+  width: 100%;
+  height: 50%;
+  padding: .25in;
+  box-sizing: border-box;
+}
+html.tetebeche div.moitie + div.moitie > iframe {
+  transform: rotate(180deg);
+}
+html.tetebeche iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}

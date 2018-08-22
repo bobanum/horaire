@@ -1,11 +1,11 @@
 /*jslint esnext:true, browser:true, debug:true*/
-import DOM from "./DOM.js";
-import Horaire from "./Horaire.js";
-import LZString from "./LZString.js";
+//import DOM from "./this.DOM.js";
+//import Horaire from "./Horaire.js";
+//import LZString from "./LZString.js";
 /**
 Classe App gérant l'application
 */
-export default class App {
+class App {
 	static afficher(horaire) {
 		if (this.mode === this.MODE_EDITION) {
 			document.body.appendChild(this.dom_interface(horaire.dom));
@@ -16,10 +16,10 @@ export default class App {
 	}
 	static dom_interface(contenu) {
 		var resultat, panneau;
-		resultat = DOM.createElement("div.interface");
-		panneau = resultat.appendChild(DOM.createElement("header", "<h1><img src=\"images/logo.svg\"/>La maison des horaires</h1>"));
+		resultat = this.DOM.createElement("div.interface");
+		panneau = resultat.appendChild(this.DOM.createElement("header", "<h1><img src=\"images/logo.svg\"/>La maison des horaires</h1>"));
 		panneau.style.gridArea = "h";
-		panneau = resultat.appendChild(DOM.createElement("footer", "<p>&copy;</p>"));
+		panneau = resultat.appendChild(this.DOM.createElement("footer", "<p>&copy;</p>"));
 		panneau.style.gridArea = "f";
 		panneau = this.dom_panneau(contenu, resultat);
 		panneau.style.gridArea = "g";
@@ -31,7 +31,7 @@ export default class App {
 	}
 	static dom_panneau(contenu, conteneur) {
 		var resultat;
-		resultat = DOM.createElement("section.panneau");
+		resultat = this.DOM.createElement("section.panneau");
 		if (conteneur) {
 			conteneur.appendChild(resultat);
 		}
@@ -42,13 +42,13 @@ export default class App {
 	}
 	static dom_options() {
 		var resultat;
-		resultat = DOM.createElement("div#options", this.horaire.dom_form());
+		resultat = this.DOM.createElement("div#options", this.horaire.dom_form());
 		return resultat;
 	}
 	static dom_status() {
 		var resultat, form;
-		resultat = DOM.createElement("div#status");
-		form = DOM.createElementIn(resultat, "form");
+		resultat = this.DOM.createElement("div#status");
+		form = this.DOM.createElementIn(resultat, "form");
 		form.obj = this;
 		form.appendChild(this.dom_status_options());
 		form.appendChild(this.dom_code());
@@ -57,42 +57,46 @@ export default class App {
 	}
 	static dom_status_options() {
 		var resultat, div;
-		resultat = DOM.createElement("div.boutons");
-		div = DOM.createElementIn(resultat, "div");
-		DOM.createElementIn(div, "input", null, {
+		resultat = this.DOM.createElement("div.boutons");
+		div = this.DOM.createElementIn(resultat, "div");
+		this.DOM.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "JSON"
 		}, this.evt.btn_json);
-		//		DOM.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, this.evt.btn_jsoncompresse);
-		DOM.createElementIn(div, "input", null, {
+		//		this.DOM.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, this.evt.btn_jsoncompresse);
+		this.DOM.createElementIn(div, "input", null, {
 			"type": "button",
 			"value":"Array"
 		}, this.evt.btn_array);
-		DOM.createElementIn(div, "input", null, {
+		this.DOM.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Compressé"
 		}, this.evt.btn_arraycompresse);
-		DOM.createElementIn(div, "input", null, {
+		this.DOM.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Adresse"
 		}, this.evt.btn_adresse);
-		DOM.createElementIn(div, "input", null, {
+		this.DOM.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Lien"
 		}, this.evt.btn_lien);
-		DOM.createElementIn(div, "input", null, {
+		this.DOM.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "iFrame"
 		}, this.evt.btn_iframe);
-		div = DOM.createElementIn(resultat, "div");
-		DOM.createElementIn(div, "input", null, {
+		div = this.DOM.createElementIn(resultat, "div");
+		this.DOM.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Visionner"
 		}, this.evt.btn_visionner);
+		this.DOM.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Tête bêche"
+		}, this.evt.btn_tetebeche);
 		return resultat;
 	}
 	static dom_code() {
-		var resultat = DOM.createElement("textarea#code", null, {
+		var resultat = this.DOM.createElement("textarea#code", null, {
 			"cols": "60",
 			rows: "10",
 			"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
@@ -102,20 +106,22 @@ export default class App {
 	}
 	/**
 	 * Ajoute un élément script pointant vers l'URL donnée
-	 * @param   {string}      url Le chemin ver le fichier script
-	 * @returns {HTMLElement} L'élément script créé
+	 * @param   {string}  url Le chemin vers le fichier script
+	 * @returns {Promise} Une promesse résolue après le chargement du script
 	 */
 	static ajouterScript(url, module = true) {
-		var resultat = document.createElement("script");
-		if (url.slice(-3) !== ".js") {
-			url += ".js";
-		}
-		resultat.setAttribute("src", this.url_script(url));
-		if (module) {
-			resultat.setAttribute("type", "module");
-		}
-		document.head.appendChild(resultat);
-		return resultat;
+		return new Promise(resolve => {
+			var script = document.createElement("script");
+			if (url.slice(-3) !== ".js") {
+				url += ".js";
+			}
+			script.setAttribute("src", this.url_script(url));
+			if (module) {
+				script.setAttribute("type", "module");
+			}
+			script.addEventListener("load", resolve);
+			document.head.appendChild(script);
+		});
 	}
 	/**
 	 * Ajoute une balise link pointant vers l'URL donnée
@@ -174,6 +180,7 @@ export default class App {
 	 */
 	static load() {
 		console.log("loadApp");
+		return Promise.resolve();
 //		if (this.json) {
 //			this.horaire = Horaire.fromArray(this.json);
 //		} else {
@@ -188,7 +195,7 @@ export default class App {
 	 */
 	static encoder(str) {
 		if (typeof str === "string") {
-			return LZString.compressToEncodedURIComponent(str);
+			return this.LZString.compressToEncodedURIComponent(str);
 		} else if (str.toString) {
 			return this.encoder(str.toString());
 		} else {
@@ -201,7 +208,7 @@ export default class App {
 	 * @returns {string} L'objet ou la chaine décompressée
 	 */
 	static decoder(str) {
-		var resultat = LZString.decompressFromEncodedURIComponent(str);
+		var resultat = this.LZString.decompressFromEncodedURIComponent(str);
 		if (typeof resultat === "string") {
 			try {
 				return JSON.parse(resultat);
@@ -268,11 +275,11 @@ export default class App {
 		var resultat, donnees;
 		url = url || location.search;
 		url = url.split("?").slice(1).join("?");
+		resultat = {};
 		if (!url) {
 			return resultat;
 		}
 		donnees = url.split("&");
-		resultat = {};
 		donnees.forEach((d) => {
 			var parts = d.split("=");
 			resultat[parts[0]] = parts.slice(1).join("=");
@@ -287,6 +294,9 @@ export default class App {
 	 */
 	static search_stringify(obj, url = "") {
 		var resultat = [];
+		if (url === ".") {
+			url = location.origin + location.pathname;
+		}
 		for (let k in obj) {
 			if (obj[k] === "") {
 				resultat.push(k);
@@ -349,7 +359,7 @@ export default class App {
 					if (e.shiftKey) {
 						ta = document.getElementById("code");
 						resultat = JSON.parse(ta.value);
-						resultat = Horaire.fromJson(resultat);
+						resultat = this.Horaire.fromJson(resultat);
 						resultat = resultat.toUrl();
 						resultat = resultat.replace("index.html", "edition.html");
 						window.location = resultat;
@@ -404,8 +414,26 @@ export default class App {
 					resultat = this.form.obj.horaire.toUrl();
 					window.open(resultat);
 				}
+			},
+			btn_tetebeche: {
+				click: function () {
+					var resultat;
+					resultat = this.form.obj.horaire.toUrl();
+					resultat = resultat.replace("?", "?tetebeche&");
+					window.open(resultat);
+				}
 			}
 		};
+	}
+	static loadTetebeche(url) {
+		window.addEventListener("load", function () {
+			document.body.parentNode.classList.add("tetebeche");
+			var moitie = document.body.appendChild(document.createElement("div"));
+			moitie.classList.add("moitie");
+			var iframe = moitie.appendChild(document.createElement("iframe"));
+			iframe.setAttribute("src", url);
+			document.body.appendChild(moitie.cloneNode(true));
+		});
 	}
 	/**
 	 * Initialise les variables statiques et evenements. Analyse l'adresse pour les propriétés de l'horaire.
@@ -416,7 +444,8 @@ export default class App {
 		this.MODE_IMPRESSION = 2;
 		this.MODE_FRAME = 3;
 		var data;
-		data = App.search_parse(location.href);
+		this.ajouterLink("horaire", "all");
+		data = this.search_parse(location.href);
 		if (location.href.match(/edition\.html/) || data.edition !== undefined) {
 			this.mode = this.MODE_EDITION;
 			document.documentElement.classList.add("edition");
@@ -430,22 +459,38 @@ export default class App {
 			this.mode = this.MODE_AFFICHAGE;
 			document.documentElement.classList.add("affichage");
 		}
+		if (data.tetebeche !== undefined) {
+			delete data.tetebeche;
+			this.loadTetebeche(App.search_stringify(data, "."));
+			return;
+		}
 		if (data.h) {
-			window.localStorage.json_horaire = data.h;
-			delete data.h;
+			App.json_horaire = data.h;
 			if (data.edition !== undefined) {
-				window.location.href = App.search_stringify(data, location.origin + location.pathname);
+				window.localStorage.json_horaire = data.h;
+				delete data.h;
+				window.location.href = App.search_stringify(data, ".");
+				return;
 			}
+		} else if (window.localStorage.json_horaire) {
+			App.json_horaire = window.localStorage.json_horaire;
+		} else {
+			delete window.localStorage.json_horaire;
 		}
 //		this.setPaths();
 		this.setEvents();
-		window.addEventListener("load", function() {
-			App.load();
+		Promise.all([
+			new Promise(resolve => window.addEventListener("load", resolve)),
+			this.ajouterScript("LZString"),
+			this.ajouterScript("Horaire"),
+//			this.ajouterScript("Plage"),
+		]).then(() => {
+			return App.load();
+		}).then(() => {
+			return App.Horaire.load();
+		}).then(() => {
+			console.log("fini");
 		});
-		this.ajouterLink("horaire", "all");
-//		this.ajouterScript("lz-string");
-//		this.ajouterScript("Horaire");
-//		this.ajouterScript("Plage");
 		this.data = {};
 		return;
 	}

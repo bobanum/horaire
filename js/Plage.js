@@ -2,8 +2,9 @@
 //TODO Ajouter annuler
 //TODO Ne pas exporter si valeurs par défaut??? pas sur
 //TODO Form pour données globales (titre, nbjours...)
+/*global App */
 import DOM from "./DOM.js";
-import App from "./App.js";
+//import App from "./App.js";
 export default class Plage extends DOM {
 	/**
 	 * Constructeur
@@ -605,6 +606,7 @@ export default class Plage extends DOM {
 		};
 	}
 	static init() {
+		App[this.name] = this;
 		this.prototype.defaut = {};	// Les propriétés par défaut d'une plage.
 		this.prototype.types = {};	// {Object}. Les types de plage
 		this.stylesheet = this.initStylesheet();

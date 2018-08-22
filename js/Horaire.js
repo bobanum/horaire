@@ -1,6 +1,7 @@
 /*jslint esnext:true, browser:true, debug:false*/
+/*global App */
 import DOM from "./DOM.js";
-import App from "./App.js";
+//import App from "./App.js";
 import Plage from "./Plage.js";
 /**
  * Classe Horaire représentant une grille horaire
@@ -674,13 +675,9 @@ export default class Horaire extends DOM {
 			this.grilles[this.grille_defaut] = g;
 				App.horaire.appliquerGrille(g);
 			return App.horaire.setGrille(this.grille_defaut);
-//				var theme = horaire.theme || "standard";
-//				return App.loadJson("json/theme_"+theme+".json");
-//			}).then(t=> {
-//				return horaire.appliquerTheme(t);
 		}).then(()=>{
-			if (localStorage.json_horaire) {
-				return Promise.resolve(App.decoder(localStorage.json_horaire)).then(json => {
+			if (App.json_horaire) {
+				return Promise.resolve(App.decoder(App.json_horaire)).then(json => {
 					return App.horaire.fill(json);
 				});
 			} else {
@@ -694,28 +691,13 @@ export default class Horaire extends DOM {
 	 * Règle les propriétés de la classe et les événements
 	 */
 	static init() {
+		App[this.name] = this;
 		this.themes = {};
 		this.grilles = {};
 		this.grille_defaut = "cstj";
 		this.theme_defaut = "standard";
 		this.proprietesGrille = ["jours", "heureDebut", "dureePeriode", "nbPeriodes", "pause", "hauteur", "theme"];
-//		this.prototype._grille = {
-//			jours: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"],
-//			heureDebut: 8 * 60 + 0,
-//			nbPeriodes: 11,
-//			dureePeriode: 50,
-//			pause: 5,
-//			hauteur: 5, // La hauteur en pouces de la zone horaire
-//		};
 		this.stylesheet = this.initStylesheet();
-		var p = new Promise(resolve => {
-			window.addEventListener("load", function () {
-				resolve(Horaire.load());
-			});
-		}).then(() => {
-			console.log("fini");
-		});
-		console.log(p, "fin init horaire");
 		this.setEvents();
 	}
 }

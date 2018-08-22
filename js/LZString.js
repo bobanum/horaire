@@ -8,9 +8,11 @@
 // http://pieroxy.net/blog/pages/lz-string/testing.html
 //
 // LZ-based compression algorithm, version 1.4.4
+/*global App */
 export default class LZString {
 	constructor() {}
 	static init() {
+		App[this.name] = this;
 		// private property
 		this.keyStrBase64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 		this.keyStrUriSafe = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$";
