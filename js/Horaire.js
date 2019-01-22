@@ -120,7 +120,7 @@ export default class Horaire extends DOM {
 		}
 		promesse.then(theme => {
 			this._theme = theme;
-			return this.appliquerTheme(this.theme);
+			return this.appliquerTheme(this._theme);
 		});
 	}
 	get nbJours() {
@@ -632,7 +632,7 @@ export default class Horaire extends DOM {
 	}
 	appliquerTheme(theme) {
 		var ss = Horaire.stylesheet;
-		while (ss.rules.length) {
+		while (ss.rules && ss.rules.length) {
 			ss.removeRule(ss.rules[0]);
 		}
 		if (theme.css) {
