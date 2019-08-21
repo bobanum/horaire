@@ -1,11 +1,11 @@
-/*jslint esnext:true, browser:true, debug:true*/
-//import DOM from "./this.DOM.js";
-//import Horaire from "./Horaire.js";
-//import LZString from "./LZString.js";
+/* jslint esnext:true, browser:true, debug:true */
+// import DOM from './this.DOM.js';
+import Horaire from './Horaire.js';
+import LZString from './LZString.js';
 /**
 Classe App gérant l'application
 */
-class App {
+export default class App {
 	static afficher(horaire) {
 		if (this.mode === this.MODE_EDITION) {
 			document.body.appendChild(this.dom_interface(horaire.dom));
@@ -16,22 +16,22 @@ class App {
 	}
 	static dom_interface(contenu) {
 		var resultat, panneau;
-		resultat = this.DOM.createElement("div.interface");
-		panneau = resultat.appendChild(this.DOM.createElement("header", "<h1><img src=\"images/logo.svg\"/>La maison des horaires</h1>"));
-		panneau.style.gridArea = "h";
-		panneau = resultat.appendChild(this.DOM.createElement("footer", "<p>&copy;</p>"));
-		panneau.style.gridArea = "f";
+		resultat = this.DOM.createElement('div.interface');
+		panneau = resultat.appendChild(this.DOM.createElement('header', '<h1><img src="images/logo.svg"/>La maison des horaires</h1>'));
+		panneau.style.gridArea = 'h';
+		panneau = resultat.appendChild(this.DOM.createElement('footer', '<p>&copy;</p>'));
+		panneau.style.gridArea = 'f';
 		panneau = this.dom_panneau(contenu, resultat);
-		panneau.style.gridArea = "g";
+		panneau.style.gridArea = 'g';
 		panneau = this.dom_panneau(this.dom_options(), resultat);
-		panneau.style.gridArea = "o";
+		panneau.style.gridArea = 'o';
 		panneau = this.dom_panneau(this.dom_status(), resultat);
-		panneau.style.gridArea = "c";
+		panneau.style.gridArea = 'c';
 		return resultat;
 	}
 	static dom_panneau(contenu, conteneur) {
 		var resultat;
-		resultat = this.DOM.createElement("section.panneau");
+		resultat = this.DOM.createElement('section.panneau');
 		if (conteneur) {
 			conteneur.appendChild(resultat);
 		}
@@ -42,13 +42,13 @@ class App {
 	}
 	static dom_options() {
 		var resultat;
-		resultat = this.DOM.createElement("div#options", this.horaire.dom_form());
+		resultat = this.DOM.createElement('div#options', this.horaire.dom_form());
 		return resultat;
 	}
 	static dom_status() {
 		var resultat, form;
-		resultat = this.DOM.createElement("div#status");
-		form = this.DOM.createElementIn(resultat, "form");
+		resultat = this.DOM.createElement('div#status');
+		form = this.DOM.createElementIn(resultat, 'form');
 		form.obj = this;
 		form.appendChild(this.dom_status_options());
 		form.appendChild(this.dom_code());
@@ -57,49 +57,49 @@ class App {
 	}
 	static dom_status_options() {
 		var resultat, div;
-		resultat = this.DOM.createElement("div.boutons");
-		div = this.DOM.createElementIn(resultat, "div");
-		this.DOM.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "JSON"
+		resultat = this.DOM.createElement('div.boutons');
+		div = this.DOM.createElementIn(resultat, 'div');
+		this.DOM.createElementIn(div, 'input', null, {
+			'type': 'button',
+			'value': 'JSON'
 		}, this.evt.btn_json);
-		//		this.DOM.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, this.evt.btn_jsoncompresse);
-		this.DOM.createElementIn(div, "input", null, {
-			"type": "button",
-			"value":"Array"
+		//		this.DOM.createElementIn(div, 'input', null, {'type': 'button', 'value':'JSON Compressé'}, this.evt.btn_jsoncompresse);
+		this.DOM.createElementIn(div, 'input', null, {
+			'type': 'button',
+			'value': 'Array'
 		}, this.evt.btn_array);
-		this.DOM.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Compressé"
+		this.DOM.createElementIn(div, 'input', null, {
+			'type': 'button',
+			'value': 'Compressé'
 		}, this.evt.btn_arraycompresse);
-		this.DOM.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Adresse"
+		this.DOM.createElementIn(div, 'input', null, {
+			'type': 'button',
+			'value': 'Adresse'
 		}, this.evt.btn_adresse);
-		this.DOM.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Lien"
+		this.DOM.createElementIn(div, 'input', null, {
+			'type': 'button',
+			'value': 'Lien'
 		}, this.evt.btn_lien);
-		this.DOM.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "iFrame"
+		this.DOM.createElementIn(div, 'input', null, {
+			'type': 'button',
+			'value': 'iFrame'
 		}, this.evt.btn_iframe);
-		div = this.DOM.createElementIn(resultat, "div");
-		this.DOM.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Visionner"
+		div = this.DOM.createElementIn(resultat, 'div');
+		this.DOM.createElementIn(div, 'input', null, {
+			'type': 'button',
+			'value': 'Visionner'
 		}, this.evt.btn_visionner);
-		this.DOM.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Tête bêche"
+		this.DOM.createElementIn(div, 'input', null, {
+			'type': 'button',
+			'value': 'Tête bêche'
 		}, this.evt.btn_tetebeche);
 		return resultat;
 	}
 	static dom_code() {
-		var resultat = this.DOM.createElement("textarea#code", null, {
-			"cols": "60",
-			rows: "10",
-			"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
+		var resultat = this.DOM.createElement('textarea#code', null, {
+			'cols': '60',
+			rows: '10',
+			'placeholder': 'Code (Cliquez sur un bouton ci-dessus pour mettre à jour)'
 		}, this.evt.code);
 		resultat.horaire = this;
 		return resultat;
@@ -111,15 +111,15 @@ class App {
 	 */
 	static ajouterScript(url, module = true) {
 		return new Promise(resolve => {
-			var script = document.createElement("script");
-			if (url.slice(-3) !== ".js") {
-				url += ".js";
+			var script = document.createElement('script');
+			if (url.slice(-3) !== '.js') {
+				url += '.js';
 			}
-			script.setAttribute("src", this.url_script(url));
+			script.setAttribute('src', this.url_script(url));
 			if (module) {
-				script.setAttribute("type", "module");
+				script.setAttribute('type', 'module');
 			}
-			script.addEventListener("load", resolve);
+			script.addEventListener('load', resolve);
 			document.head.appendChild(script);
 		});
 	}
@@ -130,15 +130,15 @@ class App {
 	 * @returns {HTMLElement} L'élément link créé
 	 */
 	static ajouterLink(url, media) {
-		var resultat = document.createElement("link");
-		resultat.setAttribute("rel", "stylesheet");
+		var resultat = document.createElement('link');
+		resultat.setAttribute('rel', 'stylesheet');
 		if (media) {
-			resultat.setAttribute("media", media);
+			resultat.setAttribute('media', media);
 		}
-		if (url.slice(-4) !== ".css") {
-			url += ".css";
+		if (url.slice(-4) !== '.css') {
+			url += '.css';
 		}
-		resultat.setAttribute("href", this.url_css(url));
+		resultat.setAttribute('href', this.url_css(url));
 		document.head.appendChild(resultat);
 		return resultat;
 	}
@@ -158,17 +158,17 @@ class App {
 	static loadJson(url) {
 		var resultat;
 		if (url instanceof Array) {
-			resultat = Promise.all(url.map(u=>this.loadJson(u)));
+			resultat = Promise.all(url.map(u => this.loadJson(u)));
 		} else {
 			resultat = new Promise(function (resolve, reject) {
 				var xhr = new XMLHttpRequest();
-				xhr.open("get", url);
-				xhr.responseType = "json";
-				xhr.addEventListener("load", function () {
+				xhr.open('get', url);
+				xhr.responseType = 'json';
+				xhr.addEventListener('load', function () {
 					resolve(this.response);
 				});
-				xhr.addEventListener("error", function () {
-					reject(this);
+				xhr.addEventListener('error', function () {
+					reject(new Error(this));
 				});
 				xhr.send(null);
 			});
@@ -179,14 +179,14 @@ class App {
 	 * Event onload de l'application
 	 */
 	static load() {
-		console.log("loadApp");
+		console.log('loadApp');
 		return Promise.resolve();
-//		if (this.json) {
-//			this.horaire = Horaire.fromArray(this.json);
-//		} else {
-//			this.horaire = new Horaire();
-//		}
-//		this.afficher(this.horaire);
+		// if (this.json) {
+		// 	this.horaire = Horaire.fromArray(this.json);
+		// } else {
+		// 	this.horaire = new Horaire();
+		// }
+		// this.afficher(this.horaire);
 	}
 	/**
 	 * Retourne la version encodée et compressée de la chaine donnée
@@ -194,8 +194,8 @@ class App {
 	 * @returns {string}           Une chaine LZW
 	 */
 	static encoder(str) {
-		if (typeof str === "string") {
-			return this.LZString.compressToEncodedURIComponent(str);
+		if (typeof str === 'string') {
+			return LZString.compressToEncodedURIComponent(str);
 		} else if (str.toString) {
 			return this.encoder(str.toString());
 		} else {
@@ -208,8 +208,8 @@ class App {
 	 * @returns {string} L'objet ou la chaine décompressée
 	 */
 	static decoder(str) {
-		var resultat = this.LZString.decompressFromEncodedURIComponent(str);
-		if (typeof resultat === "string") {
+		var resultat = LZString.decompressFromEncodedURIComponent(str);
+		if (typeof resultat === 'string') {
 			try {
 				return JSON.parse(resultat);
 			} catch (e) {
@@ -223,10 +223,10 @@ class App {
 	 * @returns {string} Un url absolu
 	 */
 	static url_app(fic) {
-//		var resultat = this.path.app;
-		var resultat = ".";
+		// var resultat = this.path.app;
+		var resultat = '.';
 		if (fic) {
-			return resultat + "/" + fic;
+			return resultat + '/' + fic;
 		}
 		return resultat;
 	}
@@ -238,7 +238,7 @@ class App {
 	static url_page(fic) {
 		var resultat = this.path.page;
 		if (fic) {
-			return resultat + "/" + fic;
+			return resultat + '/' + fic;
 		}
 		return resultat;
 	}
@@ -248,9 +248,9 @@ class App {
 	 * @returns {string} Un url absolu
 	 */
 	static url_script(fic) {
-		var resultat = this.url_app("js");
+		var resultat = this.url_app('js');
 		if (fic) {
-			resultat += "/" + fic;
+			resultat += '/' + fic;
 		}
 		return resultat;
 	}
@@ -260,9 +260,9 @@ class App {
 	 * @returns {string} Un url absolu
 	 */
 	static url_css(fic) {
-		var resultat = this.url_app("css");
+		var resultat = this.url_app('css');
 		if (fic) {
-			resultat += "/" + fic;
+			resultat += '/' + fic;
 		}
 		return resultat;
 	}
@@ -274,15 +274,15 @@ class App {
 	static search_parse(url) {
 		var resultat, donnees;
 		url = url || location.search;
-		url = url.split("?").slice(1).join("?");
+		url = url.split('?').slice(1).join('?');
 		resultat = {};
 		if (!url) {
 			return resultat;
 		}
-		donnees = url.split("&");
+		donnees = url.split('&');
 		donnees.forEach((d) => {
-			var parts = d.split("=");
-			resultat[parts[0]] = parts.slice(1).join("=");
+			var parts = d.split('=');
+			resultat[parts[0]] = parts.slice(1).join('=');
 		});
 		return resultat;
 	}
@@ -292,43 +292,44 @@ class App {
 	 * @param   {string} url = "" Une URL optionnelle à placer devant les données
 	 * @returns {string} L'url désirée
 	 */
-	static search_stringify(obj, url = "") {
+	static search_stringify(obj, url = '') {
 		var resultat = [];
-		if (url === ".") {
+		if (url === '.') {
 			url = location.origin + location.pathname;
 		}
 		for (let k in obj) {
-			if (obj[k] === "") {
+			if (obj[k] === '') {
 				resultat.push(k);
 			} else {
-				resultat.push(k + "=" + obj[k]);
+				resultat.push(k + '=' + obj[k]);
 			}
 		}
-		resultat = resultat.join("&");
-		if (resultat === "") {
+		resultat = resultat.join('&');
+		if (resultat === '') {
 			return url;
 		} else {
-			return url + "?" + resultat;
+			return url + '?' + resultat;
 		}
 	}
 	/**
 	 * Définit les adresse du script et de la page. Est appelé par le init.
 	 */
 	static setPaths() {
-		var dossierPage = window.location.href.split("/").slice(0, -1);
+		var dossierPage = window.location.href.split('/').slice(0, -1);
 		this.path = {};
-		this.toString = ()=>this.app;
-		this.path.page = dossierPage.join("/");
-		var src = document.head.lastElementChild.getAttribute("src").split("/").slice(0, -1);
-		if (src.length === 0 || !src[0].startsWith("http")) {
-			src = dossierPage.concat(src).filter(x => x !== ".");
+		this.toString = () => this.app;
+		this.path.page = dossierPage.join('/');
+		var src = document.head.lastElementChild.getAttribute('src').split('/').slice(0, -1);
+		if (src.length === 0 || !src[0].startsWith('http')) {
+			src = dossierPage.concat(src).filter(x => x !== '.');
 			let idx;
-			while (idx = src.indexOf(".."), idx > -1) {
+			// eslint-disable-next-line no-sequences
+			while (idx = src.indexOf('..'), idx > -1) {
 				src.splice(idx - 1, 2);
 			}
 		}
-		this.path.app = src.slice(0,-1).join("/");
-//		this.path.script = src.join("/");
+		this.path.app = src.slice(0, -1).join('/');
+		// this.path.script = src.join("/");
 	}
 	static setEvents() {
 		this.evt = {
@@ -336,7 +337,7 @@ class App {
 				click: function () {
 					var resultat, ta;
 					resultat = this.form.obj.horaire.toArray(true);
-					ta = document.getElementById("code");
+					ta = document.getElementById('code');
 					ta.innerHTML = resultat;
 					ta.select();
 				}
@@ -344,10 +345,10 @@ class App {
 			btn_arraycompresse: {
 				click: function () {
 					var resultat, ta;
-					ta = document.getElementById("code");
-//					ta.innerHTML = "";
+					ta = document.getElementById('code');
+					// ta.innerHTML = "";
 					resultat = this.form.obj.horaire.toArray(true);
-//					resultat = this.form.obj.horaire.toJson(true);
+					// resultat = this.form.obj.horaire.toJson(true);
 					resultat = App.encoder(resultat);
 					ta.innerHTML = resultat;
 					ta.select();
@@ -357,15 +358,15 @@ class App {
 				click: function (e) {
 					var resultat, ta;
 					if (e.shiftKey) {
-						ta = document.getElementById("code");
+						ta = document.getElementById('code');
 						resultat = JSON.parse(ta.value);
 						resultat = this.Horaire.fromJson(resultat);
 						resultat = resultat.toUrl();
-						resultat = resultat.replace("index.html", "edition.html");
+						resultat = resultat.replace('index.html', 'edition.html');
 						window.location = resultat;
 					} else {
 						resultat = this.form.obj.horaire.toJson(true);
-						ta = document.getElementById("code");
+						ta = document.getElementById('code');
 						ta.innerHTML = resultat;
 						ta.select();
 					}
@@ -375,9 +376,9 @@ class App {
 				click: function () {
 					var resultat, ta;
 					resultat = this.form.obj.horaire.toJson(true);
-					ta = document.getElementById("code");
+					ta = document.getElementById('code');
 					ta.innerHTML = App.encoder(resultat);
-					ta.innerHTML = "App.encoder(resultat)";
+					ta.innerHTML = 'App.encoder(resultat)';
 					ta.select();
 				}
 			},
@@ -385,7 +386,7 @@ class App {
 				click: function () {
 					var resultat, ta;
 					resultat = this.form.obj.horaire.toUrl();
-					ta = document.getElementById("code");
+					ta = document.getElementById('code');
 					ta.innerHTML = resultat;
 					ta.select();
 				}
@@ -394,7 +395,7 @@ class App {
 				click: function () {
 					var resultat, ta;
 					resultat = this.form.obj.horaire.html_lien();
-					ta = document.getElementById("code");
+					ta = document.getElementById('code');
 					ta.innerHTML = resultat;
 					ta.select();
 				}
@@ -403,7 +404,7 @@ class App {
 				click: function () {
 					var resultat, ta;
 					resultat = this.form.obj.horaire.html_iframe();
-					ta = document.getElementById("code");
+					ta = document.getElementById('code');
 					ta.innerHTML = resultat;
 					ta.select();
 				}
@@ -419,19 +420,19 @@ class App {
 				click: function () {
 					var resultat;
 					resultat = this.form.obj.horaire.toUrl();
-					resultat = resultat.replace("?", "?tetebeche&");
+					resultat = resultat.replace('?', '?tetebeche&');
 					window.open(resultat);
 				}
 			}
 		};
 	}
 	static loadTetebeche(url) {
-		window.addEventListener("load", function () {
-			document.body.parentNode.classList.add("tetebeche");
-			var moitie = document.body.appendChild(document.createElement("div"));
-			moitie.classList.add("moitie");
-			var iframe = moitie.appendChild(document.createElement("iframe"));
-			iframe.setAttribute("src", url);
+		window.addEventListener('load', function () {
+			document.body.parentNode.classList.add('tetebeche');
+			var moitie = document.body.appendChild(document.createElement('div'));
+			moitie.classList.add('moitie');
+			var iframe = moitie.appendChild(document.createElement('iframe'));
+			iframe.setAttribute('src', url);
 			document.body.appendChild(moitie.cloneNode(true));
 		});
 	}
@@ -444,24 +445,24 @@ class App {
 		this.MODE_IMPRESSION = 2;
 		this.MODE_FRAME = 3;
 		var data;
-		this.ajouterLink("horaire", "all");
+		this.ajouterLink('horaire', 'all');
 		data = this.search_parse(location.href);
 		if (location.href.match(/edition\.html/) || data.edition !== undefined) {
 			this.mode = this.MODE_EDITION;
-			document.documentElement.classList.add("edition");
+			document.documentElement.classList.add('edition');
 		} else if (location.href.match(/impression\.html/)) {
 			this.mode = this.MODE_IMPRESSION;
-			document.documentElement.classList.add("impression");
+			document.documentElement.classList.add('impression');
 		} else if (window.self !== window.top) {
 			this.mode = this.MODE_FRAME;
-			document.documentElement.classList.add("frame");
+			document.documentElement.classList.add('frame');
 		} else {
 			this.mode = this.MODE_AFFICHAGE;
-			document.documentElement.classList.add("affichage");
+			document.documentElement.classList.add('affichage');
 		}
 		if (data.tetebeche !== undefined) {
 			delete data.tetebeche;
-			this.loadTetebeche(App.search_stringify(data, "."));
+			this.loadTetebeche(App.search_stringify(data, '.'));
 			return;
 		}
 		if (data.h) {
@@ -469,7 +470,7 @@ class App {
 			if (data.edition !== undefined) {
 				window.localStorage.json_horaire = data.h;
 				delete data.h;
-				window.location.href = App.search_stringify(data, ".");
+				window.location.href = App.search_stringify(data, '.');
 				return;
 			}
 		} else if (window.localStorage.json_horaire) {
@@ -477,22 +478,22 @@ class App {
 		} else {
 			delete window.localStorage.json_horaire;
 		}
-//		this.setPaths();
+		// this.setPaths();
 		this.setEvents();
 		Promise.all([
-			new Promise(resolve => window.addEventListener("load", resolve)),
-			this.ajouterScript("LZString"),
-			this.ajouterScript("Horaire"),
-//			this.ajouterScript("Plage"),
+			new Promise(resolve => window.addEventListener('load', resolve)),
+			// this.ajouterScript('LZString'),
+			// this.ajouterScript('Horaire'),
+			// this.ajouterScript("Plage"),
 		]).then(() => {
 			return App.load();
 		}).then(() => {
-			return App.Horaire.load();
+			return Horaire.load();
 		}).then(() => {
-			console.log("fini");
+			console.log('fini');
 		});
 		this.data = {};
-		return;
+		// return;
 	}
 }
 App.init();

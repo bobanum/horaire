@@ -1,5 +1,5 @@
-/*jslint esnext:true, browser:true, debug:true*/
-/*global App */
+/* jslint esnext:true, browser:true, debug:true */
+
 /**
 Classe DOM permettant la manipulation et la création d'éléments
 */
@@ -18,7 +18,7 @@ export default class DOM {
 		return this._dom;
 	}
 	dom_creer() {
-		throw "La methode 'dim_creer' doit être surchargée.";
+		throw new Error("La methode 'dim_creer' doit être surchargée.");
 	}
 	/**
 	 * Retourne un élément DOM avec un certain contenu, attributs et evenements
@@ -31,20 +31,22 @@ export default class DOM {
 	createElement(name, content, attributes, events) {
 		var resultat, classes;
 		attributes = attributes || {};
-		for (let id; id = name.match(/#[a-zA-Z0-9\_\-]+/), id;) {
+		var id;
+		while ((id = name.match(/#[a-zA-Z0-9_-]+/))) {
 			attributes.id = id[0].substr(1);
 			name = name.replace(id[0], '');
 		}
-		for (let attr; attr = name.match(/#\[s[^\]]+\]/), attr;) {
-			let parts = attr.split("=");
+		var attr;
+		while ((attr = name.match(/#\[s[^\]]+\]/))) {
+			let parts = attr.split('=');
 			let k = attr.shift();
 			if (attributes[k] !== undefined) {
 				continue;
 			}
 			if (parts.length === 0) {
-				attributes[k] = "";
+				attributes[k] = '';
 			} else {
-				attributes[k] = parts.join("=");
+				attributes[k] = parts.join('=');
 			}
 			name = name.replace(attr[0], '');
 		}
@@ -110,7 +112,7 @@ export default class DOM {
 			let val = from[k];
 			if (val === undefined) {
 				delete to[k];
-			} else if (typeof val !== "object" || val instanceof Array || recursif === 0) {
+			} else if (typeof val !== 'object' || val instanceof Array || recursif === 0) {
 				to[k] = val;
 			} else {
 				if (!to[k]) {
@@ -184,7 +186,7 @@ export default class DOM {
 		var champ, i, n;
 		champ = this.createElement('div.champ');
 		if (label !== undefined) {
-			champ.appendChild(this.createElement('label', label, {'for': field.getAttribute('id')}));
+			champ.appendChild(this.createElement('label', label, { 'for': field.getAttribute('id') }));
 		}
 		if (field instanceof Array) {
 			for (i = 0, n = field.length; i < n; i += 1) {
@@ -200,8 +202,8 @@ export default class DOM {
 	 * @returns this
 	 */
 	static initStylesheet() {
-		var stylesheet = document.head.appendChild(document.createElement("style"));
-		stylesheet.setAttribute("data-objet", this.name);
+		var stylesheet = document.head.appendChild(document.createElement('style'));
+		stylesheet.setAttribute('data-objet', this.name);
 		stylesheet.appendChild(document.createTextNode(''));
 		return stylesheet.sheet;
 	}
@@ -209,11 +211,10 @@ export default class DOM {
 	 * Règle les propriété de classe et les événements
 	 */
 	static init() {
-		App[this.name] = this;
-		["createElement", "createElementIn", "setClasses", "setAttributes",
-		 "copierProps", "applyStyle", "appendContent", "addEventListeners"]
-			.forEach(m=>this[m]=this.prototype[m]);
+		[
+			'createElement', 'createElementIn', 'setClasses', 'setAttributes',
+			'copierProps', 'applyStyle', 'appendContent', 'addEventListeners'
+		].forEach(m => (this[m] = this.prototype[m]));
 	}
 }
 DOM.init();
-
