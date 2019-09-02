@@ -1,5 +1,4 @@
 /*jslint esnext:true, browser:true, debug:true*/
-/*global App */
 /**
 Classe DOM permettant la manipulation et la création d'éléments
 */
@@ -208,8 +207,7 @@ export default class DOM {
 	/**
 	 * Règle les propriété de classe et les événements
 	 */
-	static init() {
-		App[this.name] = this;
+static init() {
 		["createElement", "createElementIn", "setClasses", "setAttributes",
 		 "copierProps", "applyStyle", "appendContent", "addEventListeners"]
 			.forEach(m=>this[m]=this.prototype[m]);
