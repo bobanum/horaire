@@ -31,7 +31,7 @@ html {
 		grid-template-areas: "h h" "o g" "c g" "f f";
 		grid-template-rows: auto 1fr auto auto;
 		grid-template-columns: 20em 1fr;
-		grid-gap: 0.5em 0.5em;
+		// grid-gap: 0.5em 0.5em;
 		height: 100%;
 		width: 100%;
 		& > header,
@@ -42,6 +42,9 @@ html {
 			img {
 				margin-right: .5ch;
 			}
+		}
+		#horaire {
+			padding: 1em;
 		}
 	}
 	iframe {
@@ -75,6 +78,12 @@ div#options {
 		width: 5em;
 	}
 }
+div.resultats {
+	padding-bottom: 1em;
+	border-bottom: 1px solid#999;
+	border-bottom: groove;
+	margin-bottom: 1em;
+}
 
 div.champ {
 	display: flex;
@@ -97,6 +106,13 @@ div.champ {
 		resize: vertical;
 	}
 }
+& button.icone {
+	padding: 0.5em;
+	svg {
+		display: block;
+		fill: #234;
+	}
+}
 
 div#contenu {
 	flex: 1 0 8in;
@@ -114,6 +130,7 @@ div#status {
 	& div.boutons {
 		display: flex;
 		justify-content: space-between;
+		flex-direction: column;
 	}
 	& textarea,
 	& input {
@@ -127,6 +144,7 @@ div#status {
 div#horaire {
 	width: 100%;
 	height: 100%;
+	box-sizing: border-box;
 	display: flex;
 	margin: auto;
 	flex-direction: column;

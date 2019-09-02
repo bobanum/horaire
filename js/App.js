@@ -55,9 +55,14 @@ export default class App extends DOM {
 		//		form.appendChild(this.htmlIframe());
 		return resultat;
 	}
+	static ajouterBoutonPage(conteneur, icone, evt) {
+		var contenu = '<svg height="24" width="24"><use href="images/pages.svg#'+icone+'"></svg>';
+		this.createElementIn(conteneur, "button", contenu, {class:"icone", type:'button'}, evt);
+	}
 	static dom_status_options() {
 		var resultat, div;
 		resultat = this.createElement("div.boutons");
+		this.ajouterBoutonsResultats(resultat);
 		div = this.createElementIn(resultat, "div");
 		this.createElementIn(div, "input", null, {
 			"type": "button",
@@ -84,32 +89,17 @@ export default class App extends DOM {
 			"type": "button",
 			"value": "iFrame"
 		}, this.evt.btn_iframe);
-		div = this.createElementIn(resultat, "div");
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Visionner"
-		}, this.evt.btn_visionner);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Imprimer"
-		}, this.evt.btn_imprimer);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Tête bêche"
-		}, this.evt.btn_tetebeche);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Quatre par page"
-		}, this.evt.btn_quatre);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Six par page"
-		}, this.evt.btn_six);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Neuf par page"
-		}, this.evt.btn_neuf);
 		return resultat;
+	}
+	static ajouterBoutonsResultats(conteneur) {
+		var div = this.createElementIn(conteneur, "div");
+		div.classList.add("resultats");
+		this.ajouterBoutonPage(div, 'visionner', this.evt.btn_visionner);
+		this.ajouterBoutonPage(div, 'pagesimple2', this.evt.btn_imprimer);
+		this.ajouterBoutonPage(div, 'tetebeche', this.evt.btn_tetebeche);
+		this.ajouterBoutonPage(div, 'quatre', this.evt.btn_quatre);
+		this.ajouterBoutonPage(div, 'six', this.evt.btn_six);
+		this.ajouterBoutonPage(div, 'neuf', this.evt.btn_neuf);
 	}
 	static dom_code() {
 		var resultat = this.createElement("textarea#code", null, {
