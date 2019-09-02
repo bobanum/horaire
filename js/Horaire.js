@@ -1,7 +1,6 @@
 /*jslint esnext:true, browser:true, debug:false*/
-/*global App */
 import DOM from "./DOM.js";
-//import App from "./App.js";
+import App from "./App.js";
 import Plage from "./Plage.js";
 /**
  * Classe Horaire représentant une grille horaire
@@ -408,6 +407,7 @@ export default class Horaire extends DOM {
 		if (debut + duree > this.nbPeriodes) {
 			return false;
 		}
+		//TODO Revoir
 		for (let i = debut; i < debut + duree; i += 1) {
 			var plage = this._plages.find((p) => (p.jour === jour && i >= p.debut && i < p.debut + p.duree));
 			if (plage) {
@@ -551,10 +551,10 @@ export default class Horaire extends DOM {
 		if (g) {
 			resultat.push(g);
 		}
-		var th = this._theme;
-		if (th) {
-			resultat.push(th);
-		}
+		// var th = this._theme;
+		// if (th) {
+		// 	resultat.push(th);
+		// }
 		if (stringify !== false) {
 			return JSON.stringify(resultat);
 		}
@@ -691,7 +691,6 @@ export default class Horaire extends DOM {
 	 * Règle les propriétés de la classe et les événements
 	 */
 	static init() {
-		App[this.name] = this;
 		this.themes = {};
 		this.grilles = {};
 		this.grille_defaut = "cstj";

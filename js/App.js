@@ -1,11 +1,11 @@
 /*jslint esnext:true, browser:true, debug:true*/
-//import DOM from "./this.DOM.js";
-//import Horaire from "./Horaire.js";
-//import LZString from "./LZString.js";
+import DOM from "./DOM.js";
+import Horaire from "./Horaire.js";
+import LZString from "./LZString.js";
 /**
 Classe App gérant l'application
 */
-class App {
+export default class App extends DOM {
 	static afficher(horaire) {
 		if (this.mode === this.MODE_EDITION) {
 			document.body.appendChild(this.dom_interface(horaire.dom));
@@ -16,10 +16,10 @@ class App {
 	}
 	static dom_interface(contenu) {
 		var resultat, panneau;
-		resultat = this.DOM.createElement("div.interface");
-		panneau = resultat.appendChild(this.DOM.createElement("header", "<h1><img src=\"images/logo.svg\"/>La maison des horaires</h1>"));
+		resultat = this.createElement("div.interface");
+		panneau = resultat.appendChild(this.createElement("header", "<h1><img src=\"images/logo.svg\"/>La maison des horaires</h1>"));
 		panneau.style.gridArea = "h";
-		panneau = resultat.appendChild(this.DOM.createElement("footer", "<p>&copy;</p>"));
+		panneau = resultat.appendChild(this.createElement("footer", "<p>&copy;</p>"));
 		panneau.style.gridArea = "f";
 		panneau = this.dom_panneau(contenu, resultat);
 		panneau.style.gridArea = "g";
@@ -31,7 +31,7 @@ class App {
 	}
 	static dom_panneau(contenu, conteneur) {
 		var resultat;
-		resultat = this.DOM.createElement("section.panneau");
+		resultat = this.createElement("section.panneau");
 		if (conteneur) {
 			conteneur.appendChild(resultat);
 		}
@@ -42,13 +42,13 @@ class App {
 	}
 	static dom_options() {
 		var resultat;
-		resultat = this.DOM.createElement("div#options", this.horaire.dom_form());
+		resultat = this.createElement("div#options", this.horaire.dom_form());
 		return resultat;
 	}
 	static dom_status() {
 		var resultat, form;
-		resultat = this.DOM.createElement("div#status");
-		form = this.DOM.createElementIn(resultat, "form");
+		resultat = this.createElement("div#status");
+		form = this.createElementIn(resultat, "form");
 		form.obj = this;
 		form.appendChild(this.dom_status_options());
 		form.appendChild(this.dom_code());
@@ -57,46 +57,46 @@ class App {
 	}
 	static dom_status_options() {
 		var resultat, div;
-		resultat = this.DOM.createElement("div.boutons");
-		div = this.DOM.createElementIn(resultat, "div");
-		this.DOM.createElementIn(div, "input", null, {
+		resultat = this.createElement("div.boutons");
+		div = this.createElementIn(resultat, "div");
+		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "JSON"
 		}, this.evt.btn_json);
-		//		this.DOM.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, this.evt.btn_jsoncompresse);
-		this.DOM.createElementIn(div, "input", null, {
+		//		this.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, this.evt.btn_jsoncompresse);
+		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value":"Array"
 		}, this.evt.btn_array);
-		this.DOM.createElementIn(div, "input", null, {
+		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Compressé"
 		}, this.evt.btn_arraycompresse);
-		this.DOM.createElementIn(div, "input", null, {
+		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Adresse"
 		}, this.evt.btn_adresse);
-		this.DOM.createElementIn(div, "input", null, {
+		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Lien"
 		}, this.evt.btn_lien);
-		this.DOM.createElementIn(div, "input", null, {
+		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "iFrame"
 		}, this.evt.btn_iframe);
-		div = this.DOM.createElementIn(resultat, "div");
-		this.DOM.createElementIn(div, "input", null, {
+		div = this.createElementIn(resultat, "div");
+		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Visionner"
 		}, this.evt.btn_visionner);
-		this.DOM.createElementIn(div, "input", null, {
+		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "Tête bêche"
 		}, this.evt.btn_tetebeche);
 		return resultat;
 	}
 	static dom_code() {
-		var resultat = this.DOM.createElement("textarea#code", null, {
+		var resultat = this.createElement("textarea#code", null, {
 			"cols": "60",
 			rows: "10",
 			"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
@@ -195,7 +195,7 @@ class App {
 	 */
 	static encoder(str) {
 		if (typeof str === "string") {
-			return this.LZString.compressToEncodedURIComponent(str);
+			return LZString.compressToEncodedURIComponent(str);
 		} else if (str.toString) {
 			return this.encoder(str.toString());
 		} else {
@@ -208,7 +208,7 @@ class App {
 	 * @returns {string} L'objet ou la chaine décompressée
 	 */
 	static decoder(str) {
-		var resultat = this.LZString.decompressFromEncodedURIComponent(str);
+		var resultat = LZString.decompressFromEncodedURIComponent(str);
 		if (typeof resultat === "string") {
 			try {
 				return JSON.parse(resultat);
@@ -465,6 +465,8 @@ class App {
 			return;
 		}
 		if (data.h) {
+			//Si on a des données dans l'adresse, on met dans localstorage 
+			//et on redirige lors de l'édition.
 			App.json_horaire = data.h;
 			if (data.edition !== undefined) {
 				window.localStorage.json_horaire = data.h;
@@ -481,13 +483,13 @@ class App {
 		this.setEvents();
 		Promise.all([
 			new Promise(resolve => window.addEventListener("load", resolve)),
-			this.ajouterScript("LZString"),
-			this.ajouterScript("Horaire"),
+			// this.ajouterScript("LZString"),
+			// this.ajouterScript("Horaire"),
 //			this.ajouterScript("Plage"),
 		]).then(() => {
 			return App.load();
 		}).then(() => {
-			return App.Horaire.load();
+			return Horaire.load();
 		}).then(() => {
 			console.log("fini");
 		});
