@@ -91,8 +91,24 @@ export default class App extends DOM {
 		}, this.evt.btn_visionner);
 		this.createElementIn(div, "input", null, {
 			"type": "button",
+			"value": "Imprimer"
+		}, this.evt.btn_imprimer);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
 			"value": "Tête bêche"
 		}, this.evt.btn_tetebeche);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Quatre par page"
+		}, this.evt.btn_quatre);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Six par page"
+		}, this.evt.btn_six);
+		this.createElementIn(div, "input", null, {
+			"type": "button",
+			"value": "Neuf par page"
+		}, this.evt.btn_neuf);
 		return resultat;
 	}
 	static dom_code() {
@@ -415,6 +431,14 @@ export default class App extends DOM {
 					window.open(resultat);
 				}
 			},
+			btn_imprimer: {
+				click: function () {
+					var resultat;
+					resultat = this.form.obj.horaire.toUrl();
+					resultat = resultat.replace("?", "?page&");
+					window.open(resultat);
+				}
+			},
 			btn_tetebeche: {
 				click: function () {
 					var resultat;
@@ -422,17 +446,103 @@ export default class App extends DOM {
 					resultat = resultat.replace("?", "?tetebeche&");
 					window.open(resultat);
 				}
-			}
+			},
+			btn_quatre: {
+				click: function () {
+					var resultat;
+					resultat = this.form.obj.horaire.toUrl();
+					resultat = resultat.replace("?", "?quatre&");
+					window.open(resultat);
+				}
+			},
+			btn_six: {
+				click: function () {
+					var resultat;
+					resultat = this.form.obj.horaire.toUrl();
+					resultat = resultat.replace("?", "?six&");
+					window.open(resultat);
+				}
+			},
+			btn_neuf: {
+				click: function () {
+					var resultat;
+					resultat = this.form.obj.horaire.toUrl();
+					resultat = resultat.replace("?", "?neuf&");
+					window.open(resultat);
+				}
+			},
 		};
+	}
+	static loadPage(url) {
+		window.addEventListener("load", function () {
+			document.body.parentNode.classList.remove("affichage");
+			document.body.parentNode.classList.add("impression");
+			document.body.parentNode.classList.add("pagesimple");
+			var page = document.body.appendChild(document.createElement("div"));
+			page.classList.add("page");
+			var iframe = page.appendChild(document.createElement("iframe"));
+			iframe.setAttribute("src", url);
+		});
 	}
 	static loadTetebeche(url) {
 		window.addEventListener("load", function () {
+			document.body.parentNode.classList.remove("affichage");
+			document.body.parentNode.classList.add("impression");
 			document.body.parentNode.classList.add("tetebeche");
-			var moitie = document.body.appendChild(document.createElement("div"));
-			moitie.classList.add("moitie");
-			var iframe = moitie.appendChild(document.createElement("iframe"));
+			var page = document.body.appendChild(document.createElement("div"));
+			page.classList.add("page");
+			var iframe = page.appendChild(document.createElement("iframe"));
 			iframe.setAttribute("src", url);
-			document.body.appendChild(moitie.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+		});
+	}
+	static loadQuatre(url) {
+		window.addEventListener("load", function () {
+			document.body.parentNode.classList.remove("affichage");
+			document.body.parentNode.classList.add("impression");
+			document.body.parentNode.classList.add("quatre");
+			var page = document.body.appendChild(document.createElement("div"));
+			page.classList.add("page");
+			var iframe = page.appendChild(document.createElement("iframe"));
+			iframe.setAttribute("src", url);
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+		});
+	}
+	static loadSix(url) {
+		window.addEventListener("load", function () {
+			document.body.parentNode.classList.remove("affichage");
+			document.body.parentNode.classList.add("impression");
+			document.body.parentNode.classList.add("six");
+			var page = document.body.appendChild(document.createElement("div"));
+			page.classList.add("page");
+			var iframe = page.appendChild(document.createElement("iframe"));
+			iframe.setAttribute("src", url);
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+		});
+	}
+	static loadNeuf(url) {
+		window.addEventListener("load", function () {
+			document.body.parentNode.classList.remove("affichage");
+			document.body.parentNode.classList.add("impression");
+			document.body.parentNode.classList.add("neuf");
+			var page = document.body.appendChild(document.createElement("div"));
+			page.classList.add("page");
+			var iframe = page.appendChild(document.createElement("iframe"));
+			iframe.setAttribute("src", url);
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
+			page.appendChild(iframe.cloneNode(true));
 		});
 	}
 	/**
@@ -462,6 +572,26 @@ export default class App extends DOM {
 		if (data.tetebeche !== undefined) {
 			delete data.tetebeche;
 			this.loadTetebeche(App.search_stringify(data, "."));
+			return;
+		}
+		if (data.page !== undefined) {
+			delete data.page;
+			this.loadPage(App.search_stringify(data, "."));
+			return;
+		}
+		if (data.quatre !== undefined) {
+			delete data.quatre;
+			this.loadQuatre(App.search_stringify(data, "."));
+			return;
+		}
+		if (data.six !== undefined) {
+			delete data.six;
+			this.loadSix(App.search_stringify(data, "."));
+			return;
+		}
+		if (data.neuf !== undefined) {
+			delete data.neuf;
+			this.loadNeuf(App.search_stringify(data, "."));
 			return;
 		}
 		if (data.h) {
