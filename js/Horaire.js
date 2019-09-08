@@ -78,6 +78,7 @@ export default class Horaire extends DOM {
 		}
 		return promesse.then(grille => {
 			this._grille = grille;
+			grille.horaire = this;
 			//TODO: Réviser
 			this.appliquerGrille(grille);
 		});
@@ -166,8 +167,8 @@ export default class Horaire extends DOM {
 		resultat.obj = this;
 		this.trForm = resultat;
 		resultat.appendChild(this.dom_form_titre());
-		resultat.appendChild(Grille.select());
-		resultat.appendChild(Theme.select());
+		resultat.appendChild(Grille.form_select());
+		resultat.appendChild(Theme.form_select());
 		return resultat;
 	}
 	dom_form_titre() {
@@ -196,6 +197,15 @@ export default class Horaire extends DOM {
 		var m = "0" + min % 60;
 		m = m.slice(-2);
 		return h + "h" + m;
+	}
+	nouvellePlage(c, r) {
+		var plage = new Plage(this);
+		plage.typePlage = "D";
+		plage.jour = c;
+		plage.debut = r;
+		plage.duree = 3;
+		this.ajouterPlage(plage);
+		plage.editer();
 	}
 	/**
 	 * Ajoute une plage et l'affiche
@@ -365,24 +375,6 @@ export default class Horaire extends DOM {
 	}
 	static setEvents() {
 		this.prototype.evt = {
-			plage: {
-				click: function () {
-					var courant;
-					if (courant = document.querySelector("div.plage.courant"), courant) {
-						courant.obj.deposer();
-					} else {
-						var r = parseInt(this.style.gridRowStart) - 2;
-						var c = parseInt(this.style.gridColumnStart) - 2;
-						var plage = new Plage(App.horaire);
-						plage.typePlage = "D";
-						plage.jour = c;
-						plage.debut = r;
-						plage.duree = 3;
-						this.obj.ajouterPlage(plage);
-						plage.editer();
-					}
-				}
-			},
 			input_titre: {
 				input: function () {
 					this.form.obj.titre = this.value;

@@ -88,7 +88,7 @@ export default class Grille extends DOM {
 				plage = grille.appendChild(this.dom_case("case", j + 2, i + 2));
 				//TODO: Déplacer vers la classe App
 				if (App.mode === App.MODE_EDITION) {
-					plage.addEventListener("click", this.evt.plage.click);
+					plage.addEventListener("click", Grille.evt.plage.click);
 				}
 				plage.obj = this;
 			}
@@ -226,7 +226,7 @@ export default class Grille extends DOM {
 		temp.parentNode.replaceChild(this._dom, temp);
 	}
 	static setEvents() {
-		this.prototype.evt = {
+		this.evt = {
 			select: {
 				input: function () {
 					console.log("wow");
@@ -235,6 +235,13 @@ export default class Grille extends DOM {
 						throw "appliquer";
 						// App.horaire.appliquerGrille(t);
 					});
+				}
+			},
+			plage: {
+				click: function () {
+					var r = parseInt(this.style.gridRowStart) - 2;
+					var c = parseInt(this.style.gridColumnStart) - 2;
+					this.obj.horaire.nouvellePlage(r, c);
 				}
 			},
 		};

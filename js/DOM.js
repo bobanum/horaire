@@ -209,7 +209,7 @@ export default class DOM {
 	 */
 static init() {
 		["createElement", "createElementIn", "setClasses", "setAttributes",
-		 "copierProps", "applyStyle", "appendContent", "addEventListeners"]
+		 "copierProps", "applyStyle", "appendContent", "addEventListeners", "form_wrap"]
 			.forEach(m=>this[m]=this.prototype[m]);
 	}
 }

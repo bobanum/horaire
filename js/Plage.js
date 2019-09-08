@@ -73,8 +73,8 @@ export default class Plage extends DOM {
 	set jour(val) {
 		if (val < 0) {
 			val = 0;
-		} else if (val >= this.horaire.jours.length) {
-			val = this.horaire.jours.length - 1;
+		} else if (val >= this.horaire.grille.nbJours) {
+			val = this.horaire.grille.nbJours - 1;
 		}
 		this._jour = val;
 		if (this._dom) {
@@ -211,7 +211,7 @@ export default class Plage extends DOM {
 	}
 	form_jour() {
 		var select = this.createElement('select#jour', null, null, this.evt.jour);
-		for (var i = 0, n = this.horaire.jours.length; i < n; i += 1) {
+		for (var i = 0, n = this.horaire.grille.nbJours; i < n; i += 1) {
 			select.appendChild(this.createElement('option', this.horaire.jours[i], {'value':i}));
 		}
 		select.value = this.jour;

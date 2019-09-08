@@ -59,7 +59,7 @@ export default class Theme extends DOM {
 		return resultat;
 	}
 	static setEvents() {
-		this.prototype.evt = {
+		this.evt = {
 			select: {
 				input: function () {
 					//TODO: Valider et/ou déplacer DANS dom
