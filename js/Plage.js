@@ -73,8 +73,8 @@ export default class Plage extends DOM {
 	set jour(val) {
 		if (val < 0) {
 			val = 0;
-		} else if (val >= this.horaire.grille.nbJours) {
-			val = this.horaire.grille.nbJours - 1;
+		} else if (val >= this.horaire.nbJours) {
+			val = this.horaire.nbJours - 1;
 		}
 		this._jour = val;
 		if (this._dom) {
@@ -202,7 +202,7 @@ export default class Plage extends DOM {
 	form_typePlage() {
 		var select, i;
 		select = this.createElement('select#typePlage', null, null, this.evt.typePlage);
-		for (i in this.horaire.types) {
+		for (i in this.horaire.typesPlages) {
 			select.appendChild(this.createElement('option', this.getType(i).label, {'value': i}));
 		}
 		select.value = this.typePlage;
@@ -211,7 +211,7 @@ export default class Plage extends DOM {
 	}
 	form_jour() {
 		var select = this.createElement('select#jour', null, null, this.evt.jour);
-		for (var i = 0, n = this.horaire.grille.nbJours; i < n; i += 1) {
+		for (var i = 0, n = this.horaire.nbJours; i < n; i += 1) {
 			select.appendChild(this.createElement('option', this.horaire.jours[i], {'value':i}));
 		}
 		select.value = this.jour;
@@ -398,16 +398,16 @@ export default class Plage extends DOM {
 			this.copierProps(data, this.defaut);
 			return;
 		}
-		if (!this.types[id]) {
-			this.types[id] = Object.create(this.defaut);
+		if (!this.horaire.typesPlage[id]) {
+			this.horaire.typesPlage[id] = Object.create(this.defaut);
 		}
 		data.id = id;
-		this.copierProps(data, this.types[id]);
+		this.copierProps(data, this.horaire.typesPlage[id]);
 		return data;
 	}
 	getType(id) {
-		if (this.types[id]) {
-			return this.types[id];
+		if (this.horaire.typesPlages[id]) {
+			return this.horaire.typesPlages[id];
 		} else {
 			return this.defaut;
 		}
@@ -606,7 +606,6 @@ export default class Plage extends DOM {
 	}
 	static init() {
 		this.prototype.defaut = {};	// Les propriétés par défaut d'une plage.
-		this.prototype.types = {};	// {Object}. Les types de plage
 		this.stylesheet = this.initStylesheet();
 		this.setEvents();
 	}

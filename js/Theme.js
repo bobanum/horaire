@@ -104,7 +104,7 @@ export default class Theme extends DOM {
 	static init() {
 		this.themes = {};
 		this.defaut = "standard";
-		this.proprietesGrille = ["nom", "label", "css", "typesPlages"];
+		this.proprietes = ["nom", "label", "css", "typesPlages"];
 		this.stylesheet = this.initStylesheet();
 		this.setEvents();
 	}
