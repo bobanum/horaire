@@ -1,10 +1,12 @@
 {
-	"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"],
-	"heureDebut": 480,
-	"dureePeriode": 50,
-	"pause": 10,
+	"nom": "standard",
+	"label": "Standard",
+	"jours": ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+	"heureDebut": 540,
+	"dureePeriode": 60,
+	"pause": 0,
 	"hauteur": 5,
-	"theme": "standard",
+	"nbPeriodes": 8,
 	"typesPlages" : {
 		"defaut": {
 			"label": "En cours"

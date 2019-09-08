@@ -1,5 +1,6 @@
 {
-	"nom": "Autre",
+	"nom": "autre",
+	"label": "Autre",
 	"css": {
 		"": "font-family:papyrus;",
 		"*": "line-height: 1;",

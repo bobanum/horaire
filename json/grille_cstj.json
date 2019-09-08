@@ -1,4 +1,6 @@
 {
+	"nom": "cstj",
+	"label": "Cégep de Saint-Jérôme",
 	"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"],
 	"heureDebut": 480,
 	"dureePeriode": 50,
