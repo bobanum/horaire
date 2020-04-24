@@ -9,19 +9,19 @@
 	},
 	"typesPlages" : {
 		"defaut": {
-			"css": "background-color:white;color:black"
+			"css": "--lum:100%;"
 		},
 		"C": {
-			"css": "background-color:gold;color:#A52929"
+			"css": "--hue:60;"
 		},
 		"D": {
-			"css": "background-color:lightgreen;color:darkgreen"
+			"css": "--hue:120;"
 		},
 		"R": {
-			"css": "background-color:lightblue;color:darkblue"
+			"css": "--hue:240;"
 		},
 		"N": {
-			"css": "background-color:#ddd;color:#999"
+			"css": "--hue:0;--sat:0%;"
 		}
 	}
 }
