@@ -1,11 +1,11 @@
 <template>
     <div class="heures">
-        <div v-for="h in nombre" :key="h" :style="style(h,1)">
-            <span>{{heure(debut + (h-1)*(duree+pause))}}</span><span>{{heure(debut + duree + (h-1)*(duree+pause))}}</span>
+        <div v-for="h1 in nombre" :key="h1" :style="style(h1,col)">
+            <span>{{heure(debut + (h1-1)*(duree))}}</span><span>{{heure(debut + h1*duree-pause)}}</span>
         </div>
-        <div v-for="h in nombre" :key="h" :style="style(h,-2)">
-            <span>{{heure(debut + (h-1)*(duree+pause))}}</span><span>{{heure(debut + duree + (h-1)*(duree+pause))}}</span>
-        </div>
+        <!-- <div v-for="h2 in nombre" :key="h2" :style="style(h2,-2)">
+            <span>{{heure(debut + (h2-1)*(duree))}}</span><span>{{heure(debut + h2*duree-pause)}}</span>
+        </div> -->
     </div>
 </template>
 
@@ -23,6 +23,7 @@ export default {
         duree: {default: 50},
         pause: {default: 5},
         nombre: {default: 11},
+        col: {default: 1}
     },
     components: {
     },

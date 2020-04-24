@@ -42,9 +42,7 @@ export default {
     display: contents;
     font-weight: bold;
     text-align: center;
-    div {
-        padding: .25em 0;
-    }
+    
 }
 </style>
 
