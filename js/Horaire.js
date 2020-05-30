@@ -59,36 +59,44 @@ export default class Horaire extends DOM {
 	}
 	/**
 	 * Détermine la grille à utiliser et retourne une promesse résolue après chargement au json au besoin
-	 * @param   {Array|array[]|object|string} val La grille à utiliser
+	 * @param   {Mixed} val La grille à utiliser
 	 * @returns {Promise}                     Une promesse résolue après chargement au json au besoin
 	 */
-	setGrille(val) {
-		//TODO Rassembler en une seule promesse
-		var promesse;
-		if (!val) {
-			return Promise.resolve(false);
-		}
-		if (val instanceof Array) {
-			promesse = Promise.resolve(this.grilleFromArray(val));
-		}else if (typeof val === "object") {
-			promesse = Promise.resolve(val);
-		}else if (Horaire.grilles[val]) {
-			promesse = Promise.resolve(Horaire.grilles[val]);
-		} else {
-			promesse = App.loadJson(Horaire.url_grille(val)).then(grille=>{
-				Horaire.grilles[val] = grille;
-				return grille;
-			});
-		}
-		return promesse.then(grille => {
-			this._grille = this._grille || {};
-			DOM.copierProps(grille, this._grille);
-			this.appliquerGrille(grille);
-			//TODO Voir à ne pas changer le theme (si choisi) si on change de grille
-			if (grille.theme) {
-				return this.setTheme(grille.theme);
+	parseGrille(val) {
+		return new Promise(resolve => {
+			if (!val) {
+				return resolve(false);
+			}
+			else if (val instanceof Array) {
+				return resolve(this.grilleFromArray(val));
+			}
+			else if (typeof val === "object") {
+				return resolve(val);
+			}
+			else if (Horaire.grilles[val]) {
+				return resolve(Horaire.grilles[val]);
+			} else {
+				return resolve(App.loadJson(Horaire.url_grille(val)).then(grille => {
+					Horaire.grilles[val] = grille;
+					return grille;
+				}));
 			}
 		});
+	}
+	/**
+	 * Détermine la grille à utiliser et retourne une promesse résolue après chargement au json au besoin
+	 * @param   {Mixed} val La grille à utiliser
+	 * @returns {Promise}                     Une promesse résolue après chargement au json au besoin
+	 */
+	async setGrille(val) {
+		const grille = await this.parseGrille(val);
+		this._grille = this._grille || {};
+		DOM.copierProps(grille, this._grille);
+		this.appliquerGrille(grille);
+		//TODO Voir à ne pas changer le theme (si choisi) si on change de grille
+		if (grille.theme) {
+			return this.setTheme(grille.theme);
+		}
 	}
 	get theme() {
 		if (!this._theme) {
@@ -112,7 +120,7 @@ export default class Horaire extends DOM {
 		} else if (Horaire.themes[val]) {
 			promesse = Promise.resolve(Horaire.themes[val]);
 		} else {
-			promesse = App.loadJson(Horaire.url_theme(val)).then(theme=>{
+			promesse = App.loadJson(Horaire.url_theme(val)).then(theme => {
 				Horaire.themes[val] = theme;
 				return theme;
 			});
@@ -227,11 +235,11 @@ export default class Horaire extends DOM {
 	dom_grille_ajouterJours(grille) {
 		grille.appendChild(this.dom_case("jour", 1, 1));
 		grille.appendChild(this.dom_case("jour", 1, this.nbJours + 2));
-//		for (i = 0, n = this.jours.length; i < n; i += 1) {
-//			plage = grille.appendChild(this.dom_case("jour", 1, i + 2));
-//			plage.innerHTML = this.jours[i];
-//		}
-		this.jours.forEach((j, i)=>{
+		//		for (i = 0, n = this.jours.length; i < n; i += 1) {
+		//			plage = grille.appendChild(this.dom_case("jour", 1, i + 2));
+		//			plage.innerHTML = this.jours[i];
+		//		}
+		this.jours.forEach((j, i) => {
 			var plage = grille.appendChild(this.dom_case("jour", 1, i + 2));
 			plage.innerHTML = j;
 
@@ -354,6 +362,9 @@ export default class Horaire extends DOM {
 		});
 		return this.form_wrap(select, "Thème");
 	}
+	get base64() {
+		return App.encoder(this.toArray(true));
+	}
 	toUrl() {
 		var url = "";
 		url += location.protocol;
@@ -361,7 +372,7 @@ export default class Horaire extends DOM {
 		url += location.pathname.split("/").slice(0, -1).join("/") + "/";
 		url += "index.html";
 		url += "?h=";
-		url += App.encoder(this.toArray(true));
+		url += this.base64;
 		return url;
 	}
 	min2h(min) {
@@ -474,17 +485,17 @@ export default class Horaire extends DOM {
 		this._plages.splice(i, 1);
 		return this;
 	}
-	fill(data) {
+	async fill(data) {
 		if (typeof data == "string") {
 			this.fill(JSON.parse(data));
-			return Promise.resolve(this);
+			return this;
 		} else if (data instanceof Array) {
 			data = Array.from(data);	//TODO Voir la pertinence de faire une copie
-			return this.setGrille(data[2]).then(() => this.setTheme(data[3])).then(() => {
-				this.titre = data[0];
-				this.ajouterPlage(data[1]);
-				return Promise.resolve(this);
-			});
+			await this.setGrille(data[2]);
+			await this.setTheme(data[3]);
+			this.titre = data[0];
+			this.ajouterPlage(data[1]);
+			return this;
 		} else {
 			if (data.titre !== undefined) {
 				this.titre = data.titre;
@@ -507,12 +518,12 @@ export default class Horaire extends DOM {
 			if (data.plages !== undefined) {
 				this.ajouterPlage(data.plages);
 			}
-			return Promise.resolve(this);
+			return this;
 		}
 	}
 	grilleFromArray(array) {
 		var resultat = {};
-		Horaire.proprietesGrille.forEach(propriete=>{
+		Horaire.proprietesGrille.forEach(propriete => {
 			resultat[propriete] = array.shift();
 		});
 		return resultat;
@@ -525,7 +536,7 @@ export default class Horaire extends DOM {
 		if (typeof resultat === "string") {
 			return resultat;
 		}
-		resultat = Horaire.proprietesGrille.map(propriete=>resultat[propriete]);
+		resultat = Horaire.proprietesGrille.map(propriete => resultat[propriete]);
 		return resultat;
 	}
 	toJson(stringify) {
@@ -615,7 +626,7 @@ export default class Horaire extends DOM {
 			},
 			select_theme: {
 				input: function () {
-					return App.loadJson("json/theme_"+this.value+".json").then(t => {
+					return App.loadJson("json/theme_" + this.value + ".json").then(t => {
 						App.horaire.appliquerTheme(t);
 					});
 				}
@@ -626,7 +637,7 @@ export default class Horaire extends DOM {
 	appliquerGrille(grille) {
 		if (grille.typesPlages) {
 			Plage.appliquerTypes(grille.typesPlages);
-//			delete grille.typesPlages;
+			//			delete grille.typesPlages;
 		}
 		DOM.copierProps(grille, this);
 	}
@@ -669,13 +680,18 @@ export default class Horaire extends DOM {
 		}
 		return resultat;
 	}
+	static fromBase64(base64) {
+		var resultat = new this();
+		resultat.fill(App.decoder(base64));
+		return resultat;
+	}
 	static load() {
 		App.horaire = new this();
 		return App.loadJson(this.url_grille(this.grille_defaut)).then(g => {
 			this.grilles[this.grille_defaut] = g;
-				App.horaire.appliquerGrille(g);
+			App.horaire.appliquerGrille(g);
 			return App.horaire.setGrille(this.grille_defaut);
-		}).then(()=>{
+		}).then(() => {
 			if (App.json_horaire) {
 				return Promise.resolve(App.decoder(App.json_horaire)).then(json => {
 					return App.horaire.fill(json);
