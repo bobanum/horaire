@@ -1,0 +1,130 @@
+div.boutonsPlage {
+	--epaisseur: 1em;
+	--fond: rgba(0, 0, 0, .4);
+	--couleur: white;
+	--couleur: hsl(60, 60%, 60%);
+	--hover-fond: yellow;
+	--hover-couleur: black;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	& > * {
+		position: absolute;
+		display: flex;
+		& > * {
+			flex: 1 0 0;
+			display: flex;
+			background-color: var(--fond);
+			justify-content: center;
+			align-items: center;
+			& svg {
+				display: block;
+				fill: var(--couleur);
+			}
+			&:hover {
+				background-color: var(--hover-fond);
+				svg {
+					fill: var(--hover-couleur);
+				}
+			}
+		}
+	}
+	& > :nth-child(1),
+	& > :nth-child(2) {
+		width: 100%;
+		height: var(--epaisseur);
+		& svg {
+			width: var(--epaisseur);
+		}
+	}
+	& > :nth-child(3),
+	& > :nth-child(4) {
+		height: 100%;
+		width: var(--epaisseur);
+		& svg {
+			height: var(--epaisseur);
+		}
+	}
+	& > :nth-child(1) {
+		top: calc(-1 * var(--epaisseur));
+		& > :first-child {
+			border-top-left-radius: 100%;
+			padding-left: 15%;
+		}
+		& > :last-child {
+			border-top-right-radius: 100%;
+			padding-right: 15%;
+		}
+		& > :only-child {
+			border-top-left-radius: 50% 100%;
+			border-top-right-radius: 50% 100%;
+			padding: 0;
+		}
+	}
+	& > :nth-child(2) {
+		bottom: calc(-1 * var(--epaisseur));
+		& > :first-child {
+			border-bottom-left-radius: 100%;
+			padding-left: 15%;
+		}
+		& > :last-child {
+			border-bottom-right-radius: 100%;
+			padding-right: 15%;
+		}
+		& > :only-child {
+			border-bottom-left-radius: 50% 100%;
+			border-bottom-right-radius: 50% 100%;
+			padding: 0;
+		}
+	}
+	& > :nth-child(3) {
+		flex-direction: column;
+		left: calc(-1 * var(--epaisseur));
+		& > :first-child {
+			border-top-left-radius: 100%;
+			padding-top: 15%;
+		}
+		& > :last-child {
+			border-bottom-left-radius: 100%;
+			padding-bottom: 15%;
+		}
+		& > :only-child {
+			border-top-left-radius: 100% 50%;
+			border-bottom-left-radius: 100% 50%;
+			padding: 0;
+		}
+	}
+	& > :nth-child(4) {
+		flex-direction: column;
+		right: calc(-1 * var(--epaisseur));
+		& > :first-child {
+			border-top-right-radius: 100%;
+			padding-top: 15%;
+		}
+		& > :last-child {
+			border-bottom-right-radius: 100%;
+			padding-bottom: 15%;
+		}
+		& > :only-child {
+			border-top-right-radius: 100% 50%;
+			border-bottom-right-radius: 100% 50%;
+			padding: 0;
+		}
+	}
+	& > :nth-child(5),
+	& > :nth-child(6) {
+		bottom: calc(-1 * var(--epaisseur));
+		& > * {
+			border-radius: 100%;
+			padding: 3px;
+		}
+	}
+	& > :nth-child(5) {
+		left: calc(-1 * var(--epaisseur));
+	}
+	& > :nth-child(6) {
+		right: calc(-1 * var(--epaisseur));
+	}
+}

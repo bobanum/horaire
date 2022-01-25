@@ -208,6 +208,19 @@ export default class App extends DOM {
 			return this.encoder(JSON.stringify(str));
 		}
 	}
+	static saveHoraire(horaire) {
+		var horaires = window.localStorage.json_horaires || "{}";
+		horaires = JSON.parse(horaires);
+		horaires[horaire.titre] = horaire.base64;
+		window.localStorage.json_horaires = JSON.stringify(horaires);
+	}
+	static loadHoraire(titre) {
+		var horaires = window.localStorage.json_horaires || "{}";
+		horaires = JSON.parse(horaires);
+		var resultat = horaires[this.titre];
+		resultat = Horaire.fromBase64(resultat);
+		return resultat;
+	}
 	/**
 	 * Retourne une chaine LZW décompressée (ou un objet json correspondant)
 	 * @param   {string} str La chaine compressée
@@ -599,13 +612,9 @@ export default class App extends DOM {
 		} else {
 			delete window.localStorage.json_horaire;
 		}
-//		this.setPaths();
 		this.setEvents();
 		Promise.all([
 			new Promise(resolve => window.addEventListener("load", resolve)),
-			// this.ajouterScript("LZString"),
-			// this.ajouterScript("Horaire"),
-//			this.ajouterScript("Plage"),
 		]).then(() => {
 			return App.load();
 		}).then(() => {
