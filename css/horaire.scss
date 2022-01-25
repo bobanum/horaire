@@ -106,7 +106,7 @@ div.champ {
 		resize: vertical;
 	}
 }
-& button.icone {
+button.icone {
 	padding: 0.5em;
 	svg {
 		display: block;
@@ -167,13 +167,13 @@ div#horaire {
 }
 
 div.grille {
-	@gap: 1px;
+	--gap: 1px;
 	display: grid;
 	grid-auto-columns: 5em;
 	grid-auto-rows: 2em;
 	grid-auto-flow: column dense;
-	grid-gap: @gap;
-	padding: @gap;
+	grid-gap: var(--gap);
+	padding: var(--gap);
 	background-color: black;
 	& > div {
 		display: flex;
@@ -197,137 +197,8 @@ div.grille {
 		background-color: white;
 	}
 }
+@import '_boutonsPlage';
 
-div.boutonsPlage {
-	@epaisseur: 1em;
-	@fond: rgba(0, 0, 0, .4);
-	@couleur: white;
-	@couleur: hsl(60, 60%, 60%);
-	@hover-fond: yellow;
-	@hover-couleur: black;
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	& > * {
-		position: absolute;
-		display: flex;
-		& > * {
-			flex: 1 0 0;
-			display: flex;
-			background-color: @fond;
-			justify-content: center;
-			align-items: center;
-			& svg {
-				display: block;
-				fill: @couleur;
-			}
-			&:hover {
-				background-color: @hover-fond;
-				svg {
-					fill: @hover-couleur;
-				}
-			}
-		}
-	}
-	& > :nth-child(1),
-	& > :nth-child(2) {
-		width: 100%;
-		height: @epaisseur;
-		& svg {
-			width: @epaisseur;
-		}
-	}
-	& > :nth-child(3),
-	& > :nth-child(4) {
-		height: 100%;
-		width: @epaisseur;
-		& svg {
-			height: @epaisseur;
-		}
-	}
-	& > :nth-child(1) {
-		top: -@epaisseur;
-		& > :first-child {
-			border-top-left-radius: 100%;
-			padding-left: 15%;
-		}
-		& > :last-child {
-			border-top-right-radius: 100%;
-			padding-right: 15%;
-		}
-		& > :only-child {
-			border-top-left-radius: 50% 100%;
-			border-top-right-radius: 50% 100%;
-			padding: 0;
-		}
-	}
-	& > :nth-child(2) {
-		bottom: -@epaisseur;
-		& > :first-child {
-			border-bottom-left-radius: 100%;
-			padding-left: 15%;
-		}
-		& > :last-child {
-			border-bottom-right-radius: 100%;
-			padding-right: 15%;
-		}
-		& > :only-child {
-			border-bottom-left-radius: 50% 100%;
-			border-bottom-right-radius: 50% 100%;
-			padding: 0;
-		}
-	}
-	& > :nth-child(3) {
-		flex-direction: column;
-		left: -@epaisseur;
-		& > :first-child {
-			border-top-left-radius: 100%;
-			padding-top: 15%;
-		}
-		& > :last-child {
-			border-bottom-left-radius: 100%;
-			padding-bottom: 15%;
-		}
-		& > :only-child {
-			border-top-left-radius: 100% 50%;
-			border-bottom-left-radius: 100% 50%;
-			padding: 0;
-		}
-	}
-	& > :nth-child(4) {
-		flex-direction: column;
-		right: -@epaisseur;
-		& > :first-child {
-			border-top-right-radius: 100%;
-			padding-top: 15%;
-		}
-		& > :last-child {
-			border-bottom-right-radius: 100%;
-			padding-bottom: 15%;
-		}
-		& > :only-child {
-			border-top-right-radius: 100% 50%;
-			border-bottom-right-radius: 100% 50%;
-			padding: 0;
-		}
-	}
-	& > :nth-child(5),
-	& > :nth-child(6) {
-		bottom: -@epaisseur;
-		& > * {
-			border-radius: 100%;
-			padding: 3px;
-		}
-	}
-	& > :nth-child(5) {
-		left: -@epaisseur;
-	}
-	& > :nth-child(6) {
-		right: -@epaisseur;
-	}
-}
 
 div.jour {
 	background-color: #666;
@@ -364,6 +235,11 @@ div.jour {
 }
 
 div.plage {
+	--hue: 0;
+	--sat:100%;
+	--lum: 80%;
+	background-color: hsl(var(--hue), var(--sat), var(--lum));
+	color: hsl(var(--hue), var(--sat), calc(100% - var(--lum)));
 	padding: 0 1ch;
 	text-align: center;
 	flex-direction: column;
