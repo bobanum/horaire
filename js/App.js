@@ -185,7 +185,7 @@ export default class App extends DOM {
 	 * Event onload de l'application
 	 */
 	static load() {
-		console.log("loadApp");
+		// console.log("loadApp");
 		return Promise.resolve();
 //		if (this.json) {
 //			this.horaire = Horaire.fromArray(this.json);
@@ -620,7 +620,7 @@ export default class App extends DOM {
 		}).then(() => {
 			return Horaire.load();
 		}).then(() => {
-			console.log("fini");
+			// console.log("fini");
 		});
 		this.data = {};
 		return;
