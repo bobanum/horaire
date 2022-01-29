@@ -1,19 +1,13 @@
-/*jslint esnext:true, browser:true, debug:false*/
 import DOM from "./DOM.js";
 import App from "./App.js";
 import Plage from "./Plage.js";
 /**
  * Classe Horaire représentant une grille horaire
- * @todo Ajouter annuler
- * @todo Ne pas exporter si valeurs par défaut??? pas sur
- * @todo Form pour données globales (titre, nbjours...)
- * @todo Éliminer les variables globales (json, horaire, etc.)
- *       @todo Bouton annuler ou ok
  * @property titre {string}	Le titre de la grille (private)
  * @property jours {string[]}	Les jours (colonnes)
  * @property heureDebut {integer}	L'heure du début de l'horaire
  * @property nbPeriodes {integer}	Le nombre de périodes (rangées)
- * @property dureePeriode {integer}	La durée dechaque période
+ * @property dureePeriode {integer}	La durée de chaque période
  * @property pause {integer}	La pause à intercaler entre les périodes
  * @property hauteur {integer}	La hauteur en pouces de la zone horaire
  * @property _plages {Plage[]} Les plages actuellement dans l'horaire
@@ -324,7 +318,7 @@ export default class Horaire extends DOM {
 	 */
 	html_iframe(largeur = 768, hauteur = 469) {
 		var resultat;
-		resultat = '<iframe style="width:"' + largeur + '"px;height:"' + hauteur + '"px;border:none;" src="' + this.toUrl() + '"></iframe>';
+		resultat = '<iframe style="width:' + largeur + 'px;height:' + hauteur + 'px;border:none;" src="' + this.toUrl() + '"></iframe>';
 		return resultat;
 	}
 	/**
@@ -335,10 +329,16 @@ export default class Horaire extends DOM {
 	dom_form() {
 		var resultat;
 		resultat = DOM.createElement("form#formHoraire");
+		resultat.addEventListener("submit", e => {
+			e.preventDefault();
+			return false;
+		});
 		resultat.obj = this;
 		this.trForm = resultat;
 		resultat.appendChild(this.dom_form_titre());
 		resultat.appendChild(this.dom_form_themes());
+		resultat.appendChild(this.dom_form_choixGrille());
+		resultat.appendChild(this.dom_form_grille());
 		return resultat;
 	}
 	dom_form_titre() {
@@ -361,6 +361,70 @@ export default class Horaire extends DOM {
 			value: "autre",
 		});
 		return this.form_wrap(select, "Thème");
+	}
+	dom_form_choixGrille() {
+		var select, option;
+		select = this.createElement("select#grille", null, {
+		}, this.evt.select_grille);
+		option = this.createElementIn(select, "option", "CSTJ", {
+			value: "cstj",
+		});
+		option = this.createElementIn(select, "option", "Autre", {
+			value: "autre",
+		});
+		option = this.createElementIn(select, "option", "Personnalisée...", {
+			value: "personnalisee",
+		});
+		return this.form_wrap(select, "Grille");
+	}
+	dom_form_grille() {
+		var resultat = document.createElement("fieldset");
+		resultat.appendChild(this.dom_form_jours());
+		resultat.appendChild(this.dom_form_heureDebut());
+		resultat.appendChild(this.dom_form_dureePeriode());
+		resultat.appendChild(this.dom_form_dureePause());
+		return resultat;
+	}
+	dom_form_jours() {
+		var input;
+		input = this.createElement("input#jours", null, {
+			"type": "text",
+			"value": this.jours.join(";"),
+			"placeholder": "Jours"
+		}, this.evt.input_jours);
+		return this.form_wrap(input, "Jours");
+	}
+	dom_form_heureDebut() {
+		var input;
+		input = this.createElement("input#heureDebut", null, {
+			"type": "time",
+			"step": "60",
+			"placeholder": "Heure de début",
+		}, this.evt.input_heureDebut);
+		input.valueAsNumber = this.heureDebut*60*1000;
+		return this.form_wrap(input, "Heure de début");
+	}
+	dom_form_dureePeriode() {
+		var input;
+		input = this.createElement("input#dureePeriode", null, {
+			"type": "number",
+			"min": "0",
+			"max": "1200",
+			"value": this.dureePeriode,
+			"placeholder": "Durée d'une période"
+		}, this.evt.input_dureePeriode);
+		return this.form_wrap(input, "Durée d'une période");
+	}
+	dom_form_dureePause() {
+		var input;
+		input = this.createElement("input#dureePeriode", null, {
+			"type": "number",
+			"min": "0",
+			"max": "1200",
+			"value": this.pause,
+			"placeholder": "Durée de la pause"
+		}, this.evt.input_dureePause);
+		return this.form_wrap(input, "Durée de la pause");
 	}
 	get base64() {
 		return App.encoder(this.toArray(true));
@@ -549,7 +613,7 @@ export default class Horaire extends DOM {
 		resultat.hauteur = this.hauteur;
 		resultat.plages = this._plages.map(p => p.toJson(false));
 		if (stringify !== false) {
-			return JSON.stringify(resultat);
+			return JSON.stringify(resultat, null, 2);
 		}
 		return resultat;
 	}
@@ -592,7 +656,7 @@ export default class Horaire extends DOM {
 		if (!s) {
 			return resultat;
 		}
-		s = s.substr(1).split("&");
+		s = s.slice(1).split("&");
 		for (i = 0, n = s.length; i < n; i += 1) {
 			donnee = s[i].split("=");
 			resultat[donnee.shift()] = donnee.join("=");
@@ -630,7 +694,28 @@ export default class Horaire extends DOM {
 						App.horaire.appliquerTheme(t);
 					});
 				}
-			}
+			},
+			select_grille: {
+				input: function () {
+					if (this.value === "personnalisee") {
+						return console.log(this);
+					}
+					return App.loadJson("json/grille_" + this.value + ".json").then(g => {
+						console.log(g);
+						App.horaire.appliquerGrille(g);
+					});
+				}
+			},
+			input_jours: {
+				input: function () {
+					// if (this.value === "personnalisee") {
+					// 	return console.log(this);
+					// }
+					// return App.loadJson("json/grille_" + this.value + ".json").then(g => {
+					// 	App.horaire.appliquerGrille(g);
+					// });
+				}
+			},
 		};
 		return this;
 	}

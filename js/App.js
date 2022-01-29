@@ -1,4 +1,3 @@
-/*jslint esnext:true, browser:true, debug:true*/
 import DOM from "./DOM.js";
 import Horaire from "./Horaire.js";
 import LZString from "./LZString.js";

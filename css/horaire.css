@@ -8,16 +8,15 @@ html {
   margin: 0;
   size: var(--largeur) var(--hauteur);
 }
+
 @media all {
   html {
     height: 100%;
     font-size: 1.8vw;
   }
-
   html.edition {
     font-size: 11pt;
   }
-
   body {
     height: 100%;
     font-family: arial;
@@ -36,44 +35,53 @@ html {
         -ms-flex-align: center;
             align-items: center;
   }
-
   *.interface {
+    display: -ms-grid;
     display: grid;
-    grid-template-areas: "h h" "o g" "c g" "f f";
-    grid-template-rows: auto 1fr auto auto;
-    grid-template-columns: 20em 1fr;
+        grid-template-areas: "h h" "o g" "c g" "f f";
+    -ms-grid-rows: auto 1fr auto auto;
+        grid-template-rows: auto 1fr auto auto;
+    -ms-grid-columns: 20em 1fr;
+        grid-template-columns: 20em 1fr;
     height: 100%;
     width: 100%;
   }
-  *.interface > header, *.interface > footer {
+  *.interface > header,
+  *.interface > footer {
     background-color: #234;
     color: #dbdb24;
     padding: 0 1em 0;
   }
-  *.interface > header img, *.interface > footer img {
-    margin-right: 0.5ch;
+  *.interface > header img,
+  *.interface > footer img {
+    margin-right: .5ch;
   }
   *.interface #horaire {
     padding: 1em;
   }
-
   iframe {
     border: none;
   }
 }
+
 @media all and (min-width: 13in) {
   *.interface {
+    display: -ms-grid;
     display: grid;
-    grid-template-areas: "h h h" "o g c" "f f f";
-    grid-template-rows: auto 1fr auto;
-    grid-template-columns: 20em 1fr 20em;
+        grid-template-areas: "h h h" "o g c" "f f f";
+    -ms-grid-rows: auto 1fr auto;
+        grid-template-rows: auto 1fr auto;
+    -ms-grid-columns: 20em 1fr 20em;
+        grid-template-columns: 20em 1fr 20em;
   }
-  *.interface > header, *.interface > footer {
+  *.interface > header,
+  *.interface > footer {
     background-color: #234;
     color: white;
     padding: 0 1em 0;
   }
 }
+
 div#options {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
@@ -82,6 +90,7 @@ div#options {
   background-color: rgba(0, 0, 0, 0.1);
   padding: 1em;
 }
+
 div#options th {
   text-align: right;
   width: 5em;
@@ -94,36 +103,55 @@ div.resultats {
   margin-bottom: 1em;
 }
 
+#formHoraire {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: min-content 1fr;
+      grid-template-columns: -webkit-min-content 1fr;
+      grid-template-columns: min-content 1fr;
+  gap: .25em .5ch;
+}
+
+#formHoraire > fieldset {
+  grid-column: 1 / -1;
+  display: -ms-grid;
+  display: grid;
+}
+
+#formHoraire > fieldset label {
+  text-align: left;
+}
+
 div.champ {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  display: contents;
 }
-div.champ > * {
-  -webkit-box-flex: 1;
-      -ms-flex: 1 0 0px;
-          flex: 1 0 0px;
-}
+
 div.champ > label {
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 4em;
-          flex: 0 0 4em;
   text-align: right;
-  padding-right: 0.5em;
   font-weight: bold;
 }
-div.champ input[type=button], div.champ input[type=text], div.champ input:not([type]), div.champ select, div.champ textarea {
+
+div.champ input[type=button],
+div.champ input[type=text],
+div.champ input:not([type]),
+div.champ select,
+div.champ textarea {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  width: 100%;
   resize: vertical;
+}
+
+#formPlage {
+  padding-top: .5em;
+  margin-top: .5em;
+  border-top: 1px solid black;
 }
 
 button.icone {
   padding: 0.5em;
 }
+
 button.icone svg {
   display: block;
   fill: #234;
@@ -153,6 +181,7 @@ div#status {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
+
 div#status div.boutons {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -165,10 +194,13 @@ div#status div.boutons {
       -ms-flex-direction: column;
           flex-direction: column;
 }
-div#status textarea, div#status input {
+
+div#status textarea,
+div#status input {
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
 }
+
 div#status textarea {
   resize: vertical;
 }
@@ -187,6 +219,7 @@ div#horaire {
       -ms-flex-direction: column;
           flex-direction: column;
 }
+
 div#horaire > div.caption {
   line-height: 1;
   margin-bottom: 0.25em;
@@ -202,12 +235,14 @@ div#horaire > div.caption {
       -ms-flex-pack: justify;
           justify-content: space-between;
 }
+
 div#horaire > div.caption > span:only-child {
   text-align: center;
   -webkit-box-flex: 1;
       -ms-flex: 1 0 0px;
           flex: 1 0 0;
 }
+
 div#horaire > div.grille {
   -webkit-box-flex: 1;
       -ms-flex: 1 0 0px;
@@ -216,6 +251,7 @@ div#horaire > div.grille {
 
 div.grille {
   --gap: 1px;
+  display: -ms-grid;
   display: grid;
   grid-auto-columns: 5em;
   grid-auto-rows: 2em;
@@ -224,6 +260,7 @@ div.grille {
   padding: var(--gap);
   background-color: black;
 }
+
 div.grille > div {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -235,6 +272,7 @@ div.grille > div {
   -ms-flex-pack: distribute;
       justify-content: space-around;
 }
+
 div.grille div.heure {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -248,9 +286,11 @@ div.grille div.heure {
   background-color: #cccccc;
   line-height: 1;
 }
+
 div.grille div.heure > div:nth-child(2) {
   display: none;
 }
+
 div.grille div.case {
   background-color: #f2f2f2;
   background-color: white;
@@ -269,12 +309,14 @@ div.boutonsPlage {
   right: 0;
   bottom: 0;
 }
+
 div.boutonsPlage > * {
   position: absolute;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
 }
+
 div.boutonsPlage > * > * {
   -webkit-box-flex: 1;
       -ms-flex: 1 0 0px;
@@ -290,62 +332,82 @@ div.boutonsPlage > * > * {
       -ms-flex-align: center;
           align-items: center;
 }
+
 div.boutonsPlage > * > * svg {
   display: block;
   fill: var(--couleur);
 }
+
 div.boutonsPlage > * > *:hover {
   background-color: var(--hover-fond);
 }
+
 div.boutonsPlage > * > *:hover svg {
   fill: var(--hover-couleur);
 }
-div.boutonsPlage > :nth-child(1), div.boutonsPlage > :nth-child(2) {
+
+div.boutonsPlage > :nth-child(1),
+div.boutonsPlage > :nth-child(2) {
   width: 100%;
   height: var(--epaisseur);
 }
-div.boutonsPlage > :nth-child(1) svg, div.boutonsPlage > :nth-child(2) svg {
+
+div.boutonsPlage > :nth-child(1) svg,
+div.boutonsPlage > :nth-child(2) svg {
   width: var(--epaisseur);
 }
-div.boutonsPlage > :nth-child(3), div.boutonsPlage > :nth-child(4) {
+
+div.boutonsPlage > :nth-child(3),
+div.boutonsPlage > :nth-child(4) {
   height: 100%;
   width: var(--epaisseur);
 }
-div.boutonsPlage > :nth-child(3) svg, div.boutonsPlage > :nth-child(4) svg {
+
+div.boutonsPlage > :nth-child(3) svg,
+div.boutonsPlage > :nth-child(4) svg {
   height: var(--epaisseur);
 }
+
 div.boutonsPlage > :nth-child(1) {
   top: calc(-1 * var(--epaisseur));
 }
+
 div.boutonsPlage > :nth-child(1) > :first-child {
   border-top-left-radius: 100%;
   padding-left: 15%;
 }
+
 div.boutonsPlage > :nth-child(1) > :last-child {
   border-top-right-radius: 100%;
   padding-right: 15%;
 }
+
 div.boutonsPlage > :nth-child(1) > :only-child {
   border-top-left-radius: 50% 100%;
   border-top-right-radius: 50% 100%;
   padding: 0;
 }
+
 div.boutonsPlage > :nth-child(2) {
   bottom: calc(-1 * var(--epaisseur));
 }
+
 div.boutonsPlage > :nth-child(2) > :first-child {
   border-bottom-left-radius: 100%;
   padding-left: 15%;
 }
+
 div.boutonsPlage > :nth-child(2) > :last-child {
   border-bottom-right-radius: 100%;
   padding-right: 15%;
 }
+
 div.boutonsPlage > :nth-child(2) > :only-child {
   border-bottom-left-radius: 50% 100%;
   border-bottom-right-radius: 50% 100%;
   padding: 0;
 }
+
 div.boutonsPlage > :nth-child(3) {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
@@ -353,19 +415,23 @@ div.boutonsPlage > :nth-child(3) {
           flex-direction: column;
   left: calc(-1 * var(--epaisseur));
 }
+
 div.boutonsPlage > :nth-child(3) > :first-child {
   border-top-left-radius: 100%;
   padding-top: 15%;
 }
+
 div.boutonsPlage > :nth-child(3) > :last-child {
   border-bottom-left-radius: 100%;
   padding-bottom: 15%;
 }
+
 div.boutonsPlage > :nth-child(3) > :only-child {
   border-top-left-radius: 100% 50%;
   border-bottom-left-radius: 100% 50%;
   padding: 0;
 }
+
 div.boutonsPlage > :nth-child(4) {
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
@@ -373,29 +439,38 @@ div.boutonsPlage > :nth-child(4) {
           flex-direction: column;
   right: calc(-1 * var(--epaisseur));
 }
+
 div.boutonsPlage > :nth-child(4) > :first-child {
   border-top-right-radius: 100%;
   padding-top: 15%;
 }
+
 div.boutonsPlage > :nth-child(4) > :last-child {
   border-bottom-right-radius: 100%;
   padding-bottom: 15%;
 }
+
 div.boutonsPlage > :nth-child(4) > :only-child {
   border-top-right-radius: 100% 50%;
   border-bottom-right-radius: 100% 50%;
   padding: 0;
 }
-div.boutonsPlage > :nth-child(5), div.boutonsPlage > :nth-child(6) {
+
+div.boutonsPlage > :nth-child(5),
+div.boutonsPlage > :nth-child(6) {
   bottom: calc(-1 * var(--epaisseur));
 }
-div.boutonsPlage > :nth-child(5) > *, div.boutonsPlage > :nth-child(6) > * {
+
+div.boutonsPlage > :nth-child(5) > *,
+div.boutonsPlage > :nth-child(6) > * {
   border-radius: 100%;
   padding: 3px;
 }
+
 div.boutonsPlage > :nth-child(5) {
   left: calc(-1 * var(--epaisseur));
 }
+
 div.boutonsPlage > :nth-child(6) {
   right: calc(-1 * var(--epaisseur));
 }
@@ -422,6 +497,7 @@ div.jour {
     display: block;
   }
 }
+
 @media screen {
   div#horaire > .modif .plage:not(.courant):hover {
     position: relative;
@@ -429,6 +505,7 @@ div.jour {
             box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
   }
 }
+
 div.plage {
   --hue: 0;
   --sat:100%;
@@ -442,18 +519,23 @@ div.plage {
       -ms-flex-direction: column;
           flex-direction: column;
 }
+
 div.plage > div.etat {
   font-weight: bold;
 }
+
 div.plage > div.local {
   font-style: italic;
 }
+
 div.plage > :empty {
   display: none;
 }
+
 div.plage:before {
   content: "";
 }
+
 div.plage:after {
   content: "";
 }
@@ -463,14 +545,9 @@ div.plage:after {
     -webkit-box-shadow: 0.2em 0.2em 1em rgba(0, 0, 0, 0.5);
             box-shadow: 0.2em 0.2em 1em rgba(0, 0, 0, 0.5);
     position: relative;
-    left: -0.1em;
-    top: -0.1em;
+    left: -.1em;
+    top: -.1em;
   }
-}
-#formPlage {
-  padding-top: 0.5em;
-  margin-top: 0.5em;
-  border-top: 1px solid black;
 }
 
 textarea#code,
@@ -481,13 +558,15 @@ input#code-iframe {
 
 @media print {
   #status,
-#options {
+  #options {
     display: none;
   }
 }
+
 html.affichage {
   font-size: 16px;
 }
+
 html.affichage #horaire {
   width: 60em;
   height: 40em;
@@ -496,11 +575,13 @@ html.affichage #horaire {
 html.impression {
   --filet: 1px solid hsl(0, 0%, 90%);
 }
+
 html.impression body {
   margin: 0;
   width: auto;
   height: auto;
 }
+
 html.impression div.page {
   position: relative;
   width: var(--largeur);
@@ -508,6 +589,7 @@ html.impression div.page {
   padding: var(--marges);
   -webkit-box-sizing: border-box;
           box-sizing: border-box;
+  display: -ms-grid;
   display: grid;
   grid-gap: e("calc(2 * var(--marges))");
   -webkit-box-align: stretch;
@@ -515,6 +597,7 @@ html.impression div.page {
           align-items: stretch;
   justify-items: stretch;
 }
+
 @media screen {
   html.impression body {
     background-color: #234;
@@ -532,6 +615,7 @@ html.tetebeche div.page::before {
   border-top: var(--filet);
   width: 100%;
 }
+
 html.tetebeche iframe:first-child {
   -webkit-transform: rotate(180deg);
           transform: rotate(180deg);
@@ -547,9 +631,12 @@ html.quatre {
   --largeur: 11in;
   --hauteur: 8.5in;
 }
+
 html.quatre div.page {
-  grid-template-columns: 1fr 1fr;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
 }
+
 html.quatre div.page::before {
   content: "";
   position: absolute;
@@ -557,6 +644,7 @@ html.quatre div.page::before {
   border-top: var(--filet);
   width: 100%;
 }
+
 html.quatre div.page::after {
   content: "";
   position: absolute;
@@ -566,8 +654,10 @@ html.quatre div.page::after {
 }
 
 html.six div.page {
-  grid-template-columns: 1fr 1fr;
+  -ms-grid-columns: 1fr 1fr;
+      grid-template-columns: 1fr 1fr;
 }
+
 html.six div.page::before {
   content: "";
   position: absolute;
@@ -577,6 +667,7 @@ html.six div.page::before {
   border-bottom: var(--filet);
   width: 100%;
 }
+
 html.six div.page::after {
   content: "";
   position: absolute;
@@ -589,9 +680,12 @@ html.neuf {
   --largeur: 11in;
   --hauteur: 8.5in;
 }
+
 html.neuf div.page {
-  grid-template-columns: 1fr 1fr 1fr;
+  -ms-grid-columns: 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1fr;
 }
+
 html.neuf div.page::before {
   content: "";
   position: absolute;
@@ -601,6 +695,7 @@ html.neuf div.page::before {
   border-bottom: var(--filet);
   width: 100%;
 }
+
 html.neuf div.page::after {
   content: "";
   position: absolute;

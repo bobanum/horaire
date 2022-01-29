@@ -1,7 +1,3 @@
-/*jslint esnext:true, browser:true, debug:true*/
-//TODO Ajouter annuler
-//TODO Ne pas exporter si valeurs par défaut??? pas sur
-//TODO Form pour données globales (titre, nbjours...)
 import App from "./App.js";
 import DOM from "./DOM.js";
 export default class Plage extends DOM {
@@ -364,7 +360,7 @@ export default class Plage extends DOM {
 			local:this.local
 		};
 		if (stringify !== false) {
-			return JSON.stringify(resultat);
+			return JSON.stringify(resultat, null, 2);
 		}
 		return resultat;
 	}

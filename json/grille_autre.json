@@ -1,8 +1,8 @@
 {
 	"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"],
 	"heureDebut": 480,
-	"dureePeriode": 50,
-	"pause": 10,
+	"dureePeriode": 60,
+	"pause": 0,
 	"hauteur": 5,
 	"theme": "standard",
 	"typesPlages" : {

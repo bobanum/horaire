@@ -84,28 +84,7 @@ div.resultats {
 	border-bottom: groove;
 	margin-bottom: 1em;
 }
-
-div.champ {
-	display: flex;
-	align-items: center;
-	& > * {
-		flex: 1 0 0px;
-	}
-	& > label {
-		flex: 0 0 4em;
-		text-align: right;
-		padding-right: .5em;
-		font-weight: bold;
-	}
-	& input[type=button],
-	& input[type=text],
-	& input:not([type]),
-	& select,
-	& textarea {
-		box-sizing: border-box;
-		resize: vertical;
-	}
-}
+@import "formulaire";
 button.icone {
 	padding: 0.5em;
 	svg {
@@ -267,12 +246,6 @@ div.plage {
 		left: -.1em;
 		top: -.1em;
 	}
-}
-
-#formPlage {
-	padding-top: .5em;
-	margin-top: .5em;
-	border-top: 1px solid black;
 }
 
 textarea#code,

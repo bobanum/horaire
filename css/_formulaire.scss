@@ -1,0 +1,35 @@
+#formHoraire {
+	display: grid;
+	grid-template-columns: min-content 1fr;
+	gap: .25em .5ch;
+	> fieldset {
+		grid-column: 1 / -1;
+		display: grid;
+		label {
+			text-align: left;
+		}
+		// grid-template-columns: min-content 1fr;
+	}
+}
+div.champ {
+	display: contents;
+	& > label {
+		text-align: right;
+		font-weight: bold;
+	}
+	& input[type=button],
+	& input[type=text],
+	& input:not([type]),
+	& select,
+	& textarea {
+		box-sizing: border-box;
+		width: 100%;
+		resize: vertical;
+	}
+}
+#formPlage {
+	padding-top: .5em;
+	margin-top: .5em;
+	border-top: 1px solid black;
+}
+
