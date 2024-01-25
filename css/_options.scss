@@ -1,0 +1,11 @@
+div#options {
+	box-sizing: border-box;
+	height: 100%;
+	width: 100%;
+	background-color: rgba(0, 0, 0, .1);
+	padding: 1em;
+	& th {
+		text-align: right;
+		width: 5em;
+	}
+}

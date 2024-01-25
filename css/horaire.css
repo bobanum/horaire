@@ -4,79 +4,93 @@ html {
   --marges: .25in;
 }
 
+html {
+  height: 100%;
+  font-size: 1.8vw;
+}
+
+html.edition {
+  font-size: 11pt;
+}
+
+body {
+  height: 100%;
+  font-family: arial;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
 @page {
   margin: 0;
   size: var(--largeur) var(--hauteur);
 }
-@media all {
-  html {
-    height: 100%;
-    font-size: 1.8vw;
-  }
+iframe {
+  border: none;
+}
 
-  html.edition {
-    font-size: 11pt;
-  }
-
-  body {
-    height: 100%;
-    font-family: arial;
-    margin: 0;
-    padding: 0;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-  }
-
-  *.interface {
-    display: grid;
-    grid-template-areas: "h h" "o g" "c g" "f f";
-    grid-template-rows: auto 1fr auto auto;
-    grid-template-columns: 20em 1fr;
-    height: 100%;
-    width: 100%;
-  }
-  *.interface > header, *.interface > footer {
-    background-color: #234;
-    color: #dbdb24;
-    padding: 0 1em 0;
-  }
-  *.interface > header img, *.interface > footer img {
-    margin-right: 0.5ch;
-  }
-  *.interface #horaire {
-    padding: 1em;
-  }
-
-  iframe {
-    border: none;
-  }
+.interface {
+  display: grid;
+  grid-template-areas: "h h" "o g" "c g" "f f";
+  grid-template-rows: auto 1fr auto auto;
+  grid-template-columns: 20em 1fr;
+  height: 100%;
+  width: 100%;
+}
+.interface > header, .interface > footer {
+  background-color: #234;
+  color: #dbdb24;
+  padding: 0 1em 0;
+}
+.interface > header img, .interface > footer img {
+  margin-right: 0.5ch;
+}
+.interface #horaire {
+  padding: 1em;
 }
 @media all and (min-width: 13in) {
-  *.interface {
+  .interface {
     display: grid;
     grid-template-areas: "h h h" "o g c" "f f f";
     grid-template-rows: auto 1fr auto;
     grid-template-columns: 20em 1fr 20em;
   }
-  *.interface > header, *.interface > footer {
+  .interface > header, .interface > footer {
     background-color: #234;
     color: white;
     padding: 0 1em 0;
   }
 }
+@media (max-width: 13in) {
+  .interface > *:nth-child(2) {
+    background-color: #CC0 !important;
+  }
+  .interface > *:nth-child(2) > * {
+    position: absolute;
+    right: 0;
+    width: 3in;
+    background-color: inherit !important;
+    z-index: 1000;
+  }
+  .interface > *:nth-child(2):hover > * {
+    left: 0;
+    display: block;
+  }
+}
+
+button.icone {
+  padding: 0.5em;
+}
+button.icone svg {
+  display: block;
+  fill: #234;
+}
+
 div#options {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   height: 100%;
   width: 100%;
   background-color: rgba(0, 0, 0, 0.1);
@@ -95,54 +109,28 @@ div.resultats {
 }
 
 div.champ {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
 }
 div.champ > * {
-  -webkit-box-flex: 1;
-      -ms-flex: 1 0 0px;
-          flex: 1 0 0px;
+  flex: 1 0 0px;
 }
 div.champ > label {
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 4em;
-          flex: 0 0 4em;
+  flex: 0 0 4em;
   text-align: right;
   padding-right: 0.5em;
   font-weight: bold;
 }
 div.champ input[type=button], div.champ input[type=text], div.champ input:not([type]), div.champ select, div.champ textarea {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   resize: vertical;
 }
 
-button.icone {
-  padding: 0.5em;
-}
-button.icone svg {
-  display: block;
-  fill: #234;
-}
-
 div#contenu {
-  -webkit-box-flex: 1;
-      -ms-flex: 1 0 8in;
-          flex: 1 0 8in;
-  display: -webkit-box;
-  display: -ms-flexbox;
+  flex: 1 0 8in;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  flex-direction: column;
+  align-items: center;
 }
 
 div#status {
@@ -150,24 +138,15 @@ div#status {
   width: 100%;
   height: 100%;
   padding: 1em;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
 }
 div#status div.boutons {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  justify-content: space-between;
+  flex-direction: column;
 }
 div#status textarea, div#status input {
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
 }
 div#status textarea {
   resize: vertical;
@@ -176,42 +155,26 @@ div#status textarea {
 div#horaire {
   width: 100%;
   height: 100%;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  display: -webkit-box;
-  display: -ms-flexbox;
+  box-sizing: border-box;
   display: flex;
   margin: auto;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
 }
 div#horaire > div.caption {
   line-height: 1;
   margin-bottom: 0.25em;
   font-weight: bold;
-  font-size: 3em;
-  -webkit-box-flex: 0;
-      -ms-flex: 0 0 auto;
-          flex: 0 0 auto;
-  display: -webkit-box;
-  display: -ms-flexbox;
+  font-size: 2.5em;
+  flex: 0 0 auto;
   display: flex;
-  -webkit-box-pack: justify;
-      -ms-flex-pack: justify;
-          justify-content: space-between;
+  justify-content: space-between;
 }
 div#horaire > div.caption > span:only-child {
   text-align: center;
-  -webkit-box-flex: 1;
-      -ms-flex: 1 0 0px;
-          flex: 1 0 0;
+  flex: 1 0 0;
 }
 div#horaire > div.grille {
-  -webkit-box-flex: 1;
-      -ms-flex: 1 0 0px;
-          flex: 1 0 0;
+  flex: 1 0 0;
 }
 
 div.grille {
@@ -225,35 +188,31 @@ div.grille {
   background-color: black;
 }
 div.grille > div {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  align-items: center;
   text-align: center;
-  -ms-flex-pack: distribute;
-      justify-content: space-around;
+  justify-content: space-around;
 }
 div.grille div.heure {
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
   font-size: smaller;
   font-weight: bold;
-  background-color: #cccccc;
+  background-color: rgb(204, 204, 204);
   line-height: 1;
 }
 div.grille div.heure > div:nth-child(2) {
   display: none;
 }
 div.grille div.case {
-  background-color: #f2f2f2;
+  background-color: rgb(242, 242, 242);
   background-color: white;
+}
+
+div.jour {
+  background-color: #666;
+  color: white;
+  font-weight: bold;
 }
 
 div.boutonsPlage {
@@ -271,24 +230,14 @@ div.boutonsPlage {
 }
 div.boutonsPlage > * {
   position: absolute;
-  display: -webkit-box;
-  display: -ms-flexbox;
   display: flex;
 }
 div.boutonsPlage > * > * {
-  -webkit-box-flex: 1;
-      -ms-flex: 1 0 0px;
-          flex: 1 0 0;
-  display: -webkit-box;
-  display: -ms-flexbox;
+  flex: 1 0 0;
   display: flex;
   background-color: var(--fond);
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  justify-content: center;
+  align-items: center;
 }
 div.boutonsPlage > * > * svg {
   display: block;
@@ -347,10 +296,7 @@ div.boutonsPlage > :nth-child(2) > :only-child {
   padding: 0;
 }
 div.boutonsPlage > :nth-child(3) {
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
   left: calc(-1 * var(--epaisseur));
 }
 div.boutonsPlage > :nth-child(3) > :first-child {
@@ -367,10 +313,7 @@ div.boutonsPlage > :nth-child(3) > :only-child {
   padding: 0;
 }
 div.boutonsPlage > :nth-child(4) {
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
   right: calc(-1 * var(--epaisseur));
 }
 div.boutonsPlage > :nth-child(4) > :first-child {
@@ -400,33 +343,10 @@ div.boutonsPlage > :nth-child(6) {
   right: calc(-1 * var(--epaisseur));
 }
 
-div.jour {
-  background-color: #666;
-  color: white;
-  font-weight: bold;
-}
-
-@media (max-width: 13in) {
-  .interface > *:nth-child(2) {
-    background-color: #CC0 !important;
-  }
-  .interface > *:nth-child(2) > * {
-    position: absolute;
-    right: 0;
-    width: 3in;
-    background-color: inherit !important;
-    z-index: 1000;
-  }
-  .interface > *:nth-child(2):hover > * {
-    left: 0;
-    display: block;
-  }
-}
 @media screen {
   div#horaire > .modif .plage:not(.courant):hover {
     position: relative;
-    -webkit-box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
-            box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 1em rgba(0, 0, 0, 0.5);
   }
 }
 div.plage {
@@ -437,10 +357,7 @@ div.plage {
   color: hsl(var(--hue), var(--sat), calc(100% - var(--lum)));
   padding: 0 1ch;
   text-align: center;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
+  flex-direction: column;
 }
 div.plage > div.etat {
   font-weight: bold;
@@ -460,8 +377,7 @@ div.plage:after {
 
 @media screen {
   .courant {
-    -webkit-box-shadow: 0.2em 0.2em 1em rgba(0, 0, 0, 0.5);
-            box-shadow: 0.2em 0.2em 1em rgba(0, 0, 0, 0.5);
+    box-shadow: 0.2em 0.2em 1em rgba(0, 0, 0, 0.5);
     position: relative;
     left: -0.1em;
     top: -0.1em;
@@ -481,7 +397,7 @@ input#code-iframe {
 
 @media print {
   #status,
-#options {
+  #options {
     display: none;
   }
 }
@@ -506,13 +422,10 @@ html.impression div.page {
   width: var(--largeur);
   height: var(--hauteur);
   padding: var(--marges);
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
+  box-sizing: border-box;
   display: grid;
   grid-gap: e("calc(2 * var(--marges))");
-  -webkit-box-align: stretch;
-      -ms-flex-align: stretch;
-          align-items: stretch;
+  align-items: stretch;
   justify-items: stretch;
 }
 @media screen {
@@ -533,8 +446,7 @@ html.tetebeche div.page::before {
   width: 100%;
 }
 html.tetebeche iframe:first-child {
-  -webkit-transform: rotate(180deg);
-          transform: rotate(180deg);
+  transform: rotate(180deg);
 }
 
 html.pagesimple {
@@ -610,4 +522,3 @@ html.neuf div.page::after {
   border-right: var(--filet);
   height: 100%;
 }
-/*# sourceMappingURL=horaire.css.map */

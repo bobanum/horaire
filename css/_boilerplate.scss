@@ -1,0 +1,24 @@
+html {
+	height: 100%;
+	font-size: 1.8vw;
+}
+html.edition {
+	font-size: 11pt;
+}
+body {
+	height: 100%;
+	font-family: arial;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	flex-wrap: wrap;
+	align-items: center;
+}
+@page {
+	margin: 0;
+	size: var(--largeur) var(--hauteur);
+}
+iframe {
+	border:none;
+}
