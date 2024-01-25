@@ -1,0 +1,36 @@
+div.grille {
+	--gap: 1px;
+	display: grid;
+	grid-auto-columns: 5em;
+	grid-auto-rows: 2em;
+	grid-auto-flow: column dense;
+	grid-gap: var(--gap);
+	padding: var(--gap);
+	background-color: black;
+	& > div {
+		display: flex;
+		align-items: center;
+		text-align: center;
+		justify-content: space-around;
+	}
+	div.heure {
+		display: flex;
+		flex-direction: column;
+		font-size: smaller;
+		font-weight: bold;
+		background-color: rgba(80%, 80%, 80%, 1);
+		line-height: 1;
+		& > div:nth-child(2) {
+			display: none;
+		}
+	}
+	div.case {
+		background-color: rgba(95%, 95%, 95%, 1);
+		background-color: white;
+	}
+}
+div.jour {
+	background-color: #666;
+	color: white;
+	font-weight: bold;
+}

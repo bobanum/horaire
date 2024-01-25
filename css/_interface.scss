@@ -1,0 +1,68 @@
+.interface {
+	display: grid;
+	grid-template-areas: "h h" "o g" "c g" "f f";
+	grid-template-rows: auto 1fr auto auto;
+	grid-template-columns: 20em 1fr;
+	// grid-gap: 0.5em 0.5em;
+	height: 100%;
+	width: 100%;
+
+	& > header,
+	& > footer {
+		background-color: #234;
+		color: #dbdb24;
+		padding: 0 1em 0;
+
+		img {
+			margin-right: .5ch;
+		}
+	}
+
+	#horaire {
+		padding: 1em;
+	}
+
+	@media all and (min-width: 13in) {
+		display: grid;
+		grid-template-areas: "h h h" "o g c" "f f f";
+		grid-template-rows: auto 1fr auto;
+		grid-template-columns: 20em 1fr 20em;
+
+		& > header,
+		& > footer {
+			background-color: #234;
+			color: white;
+			padding: 0 1em 0;
+		}
+	}
+
+	@media (max-width: 13in) {
+		& > *:nth-child(2) {
+			background-color: #CC0 !important;
+
+			& > * {
+				position: absolute;
+				right: 0;
+				width: 3in;
+				background-color: inherit !important;
+				z-index: 1000;
+			}
+
+			&:hover {
+				& > * {
+					left: 0;
+					display: block;
+				}
+			}
+		}
+	}
+}
+
+button.icone {
+	padding: 0.5em;
+
+	svg {
+		display: block;
+		fill: #234;
+	}
+}

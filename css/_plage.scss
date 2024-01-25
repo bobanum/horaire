@@ -1,0 +1,25 @@
+div.plage {
+	--hue: 0;
+	--sat:100%;
+	--lum: 80%;
+	background-color: hsl(var(--hue), var(--sat), var(--lum));
+	color: hsl(var(--hue), var(--sat), calc(100% - var(--lum)));
+	padding: 0 1ch;
+	text-align: center;
+	flex-direction: column;
+	& > div.etat {
+		font-weight: bold;
+	}
+	& > div.local {
+		font-style: italic;
+	}
+	& > :empty {
+		display: none;
+	}
+	&:before {
+		content: "";
+	}
+	&:after {
+		content: "";
+	}
+}
