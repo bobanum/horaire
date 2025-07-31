@@ -339,6 +339,9 @@ export default class Horaire extends DOM {
 		this.trForm = resultat;
 		resultat.appendChild(this.dom_form_titre());
 		resultat.appendChild(this.dom_form_themes());
+		resultat.addEventListener("submit", e => {
+			e.preventDefault();
+		});
 		return resultat;
 	}
 	dom_form_titre() {

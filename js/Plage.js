@@ -197,6 +197,10 @@ export default class Plage extends DOM {
 		resultat.appendChild(this.form_local());
 		resultat.appendChild(this.form_texte());
 		resultat.appendChild(this.form_actions());
+		resultat.addEventListener("submit", e => {
+			e.preventDefault();
+			this.deposer();
+		});
 		return resultat;
 	}
 	form_typePlage() {
