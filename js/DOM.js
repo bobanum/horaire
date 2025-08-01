@@ -11,13 +11,13 @@ export default class DOM {
 	}
 	get dom() {
 		if (!this._dom) {
-			this._dom = this.dom_creer();
-			this._dom.obj = this;
+			// this._dom = this.dom_creer();
+			// this._dom.obj = this;
 		}
 		return this._dom;
 	}
 	dom_creer() {
-		throw "La methode 'dim_creer' doit être surchargée.";
+		throw "La methode 'dom_creer' doit être surchargée.";
 	}
 	/**
 	 * Retourne un élément DOM avec un certain contenu, attributs et evenements
@@ -179,18 +179,26 @@ export default class DOM {
 	 * @param   {string}      label Le label à apposer au champ
 	 * @returns {HTMLElement} Le div.champ
 	 */
-	form_wrap(field, label) {
+	static form_wrap(field, label) {
 		var champ, i, n;
-		champ = this.createElement('div.champ');
+		champ = document.createElement('div');
+		champ.classList.add('champ');
 		if (label !== undefined) {
-			champ.appendChild(this.createElement('label', label, {'for': field.getAttribute('id')}));
+			let labelElement = document.createElement('label');
+			labelElement.textContent = label;
+			labelElement.setAttribute('for', field.getAttribute('id') || field.getAttribute('name'));
+			champ.appendChild(labelElement);
 		}
 		if (field instanceof Array) {
 			for (i = 0, n = field.length; i < n; i += 1) {
-				champ.appendChild(this.createElement('span', field[i]));
+				let span = document.createElement('span');
+				span.appendChild(field[i]);
+				champ.appendChild(span);
 			}
 		} else {
-			champ.appendChild(this.createElement('span', field));
+			let span = document.createElement('span');
+			span.appendChild(field);
+			champ.appendChild(span);
 		}
 		return champ;
 	}
@@ -207,10 +215,10 @@ export default class DOM {
 	/**
 	 * Règle les propriété de classe et les événements
 	 */
-static init() {
+	static init() {
 		["createElement", "createElementIn", "setClasses", "setAttributes",
-		 "copierProps", "applyStyle", "appendContent", "addEventListeners"]
-			.forEach(m=>this[m]=this.prototype[m]);
+			"copierProps", "applyStyle", "appendContent", "addEventListeners"]
+			.forEach(m => this[m] = this.prototype[m]);
 	}
 }
 DOM.init();

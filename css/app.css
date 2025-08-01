@@ -1,32 +1,37 @@
-@import 'variables';
-@import 'boilerplate';
-@import 'interface';
-@import 'options';
-
 div.resultats {
-	padding-bottom: 1em;
+	/* padding-bottom: 1em; */
 	border-bottom: 1px solid#999;
 	border-bottom: groove;
 	margin-bottom: 1em;
+	display: flex;
+	justify-content: space-between;
 }
-
+div.output {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(5em, auto));
+	/* gap: .15em; */
+	justify-content: space-between;
+	> * {
+		flex: 1 0 0px;
+	}
+}
 div.champ {
 	display: flex;
 	align-items: center;
-	& > * {
+	> * {
 		flex: 1 0 0px;
 	}
-	& > label {
+	> label {
 		flex: 0 0 4em;
 		text-align: right;
 		padding-right: .5em;
 		font-weight: bold;
 	}
-	& input[type=button],
-	& input[type=text],
-	& input:not([type]),
-	& select,
-	& textarea {
+	input[type=button],
+	input[type=text],
+	input:not([type]),
+	select,
+	textarea {
 		box-sizing: border-box;
 		resize: vertical;
 	}
@@ -45,23 +50,19 @@ div#status {
 	height: 100%;
 	padding: 1em;
 	box-sizing: border-box;
-	& div.boutons {
+	div.boutons {
 		display: flex;
 		justify-content: space-between;
 		flex-direction: column;
 	}
-	& textarea,
-	& input {
+	textarea,
+	input {
 		box-sizing: border-box;
 	}
-	& textarea {
+	textarea {
 		resize: vertical;
 	}
 }
-
-@import '_horaire';
-@import 'grille';
-@import 'boutons-plage';
 
 @media screen {
 	div#horaire > .modif .plage:not(.courant):hover {
@@ -69,8 +70,6 @@ div#status {
 		box-shadow: 0 0 1em rgba(0, 0, 0, .5);
 	}
 }
-
-@import 'plage';
 
 @media screen {
 	.courant {

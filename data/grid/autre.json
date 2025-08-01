@@ -1,23 +1,26 @@
 {
+	"label": "Autre",
 	"jours": ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"],
 	"heureDebut": 480,
 	"dureePeriode": 50,
-	"nbPeriodes": 11,
-	"pause": 5,
+	"pause": 10,
 	"hauteur": 5,
 	"theme": "standard",
-	"typesPlages" : {
-		"C": {
+	"typesPlages" : [
+		{
 			"label": "En cours"
 		},
-		"D": {
+		{
+			"label": "En cours"
+		},
+		{
 			"label": "Disponible"
 		},
-		"R": {
+		{
 			"label": "Sur rendez-vous"
 		},
-		"N": {
+		{
 			"label": "Non disponible"
 		}
-	}
+	]
 }

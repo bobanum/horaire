@@ -1,0 +1,33 @@
+<svg version="1.1" viewBox="0 0 96 96" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<defs>
+		<symbol id="visionner" viewBox="0 0 32 32">
+			<path d="M 16,4 C 11.496062,4 6.9948822,4.6911419 2.6992188,6.0449219 L 2.2792969,6.1777344 2.09375,6.5761719 C 0.71902894,9.5165519 0,12.75413 0,16 c 0,3.24587 0.71902894,6.483458 2.09375,9.423828 l 0.1855469,0.396484 0.4199219,0.132813 C 6.9948821,27.306905 11.496062,28 16,28 c 4.503938,0 9.005117,-0.693095 13.300781,-2.046875 l 0.419922,-0.132813 0.185547,-0.396484 C 31.280971,22.483458 32,19.24587 32,16 32,12.75413 31.280971,9.5165519 29.90625,6.5761719 L 29.720703,6.1777344 29.300781,6.0449219 C 25.005117,4.6911419 20.503938,4 16,4 Z m 0,2 C 20.140318,6 24.273493,6.6460331 28.236328,7.8457031 29.365801,10.409513 30,13.19889 30,16 30,18.80029 29.367103,21.589134 28.238281,24.152344 24.274885,25.352374 20.140963,26 16,26 11.859037,26 7.725115,25.352374 3.7617188,24.152344 2.6328969,21.589134 2,18.80029 2,16 2,13.19889 2.6341994,10.409513 3.7636719,7.8457031 7.7265062,6.6460331 11.859682,6 16,6 Z M 8,8 V 9 24 H 24 V 8 Z m 2,2 H 22 V 22 H 10 Z"/>
+		</symbol>
+		<symbol id="tetebeche" viewBox="0 0 32 32">
+			<path d="m4 0v30h2v2h24v-23.414l-8.5859-8.5859zm2 2h14v4h-10l6 6 4-4h6v6h-1v2h1v12h-20v-12h1v-2h-1zm16 1.4141 2.5859 2.5859h-2.5859zm-13 10.586v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm-5 4-6 6h12z" />
+		</symbol>
+		<symbol id="quatre" viewBox="0 0 32 32">
+			<path d="m0 3v24h2v2h30v-17.414l-8.5859-8.5859zm2 2h12v1h2v-1h6v6h6v3h-2v2h2v9h-12v-1h-2v1h-12v-9h2v-2h-2zm22 1.4141 2.5859 2.5859h-2.5859zm-10 1.5859v2h2v-2zm0 4v2h2v-2zm-8 2v2h2v-2zm4 0v2h2v-2zm8 0v2h2v-2zm4 0v2h2v-2zm-8 2v2h2v-2zm0 4v2h2v-2z" />
+		</symbol>
+		<symbol id="six" viewBox="0 0 32 32">
+			<path d="m4 0v30h2v2h24v-23.414l-8.5859-8.5859zm2 2h9v2h2v-2h3v6h6v20h-9v-2h-2v2h-9zm16 1.4141 2.5859 2.5859h-2.5859zm-7 2.5859v2h2v-2zm-8 4v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm-8 4v2h2v-2zm-8 4v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm4 0v2h2v-2zm-8 4v2h2v-2z" />
+		</symbol>
+		<symbol id="neuf" viewBox="0 0 32 32">
+			<path d="m0 3v24h2v2h30v-17.414l-8.5859-8.5859zm2 2h8v1h2v-1h6v1h2v-1h2v7h2v-1h2v1h2v6h-2v2h2v5h-8v-1h-2v1h-6v-1h-2v1h-8v-5h2v-2h-2v-6h2v-2h-2zm22 1.4141 2.5859 2.5859h-2.5859zm-14 1.5859v2h2v-2zm8 0v2h2v-2zm-12 2v2h2v-2zm8 0v2h2v-2zm-4 2v2h2v-2zm8 0v2h2v-2zm-8 4v2h2v-2zm8 0v2h2v-2zm-12 2v2h2v-2zm8 0v2h2v-2zm8 0v2h2v-2zm-12 2v2h2v-2zm8 0v2h2v-2z" />
+		</symbol>
+		<symbol id="pagesimple" viewBox="0 0 32 32">
+			<path d="m4 0v30h2v2h24v-23.414l-8.5859-8.5859zm2 2h14v6h6v20h-20zm16 1.4141 2.5859 2.5859h-2.5859z" />
+		</symbol>
+		<symbol id="pagesimple2" viewBox="0 0 32 32">
+			<path d="m0 3v24h2v2h30v-17.414l-8.5859-8.5859zm2 2h20v6h6v14h-26zm22 1.4141 2.5859 2.5859h-2.5859z" />
+		</symbol>
+	</defs>
+	<use x="0" y="0" xlink:href="#visionner" width="32" height="32"></use>
+	<use x="32" y="0" xlink:href="#pagesimple" width="32" height="32"></use>
+	<use x="64" y="0" xlink:href="#pagesimple2" width="32" height="32"></use>
+	<use x="0" y="32" xlink:href="#tetebeche" width="32" height="32"></use>
+	<use x="32" y="32" xlink:href="#quatre" width="32" height="32"></use>
+	<use x="64" y="32" xlink:href="#six" width="32" height="32"></use>
+	<use x="0" y="64" xlink:href="#neuf" width="32" height="32"></use>
+	<use x="64" y="64" xlink:href="#test" width="32" height="32"></use>
+</svg>

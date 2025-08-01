@@ -3,7 +3,6 @@
 	grid-template-areas: "h h" "o g" "c g" "f f";
 	grid-template-rows: auto 1fr auto auto;
 	grid-template-columns: 20em 1fr;
-	// grid-gap: 0.5em 0.5em;
 	height: 100%;
 	width: 100%;
 
@@ -30,7 +29,7 @@
 
 		& > header,
 		& > footer {
-			background-color: #234;
+			background-color: hsl(210, 33%, 20%);
 			color: white;
 			padding: 0 1em 0;
 		}
@@ -63,6 +62,6 @@ button.icone {
 
 	svg {
 		display: block;
-		fill: #234;
+		fill: hsl(210, 33%, 100%);
 	}
 }

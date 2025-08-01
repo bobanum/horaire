@@ -1,0 +1,20 @@
+{
+	"label": "Semaine complète",
+	"jours": ["Dimanche","Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"],
+	"heureDebut": 480,
+	"dureePeriode": 60,
+	"pause": 0,
+	"hauteur": 5,
+	"theme": "standard",
+	"typesPlages" : [
+		{
+			"label": "Disponible"
+		},
+		{
+			"label": "Sur rendez-vous"
+		},
+		{
+			"label": "Non disponible"
+		}
+	]
+}

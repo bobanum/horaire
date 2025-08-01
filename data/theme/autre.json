@@ -1,5 +1,5 @@
 {
-	"nom": "Autre",
+	"label": "Autre",
 	"css": {
 		"": "font-family:papyrus;",
 		"*": "line-height: 1;",
@@ -9,21 +9,21 @@
 		"div.heure": "background-color:#CCC;",
 		".case": "border-radius: .3em;"
 	},
-	"typesPlages" : {
-		"defaut": {
+	"typesPlages" : [
+		{
 			"css": "background-color:white;color:black"
 		},
-		"C": {
+		{
 			"css": "background-color:fuchsia;color:#A52929"
 		},
-		"D": {
+		{
 			"css": "background-color:darkgreen;color:white"
 		},
-		"R": {
+		{
 			"css": "background-color:pink;color:darkblue"
 		},
-		"N": {
+		{
 			"css": "background-color:#ddd;color:#ccc"
 		}
-	}
+	]
 }

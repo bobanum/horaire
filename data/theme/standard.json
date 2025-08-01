@@ -1,5 +1,5 @@
 {
-	"nom": "Standard",
+	"label": "Standard",
 	"css": {
 		"": "font-family:arial;",
 		"div.caption": "font-size:1.5em;",
@@ -7,21 +7,21 @@
 		"div.jour": "background-color:black;color:white;",
 		"div.heure": "background-color:#CCC;"
 	},
-	"typesPlages" : {
-		"defaut": {
+	"typesPlages" : [
+		{
 			"css": "--lum:100%;"
 		},
-		"C": {
+		{
 			"css": "--hue:60;"
 		},
-		"D": {
+		{
 			"css": "--hue:120;"
 		},
-		"R": {
+		{
 			"css": "--hue:240;"
 		},
-		"N": {
+		{
 			"css": "--hue:0;--sat:0%;"
 		}
-	}
+	]
 }

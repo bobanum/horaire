@@ -1,6 +1,6 @@
 /*jslint esnext:true, browser:true, debug:true*/
 import DOM from "./DOM.js";
-import Horaire from "./Horaire.js";
+import Schedule from "./Schedule.js";
 import LZString from "./LZString.js";
 /**
 Classe App gérant l'application
@@ -42,7 +42,10 @@ export default class App extends DOM {
 	}
 	static dom_options() {
 		var resultat;
-		resultat = this.createElement("div#options", this.horaire.dom_form());
+		// resultat = this.createElement("div#options", this.horaire.dom_form());
+		resultat = document.createElement("div");
+		resultat.id = "options";
+		resultat.appendChild(this.horaire.DOM.FORM.main());
 		return resultat;
 	}
 	static dom_status() {
@@ -63,7 +66,7 @@ export default class App extends DOM {
 		var resultat, div;
 		resultat = this.createElement("div.boutons");
 		this.ajouterBoutonsResultats(resultat);
-		div = this.createElementIn(resultat, "div");
+		div = this.createElementIn(resultat, "div.output");
 		this.createElementIn(div, "input", null, {
 			"type": "button",
 			"value": "JSON"
@@ -104,7 +107,7 @@ export default class App extends DOM {
 	static dom_code() {
 		var resultat = this.createElement("textarea#code", null, {
 			"cols": "60",
-			rows: "10",
+			"rows": "3",
 			"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
 		}, this.evt.code);
 		resultat.horaire = this;
@@ -218,7 +221,7 @@ export default class App extends DOM {
 		var horaires = window.localStorage.json_horaires || "{}";
 		horaires = JSON.parse(horaires);
 		var resultat = horaires[this.titre];
-		resultat = Horaire.fromBase64(resultat);
+		resultat = Schedule.fromBase64(resultat);
 		return resultat;
 	}
 	/**
@@ -618,7 +621,7 @@ export default class App extends DOM {
 		]).then(() => {
 			return App.load();
 		}).then(() => {
-			return Horaire.load();
+			return Schedule.load();
 		}).then(() => {
 			// console.log("fini");
 		});

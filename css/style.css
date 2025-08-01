@@ -1,0 +1,10 @@
+@import url('https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css');
+@import url('variables.css'); 
+@import url('boilerplate.css');
+@import url('interface.css');
+@import url('app.css');
+@import url('options.css');
+@import url('grille.css');
+@import url('plage.css');
+@import url('boutons-plage.css');
+@import url('horaire.css');
