@@ -1,15 +1,17 @@
 .interface {
+	--pico-block-spacing-vertical: 0;
+	--pico-h1-color: #dbdb24;
 	display: grid;
-	grid-template-areas: "h h" "o g" "c g" "f f";
+	grid-template-areas:
+		"header header" "options preview" "status preview" "footer footer";
 	grid-template-rows: auto 1fr auto auto;
 	grid-template-columns: 20em 1fr;
 	height: 100%;
 	width: 100%;
 
-	& > header,
-	& > footer {
+	>header,
+	>footer {
 		background-color: #234;
-		color: #dbdb24;
 		padding: 0 1em 0;
 
 		img {
@@ -17,18 +19,34 @@
 		}
 	}
 
+	>header {
+		grid-area: header;
+
+	}
+
+	>footer {
+		grid-area: footer;
+		text-align: right;
+	}
+
+	>main {
+		display: contents;
+	}
+
 	#horaire {
 		padding: 1em;
 	}
 
+	/* 
 	@media all and (min-width: 13in) {
 		display: grid;
-		grid-template-areas: "h h h" "o g c" "f f f";
+		grid-template-areas: 
+		"header header header" "options preview status" "footer footer footer";
 		grid-template-rows: auto 1fr auto;
 		grid-template-columns: 20em 1fr 20em;
 
-		& > header,
-		& > footer {
+		> header,
+		> footer {
 			background-color: hsl(210, 33%, 20%);
 			color: white;
 			padding: 0 1em 0;
@@ -36,10 +54,10 @@
 	}
 
 	@media (max-width: 13in) {
-		& > *:nth-child(2) {
+		> *:nth-child(2) {
 			background-color: #CC0 !important;
 
-			& > * {
+			> * {
 				position: absolute;
 				right: 0;
 				width: 3in;
@@ -48,20 +66,23 @@
 			}
 
 			&:hover {
-				& > * {
+				> * {
 					left: 0;
 					display: block;
 				}
 			}
 		}
 	}
+*/
 }
 
-button.icone {
+button.icon {
 	padding: 0.5em;
 
 	svg {
 		display: block;
 		fill: hsl(210, 33%, 100%);
+		width: 1.75em;
+		height: 1.75em;
 	}
 }

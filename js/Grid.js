@@ -4,13 +4,12 @@ export default class Grid {
     static properties = {
         label: "",
         slug: "",
-        jours: ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi"],
-        heureDebut: 480, // 8:00 AM in minutes
-        dureePeriode: 50, // Duration of each period in minutes
-        pause: 10, // Break duration in minutes
-        hauteur: 5, // Height of each time slot
+        startTime: 480, // 8:00 AM in minutes
+        slotDuration: 50, // Duration of each period in minutes
+        breakDuration: 10, // Break duration in minutes
+        slotCount: 10, // Number of slots
         theme: "standard", // Default theme
-        typesPlages: [
+        slotTypes: [
             { label: "En cours" },
             { label: "Disponible" },
             { label: "Sur rendez-vous" },
@@ -18,7 +17,7 @@ export default class Grid {
         ]
     };
     constructor(json) {
-        this.fill(Grid.properties);
+        // this.fill(Grid.properties);
 
         if (json) {
             this.fill(json);
@@ -46,11 +45,11 @@ export default class Grid {
         return result;
     }
     static fromArray(array) {
-        var resultat = {};
+        var result = {};
         this.properties.forEach(propriete => {
-            resultat[propriete] = array.shift();
+            result[propriete] = array.shift();
         });
-        return resultat;
+        return result;
     }
     toArray() {
         var result = Grid.properties.map(propriete => this[propriete]);
@@ -74,7 +73,13 @@ export default class Grid {
         });
     }
     static async fetch(slug) {
-        const url = `/data/grid/${slug}.json`;
+        const url = `/data/grid/${slug}.js`;
+        console.log(`Fetching Grid data for slug: ${slug}`);
+        const grid = await import(url).then(module => module.default);
+        grid.slug = slug;
+        console.log(grid);
+        
+        return;
         try {
             const response = await fetch(url);
             const json = await response.json();
@@ -85,7 +90,7 @@ export default class Grid {
         }
     }
     static async fetchList() {
-        const url = `${config.apiUrl || ''}/api.php?list=grid&full`;
+        const url = `${config.apiUrl || ''}/grid`;
         try {
             const response = await fetch(url);
             const json = await response.json();

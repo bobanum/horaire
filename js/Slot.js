@@ -106,21 +106,21 @@ export default class Slot extends DOM {
 	}
 	DOM = {
 		main: () => {
-			var resultat, typePlage = "C";
-			resultat = this.createElement('div.plage');
-			resultat.setAttribute("data-type", typePlage);
+			var result, typePlage = "C";
+			result = this.createElement('div.plage');
+			result.setAttribute("data-type", typePlage);
 			//TODO Déplacer vers la classe App
 			if (App.mode === App.MODE_EDITION) {
-				resultat.addEventListener("click", this.evt.plage.click);
+				result.addEventListener("click", this.evt.plage.click);
 			}
-			this._dom_label = resultat.appendChild(this.createElement('div.etat', ""));
-			this._dom_local = resultat.appendChild(this.createElement('div.local', ""));
-			this._dom_texte = resultat.appendChild(this.createElement('div.texte', ""));
-			resultat.style.gridRowStart = this.debut + 2;
-			resultat.style.gridColumnStart = this.jour + 2;
-			resultat.style.gridRowEnd = "span " + this.duree;
-			resultat.style.gridColumnEnd = "span " + 1;
-			return resultat;
+			this._dom_label = result.appendChild(this.createElement('div.etat', ""));
+			this._dom_local = result.appendChild(this.createElement('div.local', ""));
+			this._dom_texte = result.appendChild(this.createElement('div.texte', ""));
+			result.style.gridRowStart = this.debut + 2;
+			result.style.gridColumnStart = this.jour + 2;
+			result.style.gridRowEnd = "span " + this.duree;
+			result.style.gridColumnEnd = "span " + 1;
+			return result;
 		},
 		btsPlage() {
 			var result = this.createElement("div.boutonsPlage");
@@ -326,10 +326,10 @@ export default class Slot extends DOM {
 	 * @returns {Slot}   La nouvelle Plage
 	 */
 	static fromJson(json, horaire) {
-		var resultat;
-		resultat = new Slot(horaire);
-		resultat.fill(json);
-		return resultat;
+		var result;
+		result = new Slot(horaire);
+		result.fill(json);
+		return result;
 	}
 	fill(j) {
 		if (typeof j === "string") {
@@ -367,7 +367,7 @@ export default class Slot extends DOM {
 		return this;
 	}
 	toJson(stringify) {
-		var resultat = {
+		var result = {
 			typePlage: this.typePlage,
 			jour: this.jour,
 			debut: this.debut,
@@ -376,23 +376,23 @@ export default class Slot extends DOM {
 			local: this.local
 		};
 		if (stringify !== false) {
-			return JSON.stringify(resultat);
+			return JSON.stringify(result);
 		}
-		return resultat;
+		return result;
 	}
 	static fromArray(a, horaire) {
-		var resultat;
+		var result;
 		if (typeof a == "string") {
 			a = JSON.parse(a);
 		}
 		//		???var h = Horaire.fromJson(a);
 
-		resultat = new Slot(horaire);
-		resultat.fill(a);
-		return resultat;
+		result = new Slot(horaire);
+		result.fill(a);
+		return result;
 	}
 	toArray(stringify) {
-		var resultat = [
+		var result = [
 			this.typePlage,
 			this.jour,
 			this.debut,
@@ -401,9 +401,9 @@ export default class Slot extends DOM {
 			this.local
 		];
 		if (stringify !== false) {
-			return JSON.stringify(resultat);
+			return JSON.stringify(result);
 		}
-		return resultat;
+		return result;
 	}
 	setType(id, data) {
 		if (!id || id === 'defaut') {

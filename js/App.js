@@ -1,117 +1,125 @@
-/*jslint esnext:true, browser:true, debug:true*/
-import DOM from "./DOM.js";
 import Schedule from "./Schedule.js";
 import LZString from "./LZString.js";
 /**
 Classe App gérant l'application
 */
-export default class App extends DOM {
+export default class App {
 	static afficher(horaire) {
 		if (this.mode === this.MODE_EDITION) {
-			document.body.appendChild(this.dom_interface(horaire.dom));
+			this.DOM.interface(horaire.dom)
 		} else {
 			document.body.appendChild(horaire.dom);
 		}
 		return this;
 	}
-	static dom_interface(contenu) {
-		var resultat, panneau;
-		resultat = this.createElement("div.interface");
-		panneau = resultat.appendChild(this.createElement("header", "<h1><img src=\"images/logo.svg\"/>La maison des horaires</h1>"));
-		panneau.style.gridArea = "h";
-		panneau = resultat.appendChild(this.createElement("footer", "<p>&copy;</p>"));
-		panneau.style.gridArea = "f";
-		panneau = this.dom_panneau(contenu, resultat);
-		panneau.style.gridArea = "g";
-		panneau = this.dom_panneau(this.dom_options(), resultat);
-		panneau.style.gridArea = "o";
-		panneau = this.dom_panneau(this.dom_status(), resultat);
-		panneau.style.gridArea = "c";
-		return resultat;
-	}
-	static dom_panneau(contenu, conteneur) {
-		var resultat;
-		resultat = this.createElement("section.panneau");
-		if (conteneur) {
-			conteneur.appendChild(resultat);
-		}
-		if (contenu) {
-			resultat.appendChild(contenu);
-		}
-		return resultat;
-	}
-	static dom_options() {
-		var resultat;
-		// resultat = this.createElement("div#options", this.horaire.dom_form());
-		resultat = document.createElement("div");
-		resultat.id = "options";
-		resultat.appendChild(this.horaire.DOM.FORM.main());
-		return resultat;
-	}
-	static dom_status() {
-		var resultat, form;
-		resultat = this.createElement("div#status");
-		form = this.createElementIn(resultat, "form");
-		form.obj = this;
-		form.appendChild(this.dom_status_options());
-		form.appendChild(this.dom_code());
-		//		form.appendChild(this.htmlIframe());
-		return resultat;
-	}
-	static ajouterBoutonPage(conteneur, icone, evt) {
-		var contenu = '<svg height="24" width="24"><use href="images/pages.svg#'+icone+'"></svg>';
-		this.createElementIn(conteneur, "button", contenu, {class:"icone", type:'button'}, evt);
-	}
-	static dom_status_options() {
-		var resultat, div;
-		resultat = this.createElement("div.boutons");
-		this.ajouterBoutonsResultats(resultat);
-		div = this.createElementIn(resultat, "div.output");
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "JSON"
-		}, this.evt.btn_json);
-		//		this.createElementIn(div, "input", null, {"type": "button", "value":"JSON Compressé"}, this.evt.btn_jsoncompresse);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value":"Array"
-		}, this.evt.btn_array);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Compressé"
-		}, this.evt.btn_arraycompresse);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Adresse"
-		}, this.evt.btn_adresse);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "Lien"
-		}, this.evt.btn_lien);
-		this.createElementIn(div, "input", null, {
-			"type": "button",
-			"value": "iFrame"
-		}, this.evt.btn_iframe);
-		return resultat;
-	}
-	static ajouterBoutonsResultats(conteneur) {
-		var div = this.createElementIn(conteneur, "div");
-		div.classList.add("resultats");
-		this.ajouterBoutonPage(div, 'visionner', this.evt.btn_visionner);
-		this.ajouterBoutonPage(div, 'pagesimple2', this.evt.btn_imprimer);
-		this.ajouterBoutonPage(div, 'tetebeche', this.evt.btn_tetebeche);
-		this.ajouterBoutonPage(div, 'quatre', this.evt.btn_quatre);
-		this.ajouterBoutonPage(div, 'six', this.evt.btn_six);
-		this.ajouterBoutonPage(div, 'neuf', this.evt.btn_neuf);
-	}
-	static dom_code() {
-		var resultat = this.createElement("textarea#code", null, {
-			"cols": "60",
-			"rows": "3",
-			"placeholder": "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)"
-		}, this.evt.code);
-		resultat.horaire = this;
-		return resultat;
+	static DOM = {
+		panneau: (content) => {
+			const result = document.createElement("section");
+			result.classList.add("panneau");
+			if (content) {
+				result.appendChild(content);
+			}
+			return result;
+		},
+		options: () => {
+			const result = document.createElement("div");
+			result.id = "options";
+			result.appendChild(this.horaire.DOM.FORM.main());
+			return result;
+		},
+		status: () => {
+			const result = document.createElement("div");
+			result.id = "status";
+			const form = document.createElement("form");
+			result.appendChild(form);
+			form.obj = this;
+			form.appendChild(this.DOM.status_options());
+			form.appendChild(this.DOM.code());
+			//		form.appendChild(this.htmlIframe());
+			return result;
+		},
+		header: () => {
+			const result = document.createElement("header");
+			const h1 = document.createElement("h1");
+			const img = document.createElement("img");
+			img.src = "images/logo.svg";
+			h1.appendChild(img);
+			h1.appendChild(document.createTextNode("La maison des horaires"));
+			result.appendChild(h1);
+			return result;
+		},
+		footer: () => {
+			const result = document.createElement("footer");
+			const p = document.createElement("p");
+			p.innerHTML = "&copy;";
+			result.appendChild(p);
+			result.style.gridArea = "footer";
+			return result;
+		},
+
+		interface: (content) => {
+			const main = document.querySelector(".interface > main");
+			main.appendChild(this.DOM.panneau(document.createElement("div"))).style.gridArea = "preview";
+			main.appendChild(this.DOM.panneau(this.DOM.options())).style.gridArea = "options";
+			main.appendChild(this.DOM.panneau(this.DOM.status())).style.gridArea = "status";
+			return main;
+		},
+		status_options: () => {
+			const result = document.createElement("div");
+			result.classList.add("boutons");
+			result.appendChild(this.DOM.resultsButtons());
+			const div = document.createElement("div");
+			div.classList.add("output");
+			result.appendChild(div);
+
+			div.appendChild(this.DOM.svgButton('json', this.evt.btn_json));
+			div.appendChild(this.DOM.svgButton('array', this.evt.btn_array));
+			div.appendChild(this.DOM.svgButton('zip', this.evt.btn_arraycompresse));
+			div.appendChild(this.DOM.svgButton('url', this.evt.btn_adresse));
+			div.appendChild(this.DOM.svgButton('link', this.evt.btn_lien));
+			div.appendChild(this.DOM.svgButton('iframe', this.evt.btn_iframe));
+			return result;
+		},
+		resultsButtons: () => {
+			const result = document.createElement("div");
+			result.classList.add("results");
+			result.appendChild(this.DOM.svgButton('visionner', this.evt.btn_visionner));
+			result.appendChild(this.DOM.svgButton('pagesimple2', this.evt.btn_imprimer));
+			result.appendChild(this.DOM.svgButton('tetebeche', this.evt.btn_tetebeche));
+			result.appendChild(this.DOM.svgButton('quatre', this.evt.btn_quatre));
+			result.appendChild(this.DOM.svgButton('six', this.evt.btn_six));
+			result.appendChild(this.DOM.svgButton('neuf', this.evt.btn_neuf));
+			return result;
+		},
+		code: () => {
+			const result = document.createElement("textarea");
+			result.id = "code";
+			result.setAttribute("cols", "60");
+			result.setAttribute("rows", "3");
+			result.setAttribute("placeholder", "Code (Cliquez sur un bouton ci-dessus pour mettre à jour)");
+			result.addEventListener("click", this.evt.code);
+			return result;
+		},
+		svgButton: (icon, evt) => {
+			const result = document.createElement("button");
+			result.classList.add("icon");
+			result.setAttribute("type", "button");
+			result.addEventListener("click", evt);
+			const svg = result.appendChild(document.createElementNS("http://www.w3.org/2000/svg", "svg"));
+			const use = svg.appendChild(document.createElementNS("http://www.w3.org/2000/svg", "use"));
+			use.setAttribute("href", "img/icons.svg#" + icon);
+			return result;
+		},
+	};
+	static ajouterBoutonPage(conteneur, icon, evt) {
+		const contenu = this.DOM.svgButton(icon, evt);
+		const btn = document.createElement("button");
+		btn.appendChild(contenu);
+		btn.classList.add("icon");
+		btn.setAttribute("type", "button");
+		btn.addEventListener("click", evt);
+		conteneur.appendChild(btn);
+		return btn;
 	}
 	/**
 	 * Ajoute un élément script pointant vers l'URL donnée
@@ -139,17 +147,17 @@ export default class App extends DOM {
 	 * @returns {HTMLElement} L'élément link créé
 	 */
 	static ajouterLink(url, media) {
-		var resultat = document.createElement("link");
-		resultat.setAttribute("rel", "stylesheet");
+		var result = document.createElement("link");
+		result.setAttribute("rel", "stylesheet");
 		if (media) {
-			resultat.setAttribute("media", media);
+			result.setAttribute("media", media);
 		}
 		if (url.slice(-4) !== ".css") {
 			url += ".css";
 		}
-		resultat.setAttribute("href", this.url_css(url));
-		document.head.appendChild(resultat);
-		return resultat;
+		result.setAttribute("href", this.url_css(url));
+		document.head.appendChild(result);
+		return result;
 	}
 	/**
 	 * Callback appelé lors de la récupération d'un json
@@ -165,11 +173,11 @@ export default class App extends DOM {
 	 * @returns {XMLHttpRequest}   L'objet xhr utilisé pour la récupération
 	 */
 	static loadJson(url) {
-		var resultat;
+		var result;
 		if (url instanceof Array) {
-			resultat = Promise.all(url.map(u=>this.loadJson(u)));
+			result = Promise.all(url.map(u => this.loadJson(u)));
 		} else {
-			resultat = new Promise(function (resolve, reject) {
+			result = new Promise(function (resolve, reject) {
 				var xhr = new XMLHttpRequest();
 				xhr.open("get", url);
 				xhr.responseType = "json";
@@ -182,7 +190,7 @@ export default class App extends DOM {
 				xhr.send(null);
 			});
 		}
-		return resultat;
+		return result;
 	}
 	/**
 	 * Event onload de l'application
@@ -190,12 +198,12 @@ export default class App extends DOM {
 	static load() {
 		// console.log("loadApp");
 		return Promise.resolve();
-//		if (this.json) {
-//			this.horaire = Horaire.fromArray(this.json);
-//		} else {
-//			this.horaire = new Horaire();
-//		}
-//		this.afficher(this.horaire);
+		//		if (this.json) {
+		//			this.horaire = Horaire.fromArray(this.json);
+		//		} else {
+		//			this.horaire = new Horaire();
+		//		}
+		//		this.afficher(this.horaire);
 	}
 	/**
 	 * Retourne la version encodée et compressée de la chaine donnée
@@ -220,9 +228,9 @@ export default class App extends DOM {
 	static loadHoraire(titre) {
 		var horaires = window.localStorage.json_horaires || "{}";
 		horaires = JSON.parse(horaires);
-		var resultat = horaires[this.titre];
-		resultat = Schedule.fromBase64(resultat);
-		return resultat;
+		var result = horaires[this.titre];
+		result = Schedule.fromBase64(result);
+		return result;
 	}
 	/**
 	 * Retourne une chaine LZW décompressée (ou un objet json correspondant)
@@ -230,12 +238,12 @@ export default class App extends DOM {
 	 * @returns {string} L'objet ou la chaine décompressée
 	 */
 	static decoder(str) {
-		var resultat = LZString.decompressFromEncodedURIComponent(str);
-		if (typeof resultat === "string") {
+		var result = LZString.decompressFromEncodedURIComponent(str);
+		if (typeof result === "string") {
 			try {
-				return JSON.parse(resultat);
+				return JSON.parse(result);
 			} catch (e) {
-				return resultat;
+				return result;
 			}
 		}
 	}
@@ -245,12 +253,12 @@ export default class App extends DOM {
 	 * @returns {string} Un url absolu
 	 */
 	static url_app(fic) {
-//		var resultat = this.path.app;
-		var resultat = ".";
+		//		var result = this.path.app;
+		var result = ".";
 		if (fic) {
-			return resultat + "/" + fic;
+			return result + "/" + fic;
 		}
-		return resultat;
+		return result;
 	}
 	/**
 	 * Retourne le url absolu d'un fichier relatif à la page ayant intégré le script App.js
@@ -258,11 +266,11 @@ export default class App extends DOM {
 	 * @returns {string} Un url absolu
 	 */
 	static url_page(fic) {
-		var resultat = this.path.page;
+		var result = this.path.page;
 		if (fic) {
-			return resultat + "/" + fic;
+			return result + "/" + fic;
 		}
-		return resultat;
+		return result;
 	}
 	/**
 	 * Retourne le url absolu d'un fichier relatif à l'emplacement du script App.js
@@ -270,11 +278,11 @@ export default class App extends DOM {
 	 * @returns {string} Un url absolu
 	 */
 	static url_script(fic) {
-		var resultat = this.url_app("js");
+		var result = this.url_app("js");
 		if (fic) {
-			resultat += "/" + fic;
+			result += "/" + fic;
 		}
-		return resultat;
+		return result;
 	}
 	/**
 	 * Retourne le url absolu d'un fichier relatif à l'emplacement du script App.js
@@ -282,11 +290,11 @@ export default class App extends DOM {
 	 * @returns {string} Un url absolu
 	 */
 	static url_css(fic) {
-		var resultat = this.url_app("css");
+		var result = this.url_app("css");
 		if (fic) {
-			resultat += "/" + fic;
+			result += "/" + fic;
 		}
-		return resultat;
+		return result;
 	}
 	/**
 	 * Retourne un objet générique contenant les données d'une adresse donnée ou de l'adresse de la page
@@ -294,19 +302,19 @@ export default class App extends DOM {
 	 * @returns {object} Un objet des données
 	 */
 	static search_parse(url) {
-		var resultat, donnees;
+		var result, donnees;
 		url = url || location.search;
 		url = url.split("?").slice(1).join("?");
-		resultat = {};
+		result = {};
 		if (!url) {
-			return resultat;
+			return result;
 		}
 		donnees = url.split("&");
 		donnees.forEach((d) => {
 			var parts = d.split("=");
-			resultat[parts[0]] = parts.slice(1).join("=");
+			result[parts[0]] = parts.slice(1).join("=");
 		});
-		return resultat;
+		return result;
 	}
 	/**
 	 * Retourne une url contenant les données fournies
@@ -315,22 +323,22 @@ export default class App extends DOM {
 	 * @returns {string} L'url désirée
 	 */
 	static search_stringify(obj, url = "") {
-		var resultat = [];
+		var result = [];
 		if (url === ".") {
 			url = location.origin + location.pathname;
 		}
 		for (let k in obj) {
 			if (obj[k] === "") {
-				resultat.push(k);
+				result.push(k);
 			} else {
-				resultat.push(k + "=" + obj[k]);
+				result.push(k + "=" + obj[k]);
 			}
 		}
-		resultat = resultat.join("&");
-		if (resultat === "") {
+		result = result.join("&");
+		if (result === "") {
 			return url;
 		} else {
-			return url + "?" + resultat;
+			return url + "?" + result;
 		}
 	}
 	/**
@@ -339,7 +347,7 @@ export default class App extends DOM {
 	static setPaths() {
 		var dossierPage = window.location.href.split("/").slice(0, -1);
 		this.path = {};
-		this.toString = ()=>this.app;
+		this.toString = () => this.app;
 		this.path.page = dossierPage.join("/");
 		var src = document.head.lastElementChild.getAttribute("src").split("/").slice(0, -1);
 		if (src.length === 0 || !src[0].startsWith("http")) {
@@ -349,132 +357,132 @@ export default class App extends DOM {
 				src.splice(idx - 1, 2);
 			}
 		}
-		this.path.app = src.slice(0,-1).join("/");
-//		this.path.script = src.join("/");
+		this.path.app = src.slice(0, -1).join("/");
+		//		this.path.script = src.join("/");
 	}
 	static setEvents() {
 		this.evt = {
 			btn_array: {
 				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.horaire.toArray(true);
+					var result, ta;
+					result = this.form.obj.horaire.toArray(true);
 					ta = document.getElementById("code");
-					ta.innerHTML = resultat;
+					ta.innerHTML = result;
 					ta.select();
 				}
 			},
 			btn_arraycompresse: {
 				click: function () {
-					var resultat, ta;
+					var result, ta;
 					ta = document.getElementById("code");
-//					ta.innerHTML = "";
-					resultat = this.form.obj.horaire.toArray(true);
-//					resultat = this.form.obj.horaire.toJson(true);
-					resultat = App.encoder(resultat);
-					ta.innerHTML = resultat;
+					//					ta.innerHTML = "";
+					result = this.form.obj.horaire.toArray(true);
+					//					result = this.form.obj.horaire.toJson(true);
+					result = App.encoder(result);
+					ta.innerHTML = result;
 					ta.select();
 				}
 			},
 			btn_json: {
 				click: function (e) {
-					var resultat, ta;
+					var result, ta;
 					if (e.shiftKey) {
 						ta = document.getElementById("code");
-						resultat = JSON.parse(ta.value);
-						resultat = this.Horaire.fromJson(resultat);
-						resultat = resultat.toUrl();
-						resultat = resultat.replace("index.html", "edition.html");
-						window.location = resultat;
+						result = JSON.parse(ta.value);
+						result = this.Horaire.fromJson(result);
+						result = result.toUrl();
+						result = result.replace("index.html", "edition.html");
+						window.location = result;
 					} else {
-						resultat = this.form.obj.horaire.toJson(true);
+						result = this.form.obj.horaire.toJson(true);
 						ta = document.getElementById("code");
-						ta.innerHTML = resultat;
+						ta.innerHTML = result;
 						ta.select();
 					}
 				}
 			},
 			btn_jsoncompresse: {
 				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.horaire.toJson(true);
+					var result, ta;
+					result = this.form.obj.horaire.toJson(true);
 					ta = document.getElementById("code");
-					ta.innerHTML = App.encoder(resultat);
-					ta.innerHTML = "App.encoder(resultat)";
+					ta.innerHTML = App.encoder(result);
+					ta.innerHTML = "App.encoder(result)";
 					ta.select();
 				}
 			},
 			btn_adresse: {
 				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.horaire.toUrl();
+					var result, ta;
+					result = this.form.obj.horaire.toUrl();
 					ta = document.getElementById("code");
-					ta.innerHTML = resultat;
+					ta.innerHTML = result;
 					ta.select();
 				}
 			},
 			btn_lien: {
 				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.horaire.html_lien();
+					var result, ta;
+					result = this.form.obj.horaire.html_lien();
 					ta = document.getElementById("code");
-					ta.innerHTML = resultat;
+					ta.innerHTML = result;
 					ta.select();
 				}
 			},
 			btn_iframe: {
 				click: function () {
-					var resultat, ta;
-					resultat = this.form.obj.horaire.html_iframe();
+					var result, ta;
+					result = this.form.obj.horaire.html_iframe();
 					ta = document.getElementById("code");
-					ta.innerHTML = resultat;
+					ta.innerHTML = result;
 					ta.select();
 				}
 			},
 			btn_visionner: {
 				click: function () {
-					var resultat;
-					resultat = this.form.obj.horaire.toUrl();
-					window.open(resultat);
+					var result;
+					result = this.form.obj.horaire.toUrl();
+					window.open(result);
 				}
 			},
 			btn_imprimer: {
 				click: function () {
-					var resultat;
-					resultat = this.form.obj.horaire.toUrl();
-					resultat = resultat.replace("?", "?page&");
-					window.open(resultat);
+					var result;
+					result = this.form.obj.horaire.toUrl();
+					result = result.replace("?", "?page&");
+					window.open(result);
 				}
 			},
 			btn_tetebeche: {
 				click: function () {
-					var resultat;
-					resultat = this.form.obj.horaire.toUrl();
-					resultat = resultat.replace("?", "?tetebeche&");
-					window.open(resultat);
+					var result;
+					result = this.form.obj.horaire.toUrl();
+					result = result.replace("?", "?tetebeche&");
+					window.open(result);
 				}
 			},
 			btn_quatre: {
 				click: function () {
-					var resultat;
-					resultat = this.form.obj.horaire.toUrl();
-					resultat = resultat.replace("?", "?quatre&");
-					window.open(resultat);
+					var result;
+					result = this.form.obj.horaire.toUrl();
+					result = result.replace("?", "?quatre&");
+					window.open(result);
 				}
 			},
 			btn_six: {
 				click: function () {
-					var resultat;
-					resultat = this.form.obj.horaire.toUrl();
-					resultat = resultat.replace("?", "?six&");
-					window.open(resultat);
+					var result;
+					result = this.form.obj.horaire.toUrl();
+					result = result.replace("?", "?six&");
+					window.open(result);
 				}
 			},
 			btn_neuf: {
 				click: function () {
-					var resultat;
-					resultat = this.form.obj.horaire.toUrl();
-					resultat = resultat.replace("?", "?neuf&");
-					window.open(resultat);
+					var result;
+					result = this.form.obj.horaire.toUrl();
+					result = result.replace("?", "?neuf&");
+					window.open(result);
 				}
 			},
 		};

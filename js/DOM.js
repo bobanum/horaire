@@ -28,7 +28,7 @@ export default class DOM {
 	 * @returns {HTMLElement}        L'élément créé
 	 */
 	createElement(name, content, attributes, events) {
-		var resultat, classes;
+		var result, classes;
 		attributes = attributes || {};
 		for (let id; id = name.match(/#[a-zA-Z0-9\_\-]+/), id;) {
 			attributes.id = id[0].substr(1);
@@ -49,12 +49,12 @@ export default class DOM {
 		}
 		classes = name.split('.');
 		name = classes.shift();
-		resultat = document.createElement(name);
-		this.setAttributes(resultat, attributes);
-		this.setClasses(resultat, classes);
-		this.appendContent(resultat, content);
-		this.addEventListeners(resultat, events);
-		return resultat;
+		result = document.createElement(name);
+		this.setAttributes(result, attributes);
+		this.setClasses(result, classes);
+		this.appendContent(result, content);
+		this.addEventListeners(result, events);
+		return result;
 	}
 	/**
 	 * Créée un élément comme enfant d'un élément

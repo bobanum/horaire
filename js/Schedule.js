@@ -18,7 +18,6 @@ import Theme from "./Theme.js";
  * @property nbPeriodes {integer}	Le nombre de périodes (rangées)
  * @property dureePeriode {integer}	La durée dechaque période
  * @property pause {integer}	La pause à intercaler entre les périodes
- * @property hauteur {integer}	La hauteur en pouces de la zone horaire
  * @property _plages {Plage[]} Les plages actuellement dans l'horaire
  */
 export default class Schedule {
@@ -63,8 +62,8 @@ export default class Schedule {
 	set grid(val) {
 		this.setGrid(val);
 	}
-	
-	
+
+
 	/**
 	 * Détermine la grille à utiliser et retourne une promesse résolue après chargement au json au besoin
 	 * @param   {Mixed} val La grille à utiliser
@@ -145,14 +144,8 @@ export default class Schedule {
 	set pause(val) {
 		this.grid.pause = val;
 	}
-	get hauteur() {
-		return this.grid.hauteur;
-	}
-	set hauteur(val) {
-		this.grid.hauteur = val;
-	}
 	get types() {
-		return this._grid.typesPlages;
+		return this._grid.slotTypes;
 	}
 	static url_grid(nom) {
 		return "data/grid/" + nom + ".json";
@@ -162,11 +155,10 @@ export default class Schedule {
 	}
 	DOM = {
 		main: () => {
-			var resultat;
-			resultat = this.createElement("div#horaire", this.DOM.caption());
-			//		resultat.style.height = this.hauteur + "in";
-			resultat.appendChild(this.grid_dom);
-			return resultat;
+			var result;
+			result = this.createElement("div#horaire", this.DOM.caption());
+			result.appendChild(this.grid_dom);
+			return result;
 		},
 		caption: () => {
 			// const caption = this.createElement("div.caption#affichage_titre");
@@ -257,36 +249,36 @@ export default class Schedule {
 			if (l !== "auto") {
 				l += " span";
 			}
-			var resultat = document.createElement("div");
+			var result = document.createElement("div");
 			if (classe) {
-				resultat.classList.add(classe);
+				result.classList.add(classe);
 			}
-			resultat.style.gridArea = "" + r + " / " + c + " / " + h + " / " + l + "";
-			return resultat;
+			result.style.gridArea = "" + r + " / " + c + " / " + h + " / " + l + "";
+			return result;
 		},
 		lien: () => {
-			var resultat;
-			resultat = '<a href="' + this.toUrl() + '">' + this.titre + '</a>';
-			return resultat;
+			var result;
+			result = '<a href="' + this.toUrl() + '">' + this.titre + '</a>';
+			return result;
 		},
 		iframe: (largeur = 768, hauteur = 469) => {
-			var resultat;
-			resultat = '<iframe style="width:' + largeur + 'px;height:' + hauteur + 'px;border:none;" src="' + this.toUrl() + '"></iframe>';
-			return resultat;
+			var result;
+			result = '<iframe style="width:' + largeur + 'px;height:' + hauteur + 'px;border:none;" src="' + this.toUrl() + '"></iframe>';
+			return result;
 		},
 		FORM: {
 			main: () => {
-				var resultat;
-				resultat = DOM.createElement("form#formHoraire");
-				resultat.obj = this;
-				this.trForm = resultat;
-				resultat.appendChild(this.DOM.FORM.titre());
-				resultat.appendChild(this.DOM.FORM.grids());
-				resultat.appendChild(this.DOM.FORM.themes());
-				resultat.addEventListener("submit", e => {
+				var result;
+				result = DOM.createElement("form#formHoraire");
+				result.obj = this;
+				this.trForm = result;
+				result.appendChild(this.DOM.FORM.titre());
+				result.appendChild(this.DOM.FORM.grids());
+				result.appendChild(this.DOM.FORM.themes());
+				result.addEventListener("submit", e => {
 					e.preventDefault();
 				});
-				return resultat;
+				return result;
 			},
 			titre: () => {
 				const input = document.createElement("input");
@@ -459,9 +451,6 @@ export default class Schedule {
 			if (data.pause !== undefined) {
 				this.pause = data.pause;
 			}
-			if (data.hauteur !== undefined) {
-				this.hauteur = data.hauteur;
-			}
 			if (data.plages !== undefined) {
 				this.ajouterPlage(data.plages);
 			}
@@ -469,82 +458,81 @@ export default class Schedule {
 		}
 	}
 	// grilleFromArray(array) {
-	// 	var resultat = {};
+	// 	var result = {};
 	// 	Grille.proprietes.forEach(propriete => {
-	// 		resultat[propriete] = array.shift();
+	// 		result[propriete] = array.shift();
 	// 	});
-	// 	return resultat;
+	// 	return result;
 	// }
 	// grilToArray() {
-	// 	var resultat = this._grille;
-	// 	if (!resultat) {
+	// 	var result = this._grille;
+	// 	if (!result) {
 	// 		return false;
 	// 	}
-	// 	if (typeof resultat === "string") {
-	// 		return resultat;
+	// 	if (typeof result === "string") {
+	// 		return result;
 	// 	}
-	// 	resultat = Grille.proprietes.map(propriete => resultat[propriete]);
-	// 	return resultat;
+	// 	result = Grille.proprietes.map(propriete => result[propriete]);
+	// 	return result;
 	// }
 	toJson(stringify) {
-		var resultat = {};
-		resultat.titre = this.titre;
-		resultat.jours = this.jours;
-		resultat.heureDebut = this.heureDebut;
-		resultat.dureePeriode = this.dureePeriode;
-		resultat.pause = this.pause;
-		resultat.hauteur = this.hauteur;
-		resultat.plages = this._plages.map(p => p.toJson(false));
+		var result = {};
+		result.titre = this.titre;
+		result.jours = this.jours;
+		result.heureDebut = this.heureDebut;
+		result.dureePeriode = this.dureePeriode;
+		result.pause = this.pause;
+		result.plages = this._plages.map(p => p.toJson(false));
 		if (stringify !== false) {
-			return JSON.stringify(resultat);
+			return JSON.stringify(result);
 		}
-		return resultat;
+		return result;
 	}
 	toArray(stringify) {
-		var resultat = [
+		var result = [
 			this.titre,
 			this._plages.map(p => p.toArray(false)),
 		];
 		var g = this.gridToArray();
 		if (g) {
-			resultat.push(g);
+			result.push(g);
 		}
 		// var th = this._theme;
 		// if (th) {
-		// 	resultat.push(th);
+		// 	result.push(th);
 		// }
 		if (stringify !== false) {
-			return JSON.stringify(resultat);
+			return JSON.stringify(result);
 		}
-		return resultat;
+		return result;
 	}
 	static fromJson(json) {
-		var resultat = new Schedule();
-		resultat.fill(json);
-		return resultat;
+		var result = new Schedule();
+		result.fill(json);
+		return result;
 	}
 	static fromArray(data) {
 		if (typeof data == "string") {
 			data = JSON.parse(data);
 		}
-		var resultat = new Schedule();
-		App.horaire = resultat;	//TODO Vérifier la pertinence
-		resultat.fill(data);
-		return resultat;
+		var result = new Schedule();
+		App.horaire = result;	//TODO Vérifier la pertinence
+		result.fill(data);
+		return result;
 	}
 	static zzzgetSearch() {
-		var resultat, s, i, n, donnee;
-		resultat = {};
+		var result, s, i, n, donnee;
+		result = {};
 		s = location.href;
 		if (!s) {
-			return resultat;
+			return result;
 		}
 		s = s.slice(1).split("&");
 		for (i = 0, n = s.length; i < n; i += 1) {
 			donnee = s[i].split("=");
-			resultat[donnee.shift()] = donnee.join("=");
+			result[donnee.shift()] = donnee.join("=");
 		}
-		return resultat;
+		return result;
 	}
 	static setEvents() {
 		this.prototype.evt = {
@@ -582,9 +570,11 @@ export default class Schedule {
 		return this;
 	}
 	appliquerGrid(grid) {
-		if (grid.typesPlages) {
-			Slot.appliquerTypes(grid.typesPlages);
-			//			delete grille.typesPlages;
+		console.log(grid);
+
+		if (grid.slotTypes) {
+			Slot.appliquerTypes(grid.slotTypes);
+			//			delete grille.slotTypes;
 		}
 		// DOM.copierProps(grille, this);
 	}
@@ -598,12 +588,12 @@ export default class Schedule {
 				ss.insertRule("div#horaire " + selecteur + " {" + theme.css[selecteur] + "}");
 			}
 		}
-		if (theme.typesPlages) {
-			for (let k in theme.typesPlages) {
-				ss.insertRule("div.plage[data-type='" + k + "'] {" + theme.typesPlages[k].css + "}");
+		if (theme.slotTypes) {
+			for (let k in theme.slotTypes) {
+				ss.insertRule("div.plage[data-type='" + k + "'] {" + theme.slotTypes[k].css + "}");
 			}
 		}
-		Slot.appliquerTypes(theme.typesPlages);
+		Slot.appliquerTypes(theme.slotTypes);
 	}
 	/**
 	 * Retourne un tableau de nom des jours dans la langue donnée
@@ -613,31 +603,37 @@ export default class Schedule {
 	 * @returns {string[]} Un tableau de string
 	 */
 	static trouverNomsJours(lang, debut = 0, nombre = 7) {
-		var resultat, dimanche, step;
+		var result, dimanche, step;
 		step = 1000 * 60 * 60 * 24;
 		lang = lang || window.navigator.language;
-		resultat = [];
+		result = [];
 		dimanche = new Date();
 		dimanche = dimanche.getTime() - dimanche.getDay() * step;
 		for (let i = dimanche + debut * step, fin = i + nombre * step; i < fin; i += step) {
 			let dd = new Date(i);
-			resultat.push(dd.toLocaleString(lang, {
+			result.push(dd.toLocaleString(lang, {
 				weekday: "long"
 			}));
 		}
-		return resultat;
+		return result;
 	}
 	static fromBase64(base64) {
-		var resultat = new this();
-		resultat.fill(App.decoder(base64));
-		return resultat;
+		var result = new this();
+		result.fill(App.decoder(base64));
+		return result;
 	}
 	static load() {
 		App.horaire = new this();
-		Grid.fetch(this.grid_default).then(grid => {
-			this._grid = grid;
-			this.grids[this.grid_default] = grid;
-			App.horaire.appliquerGrid(grid);
+		import("../data/grid/" + this.grid_default + ".js").then(module => {
+			let Grid = module.default;
+			this.grids[this.grid_default] = Grid;
+			// App.horaire.appliquerGrid(Grid);
+		// });
+			// return;
+		// Grid.fetch(this.grid_default).then(grid => {
+			// this._grid = grid;
+			// this.grids[this.grid_default] = grid;
+			App.horaire.appliquerGrid(Grid);
 			return App.horaire.setGrid(this.grid_default);
 		}).then(() => {
 			if (App.json_horaire) {

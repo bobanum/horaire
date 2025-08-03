@@ -4,7 +4,7 @@ export default class Theme {
         slug: "",
         label: "",
         css: {},
-        typesPlages: [],
+        slotTypes: [],
     };
     constructor(json) {
         this.fill(Theme.properties);
@@ -46,7 +46,7 @@ export default class Theme {
         }
     }
     static async fetchList() {
-        const url = `${config.apiUrl || ''}/api.php?list=theme&full`;
+        const url = `${config.apiUrl || ''}/theme`;
         try {
             const response = await fetch(url);
             const json = await response.json();

@@ -1,19 +1,17 @@
-div.resultats {
-	/* padding-bottom: 1em; */
-	border-bottom: 1px solid#999;
-	border-bottom: groove;
+div.results {
+	padding-bottom: .5em;
+	border-bottom: 2px groove #fff9;
 	margin-bottom: 1em;
-	display: flex;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(2em, auto));
+	gap: .25em;
 	justify-content: space-between;
 }
 div.output {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(5em, auto));
-	/* gap: .15em; */
+	grid-template-columns: repeat(auto-fit, minmax(2em, auto));
+	gap: .25em;
 	justify-content: space-between;
-	> * {
-		flex: 1 0 0px;
-	}
 }
 div.champ {
 	display: flex;
