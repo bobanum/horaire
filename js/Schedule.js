@@ -52,9 +52,9 @@ export default class Schedule {
 	}
 	get grid() {
 		if (typeof this._grid === "string") {
-			return Schedule.grids[this._grid];
+			return Grid.loadedGrids[this._grid];
 		} else if (typeof this._grid === "undefined") {
-			return Schedule.grids[Schedule.grid_default];
+			return Grid.loadedGrids[Grid.grid_default];
 		} else {
 			return this._grid;
 		}
@@ -73,7 +73,7 @@ export default class Schedule {
 		const grid = await Grid.parse(val);
 		this._grid = this._grid || {};
 		// DOM.copierProps(grille, this._grille);
-		this.appliquerGrid(grid);
+		grid.applyTo(Slot);
 		//TODO Voir à ne pas changer le theme (si choisi) si on change de grille
 		if (grid.theme) {
 			return this.setTheme(grid.theme);
@@ -83,7 +83,7 @@ export default class Schedule {
 		if (!this._theme) {
 			return this.grid.theme;
 		} else if (typeof this._theme === "string") {
-			return Schedule.themes[this._theme];
+			return Theme.loadedThemes[this._theme];
 		} else {
 			return this._theme;
 		}
@@ -98,17 +98,22 @@ export default class Schedule {
 		}
 		if (typeof val === "object") {
 			promesse = Promise.resolve(val);
-		} else if (Schedule.themes[val]) {
-			promesse = Promise.resolve(Schedule.themes[val]);
+		} else if (Theme.loadedThemes[val]) {
+			promesse = Promise.resolve(Theme.loadedThemes[val]);
 		} else {
+			Theme.fetch(val).then(theme => {
+			console.log(theme);
+			});
+			
 			promesse = App.loadJson(Schedule.url_theme(val)).then(theme => {
-				Schedule.themes[val] = theme;
+				Theme.loadedThemes[val] = theme;
 				return theme;
 			});
 		}
 		promesse.then(theme => {
 			this._theme = theme;
-			return this.appliquerTheme(this._theme);
+			this._theme.apply(Schedule);
+			return this._theme;
 		});
 	}
 	get nbJours() {
@@ -148,16 +153,17 @@ export default class Schedule {
 		return this._grid.slotTypes;
 	}
 	static url_grid(nom) {
-		return "data/grid/" + nom + ".json";
+		return "/data/grid/" + nom + ".js";
 	}
 	static url_theme(nom) {
-		return "data/theme/" + nom + ".json";
+		return "/data/theme/" + nom + ".js";
 	}
 	DOM = {
 		main: () => {
-			var result;
-			result = this.createElement("div#horaire", this.DOM.caption());
-			result.appendChild(this.grid_dom);
+			var result = document.createElement("div");
+			result.id = "horaire";
+			result.appendChild(this.DOM.caption());
+			result.appendChild(this.DOM.grid());
 			return result;
 		},
 		caption: () => {
@@ -561,39 +567,13 @@ export default class Schedule {
 			},
 			select_theme: {
 				input: function () {
-					return App.loadJson("data/theme/" + this.value + ".json").then(t => {
-						App.horaire.appliquerTheme(t);
+					Theme.fetch(this.value).then(theme => {
+						theme.apply(Schedule);
 					});
 				}
 			}
 		};
 		return this;
-	}
-	appliquerGrid(grid) {
-		console.log(grid);
-
-		if (grid.slotTypes) {
-			Slot.appliquerTypes(grid.slotTypes);
-			//			delete grille.slotTypes;
-		}
-		// DOM.copierProps(grille, this);
-	}
-	appliquerTheme(theme) {
-		var ss = Schedule.stylesheet;
-		while (ss.cssRules && ss.cssRules.length) {
-			ss.deleteRule(0);
-		}
-		if (theme.css) {
-			for (let selecteur in theme.css) {
-				ss.insertRule("div#horaire " + selecteur + " {" + theme.css[selecteur] + "}");
-			}
-		}
-		if (theme.slotTypes) {
-			for (let k in theme.slotTypes) {
-				ss.insertRule("div.plage[data-type='" + k + "'] {" + theme.slotTypes[k].css + "}");
-			}
-		}
-		Slot.appliquerTypes(theme.slotTypes);
 	}
 	/**
 	 * Retourne un tableau de nom des jours dans la langue donnée
@@ -624,17 +604,8 @@ export default class Schedule {
 	}
 	static load() {
 		App.horaire = new this();
-		import("../data/grid/" + this.grid_default + ".js").then(module => {
-			let Grid = module.default;
-			this.grids[this.grid_default] = Grid;
-			// App.horaire.appliquerGrid(Grid);
-		// });
-			// return;
-		// Grid.fetch(this.grid_default).then(grid => {
-			// this._grid = grid;
-			// this.grids[this.grid_default] = grid;
-			App.horaire.appliquerGrid(Grid);
-			return App.horaire.setGrid(this.grid_default);
+		Grid.fetch(this.grid_default).then(grid => {
+			grid.applyTo(Slot);
 		}).then(() => {
 			if (App.json_horaire) {
 				return Promise.resolve(App.decoder(App.json_horaire)).then(json => {

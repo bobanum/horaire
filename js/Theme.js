@@ -1,5 +1,6 @@
 import config from '/config.js';
 export default class Theme {
+    static loadedThemes = {};
     static properties = {
         slug: "",
         label: "",
@@ -33,13 +34,33 @@ export default class Theme {
         }
         return result;
     }
+    applyTo(to) {
+        var ss = to.stylesheet;
+        while (ss.cssRules && ss.cssRules.length) {
+            ss.deleteRule(0);
+        }
+        if (this.css) {
+            for (let selecteur in this.css) {
+                ss.insertRule("div#horaire " + selecteur + " {" + this.css[selecteur] + "}");
+            }
+        }
+        if (this.slotTypes) {
+            for (let k in this.slotTypes) {
+                ss.insertRule("div.plage[data-type='" + k + "'] {" + this.slotTypes[k].css + "}");
+            }
+        }
+        Slot.appliquerTypes(this.slotTypes);
+    }
+
     static async fetch(slug) {
-        const url = `${config.apiUrl || ''}/data/grid/${slug}.json`;
+
         try {
-            const response = await fetch(url);
-            const json = await response.json();
-            json.slug = slug;
-            return this.fromJson(json);
+            const url = `/data/theme/${slug}.js`;
+            const module = await import(url);
+            const theme = new Theme(module.default);
+            theme.slug = slug;
+            this.loadedThemes[slug] = theme;
+            return theme;
         } catch (error) {
             console.error("Error fetching Theme data:", error);
             throw error;

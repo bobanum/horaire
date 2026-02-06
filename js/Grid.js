@@ -1,6 +1,7 @@
 import Schedule from "./Schedule.js";
 import config from '/config.js';
 export default class Grid {
+    static loadedGrids = {};
     static properties = {
         label: "",
         slug: "",
@@ -28,6 +29,12 @@ export default class Grid {
             json.slug = slug;
         }
         return new Grid().fill(json);
+    }
+    applyTo(to) {
+        if (this.slotTypes) {
+            to.appliquerTypes(this.slotTypes);
+        }
+        return this;
     }
     fill(json) {
         for (const prop in Grid.properties) {
@@ -64,26 +71,33 @@ export default class Grid {
 
             if (typeof val === "object") return resolve(val);
 
-            if (Schedule.grids[val]) return resolve(Schedule.grids[val]);
-            
-            return resolve(App.loadJson(Schedule.url_grid(val)).then(grid => {
-                Schedule.grids[val] = grid;
-                return grid;
-            }));
+            if (Grid.loadedGrids[val]) return resolve(Grid.loadedGrids[val]);
+
+            return Grid.fetch(val).then(grid => {
+                Grid.loadedGrids[val] = grid;
+            }).then(() => {
+                return resolve(Grid.loadedGrids[val]);
+            });
+            // return resolve(App.loadJson(Schedule.url_grid(val)).then(grid => {
+            //     Grid.loadedGrids[val] = grid;
+            //     return grid;
+            // }));
         });
     }
+    static url(slug) {
+        return `/data/grid/${slug}.js`;
+    }
     static async fetch(slug) {
-        const url = `/data/grid/${slug}.js`;
-        console.log(`Fetching Grid data for slug: ${slug}`);
-        const grid = await import(url).then(module => module.default);
-        grid.slug = slug;
-        console.log(grid);
-        
-        return;
         try {
-            const response = await fetch(url);
-            const json = await response.json();
-            return Grid.fromJson(json);
+            if (this.loadedGrids[slug]) {
+                return this.loadedGrids[slug];
+            }
+            const url = this.url(slug);
+            const module = await import(url);
+            const grid = new Grid(module.default);
+            this.loadedGrids[slug] = grid;
+            grid.slug = slug;
+            return grid;
         } catch (error) {
             console.error("Error fetching Grid data:", error);
             throw error;
@@ -107,9 +121,6 @@ export default class Grid {
         select: () => {
             const select = document.createElement("select");
             select.id = "grid";
-            // select.addEventListener("input", e => {
-            //     this.setTheme(e.target.value);
-            // });
             this.fetchList().then(grids => {
                 for (const slug in grids) {
                     const grid = grids[slug];
@@ -128,6 +139,6 @@ export default class Grid {
             option.value = this.slug;
             option.textContent = this.label || this.slug;
             return option;
-        }    
+        }
     };
 }
