@@ -200,6 +200,10 @@ export default class Horaire extends DOM {
 		parties.forEach(function (t) {
 			this.createElementIn(caption, "span", t);
 		}, this);
+		caption.addEventListener("dblclick", e => {
+			if (!e.ctrlKey) return;
+			location.href = this.toUrl({ edition: true });
+		});
 		return caption;
 	}
 	/**
@@ -365,14 +369,11 @@ export default class Horaire extends DOM {
 	get base64() {
 		return App.encoder(this.toArray(true));
 	}
-	toUrl() {
-		var url = "";
-		url += location.protocol;
-		url += "//" + location.host;
-		url += location.pathname.split("/").slice(0, -1).join("/") + "/";
-		url += "index.html";
-		url += "?h=";
-		url += this.base64;
+	toUrl(options = {}) {
+		options.h = this.base64;
+		let url = new URL(location);
+		url.pathname = url.pathname.split("/").slice(0, -1).join("/") + "/index.html";
+		url.search = new URLSearchParams(options).toString();
 		return url;
 	}
 	min2h(min) {
